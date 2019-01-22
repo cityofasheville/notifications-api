@@ -1,15 +1,21 @@
 const schema = `
-type Book {
-  title: String
-  author: String
-  secret: String
+
+type Tag {
+  id: String
+  name: String
+  topics: [Topic]
+}
+
+type Topic {
+  id: String
+  name: String
 }
 
 extend type Query {
-  "This is documentation"
-  books: [Book]
+  tag(id: ID): Tag 
+  tags: [Tag]
+  topics: [Topic]
 }
 
 `;
 module.exports = schema;
-

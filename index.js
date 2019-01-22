@@ -100,6 +100,7 @@ const resolvers = require('./resolvers');
 
 const server = new ApolloServer({
   typeDefs,
+  // mocks: true,
   resolvers,
   context: ({ req }) => ({
     sessionId: req.session.id,
