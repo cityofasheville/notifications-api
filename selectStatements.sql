@@ -21,6 +21,23 @@ AND topics.id = 1
 
 -------------------------------------
 -- CREATE DB 
+
+DROP TABLE note.categories;
+
+CREATE TABLE note.categories
+(
+    id SERIAL,
+    name character varying COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT categories_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE note.categories
+    OWNER to notedb;
+
  DROP TABLE note.messages;
 
 CREATE TABLE note.messages
@@ -45,6 +62,7 @@ ALTER TABLE note.messages
 CREATE TABLE note.tags
 (
     id SERIAL,
+    category_id integer NOT NULL,
     name character varying COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT tags_pkey PRIMARY KEY (id)
 )
@@ -78,6 +96,7 @@ ALTER TABLE note.topic_tags
 CREATE TABLE note.topics
 (
     id SERIAL,
+    category_id integer NOT NULL,
     name character varying COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT topics_pkey PRIMARY KEY (id)
 )
