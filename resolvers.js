@@ -47,7 +47,7 @@ const resolverMap = {
   },
   Mutation: {
     test(obj, args, context) { // eslint-disable-line no-unused-vars
-      return 'You have successfully called the test mutation';
+      return { message: 'You have successfully called the test mutation' };
     },
   },
 };

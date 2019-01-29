@@ -1,4 +1,4 @@
 module.exports = {
-  enableEmployeeLogins: true,
+  enableEmployeeLogins: false,
   onlyEmployeeLogins: false,
 };
