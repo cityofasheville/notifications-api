@@ -1,71 +1,63 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console no-unused-vars */
 
 const getDbConnection = require('../common/db');
 
 const pool = getDbConnection('mds'); // Initialize the connection.
 
-const tagsData = [{ id: '1', name: '28801', topics: [{ id: '10', name: 'MontfordGardens' }, { id: '20', name: 'MontfordEstates' }] }, { id: '2', name: '28803', topics: [{ id: '30', name: 'WestGardens' }] }];
-
-function getTag(parent, args, context) { // eslint-disable-line no-unused-vars
-  pool.connect((err, client, release) => {
-    if (err) {
-      return console.error('Error acquiring client', err.stack);
-    }
-    client.query('select id, name, category_id from note.tags where id = 1', (err2, result) => {
-      release();
-      if (err2) {
-        return console.error('Error executing query', err.stack);
-      }
-      console.log(result.rows);
-      return result.rows;
-    });
-    return 0;
-  });
-
+async function getCategory(parent, args, context) {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('select id, name from note.categories where id = $1', [args.id]);
+    client.release();
+    return Promise.resolve(result.rows[0]);
+  } catch (e) { return Promise.reject(e); }
 }
 
-function getTags(parent, args, context) { // eslint-disable-line no-unused-vars
-  return tagsData;
+async function getTag(parent, args, context) {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('select id, name, category_id from note.tags where id = $1', [args.id]);
+    client.release();
+    return Promise.resolve(result.rows[0]);
+  } catch (e) { return Promise.reject(e); }
 }
 
-function getTopic(parent, args, context) { // eslint-disable-line no-unused-vars
-  return tagsData[0].topics;
+async function getTags(parent, args, context) {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('select id, name, category_id from note.tags');
+    client.release();
+    //console.log(result.rows);
+    return Promise.resolve(result.rows);
+  } catch (e) { return Promise.reject(e); }
 }
 
-function test2(obj, args, context) { // eslint-disable-line no-unused-vars
+async function getTopics(parent, args, context) {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('select id, name, category_id from note.topics');
+    client.release();
+    return Promise.resolve(result.rows);
+  } catch (e) { return Promise.reject(e); }
+}
+
+function test2(obj, args, context) {
   return { message: 'You have successfully called the test2 mutation' };
 }
 
 const resolvers = {
   Query: {
+    category: getCategory,
     tag: getTag,
     tags: getTags,
-    topics: getTopic,
+    topics: getTopics,
+  },
+  Category: {
+    tags: getTags,
   },
   Mutation: {
     test2,
   },
 };
 
-
 module.exports = resolvers;
-
-/*
-query {
-  topics{
-    name,
-  },
-  tags {
-    name,
-  },
-  tag(id: "2"){
-    name
-  }
-}
-
-mutation {
-  test2 {
-    message
-  }
-}
-*/

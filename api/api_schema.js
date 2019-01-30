@@ -20,7 +20,7 @@ type Topic {
 
 extend type Query {
   category(id: ID): Category
-  tag(id: ID): Tag 
+  tag(id: ID): Tag
   tags: [Tag]
   topics: [Topic]
 }
