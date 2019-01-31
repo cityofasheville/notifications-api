@@ -1,24 +1,33 @@
 const schema = `
 
+type Message {
+  id: ID
+  msg: String
+  topic: Topic
+  sent: Boolean
+  datesent: String
+}
+
 type Category {
-  id: String
+  id: ID
   name: String
   tags: [Tag]
   topics: [Topic]  
 }
 
 type Tag {
-  id: String
+  id: ID
   name: String
   topics: [Topic]
 }
 
 type Topic {
-  id: String
+  id: ID
   name: String
 }
 
 extend type Query {
+  message(id: ID): Message
   category(id: ID): Category
   tag(id: ID): Tag
   tags: [Tag]
@@ -27,7 +36,10 @@ extend type Query {
 
 extend type Mutation {
   createTopic(input: String): Topic
-  test2: Dummy
+  """
+  Dummy is defined in ../schema.js
+  """
+  test2: Dummy 
 }
 `;
 module.exports = schema;
