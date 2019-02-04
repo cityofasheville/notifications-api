@@ -36,7 +36,7 @@ INSERT INTO note.topics(name)VALUES('Montford Gardens'),('West Estates');
 INSERT INTO note.topic_tags(topic_id,tag_id)VALUES(1,1),(1,3),(2,2);
 
 INSERT INTO note.people(emailaddress,send_email)VALUES('jtwilson@ashevillenc.gov',true);
-INSERT INTO note.subscriptions(user_id,tag_id)VALUES(1,1);
+INSERT INTO note.subscriptions(user_id,tag_id)VALUES(1,1),(1,3);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(1, 'Montford Gardens Apartments coming soon',false);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury Condos replacing Pub',false);
 */

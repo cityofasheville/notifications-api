@@ -2,7 +2,7 @@ const schema = `
 
 type Message {
   id: ID
-  msg: String
+  message: String
   sent: Boolean
   datesent: String
   topic: Topic
@@ -21,7 +21,7 @@ type Tag {
   name: String
   topics: [Topic]
   category: Category
-  subscrs: [Subscr]
+  people: [Person]
 }
 
 type Category {
@@ -31,17 +31,24 @@ type Category {
 }
 
 type Subscr {
-  person: People
+  person: Person
   tag: Tag
 }
 
-type People {
-  subscrs: [Subscr]
+type Person {
+  emailaddress: String
+  phonenumber: String
+  send_email: Boolean,
+  send_text: Boolean,
+  send_push: Boolean,
+  send_voice: Boolean,
+  tags: [Tag]
 }
 
 extend type Query {
   message(id: ID): Message
   category(id: ID): Category
+  person(id: ID): Person
   tag(id: ID): Tag
   tags: [Tag]
   topics: [Topic]
