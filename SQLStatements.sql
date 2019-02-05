@@ -1,11 +1,13 @@
 /*
-SELECT id, name	FROM note.tags;
-SELECT id, name	FROM note.topics;
+SELECT * FROM note.tags;
+SELECT * FROM note.topics;
 SELECT * FROM note.topic_tags;
 
 SELECT id, topic_id, message, sent, datesent FROM note.messages;
 
-SELECT * FROM note.people;
+SELECT id, email, phone, email_verified, phone_verified, 
+send_email, send_text, send_push, send_voice FROM note.people;
+
 SELECT * FROM note.subscriptions;
 
 SELECT people.*, tags.id AS tags_id, topics.name, messages.* 
@@ -35,7 +37,7 @@ INSERT INTO note.tags(name,category_id)VALUES('28801',1),('28803',1),('Affordabl
 INSERT INTO note.topics(name)VALUES('Montford Gardens'),('West Estates');
 INSERT INTO note.topic_tags(topic_id,tag_id)VALUES(1,1),(1,3),(2,2);
 
-INSERT INTO note.people(emailaddress,send_email)VALUES('jtwilson@ashevillenc.gov',true);
+INSERT INTO note.people(email,send_email)VALUES('jtwilson@ashevillenc.gov',true);
 INSERT INTO note.subscriptions(user_id,tag_id)VALUES(1,1),(1,3);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(1, 'Montford Gardens Apartments coming soon',false);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury Condos replacing Pub',false);
@@ -43,7 +45,7 @@ INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury
 -------------------------------------
 -- CREATE DB 
 
--- DROP TABLE note.categories CASCADE;
+DROP TABLE note.categories CASCADE;
 
 CREATE TABLE note.categories
 (
@@ -53,7 +55,7 @@ CREATE TABLE note.categories
 );
 
 ---------------------------------------------------------------------------------
- -- DROP TABLE note.tags CASCADE;
+DROP TABLE note.tags CASCADE;
 
 CREATE TABLE note.tags
 (
@@ -63,7 +65,7 @@ CREATE TABLE note.tags
     CONSTRAINT tags_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
- -- DROP TABLE note.topics CASCADE;
+DROP TABLE note.topics CASCADE;
 
 CREATE TABLE note.topics
 (
@@ -72,7 +74,7 @@ CREATE TABLE note.topics
     CONSTRAINT topics_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
-  -- DROP TABLE note.topic_tags CASCADE;
+ DROP TABLE note.topic_tags CASCADE;
 
 CREATE TABLE note.topic_tags
 (
@@ -81,7 +83,7 @@ CREATE TABLE note.topic_tags
     topic_id integer NOT NULL REFERENCES note.topics(id),
     CONSTRAINT topic_tags_pkey PRIMARY KEY (id)
 );---------------------------------------------------------------------------------
- -- DROP TABLE note.messages CASCADE;
+DROP TABLE note.messages CASCADE;
 
 CREATE TABLE note.messages
 (
@@ -93,13 +95,15 @@ CREATE TABLE note.messages
     CONSTRAINT messages_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
- -- DROP TABLE note.people CASCADE;
+DROP TABLE note.people CASCADE;
 
 CREATE TABLE note.people
 (
     id SERIAL,
-    emailaddress character varying COLLATE pg_catalog."default",
-    phonenumber character varying COLLATE pg_catalog."default",
+    email character varying COLLATE pg_catalog."default",
+    phone character varying COLLATE pg_catalog."default",
+    email_verified boolean,
+    phone_verified boolean,
     send_email boolean,
     send_text boolean,
     send_push boolean,
@@ -107,7 +111,7 @@ CREATE TABLE note.people
     CONSTRAINT people_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
--- DROP TABLE note.subscriptions CASCADE;
+DROP TABLE note.subscriptions CASCADE;
 
 CREATE TABLE note.subscriptions
 (

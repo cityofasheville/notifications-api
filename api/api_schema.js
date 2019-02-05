@@ -36,12 +36,14 @@ type Subscr {
 }
 
 type Person {
-  emailaddress: String
-  phonenumber: String
-  send_email: Boolean,
-  send_text: Boolean,
-  send_push: Boolean,
-  send_voice: Boolean,
+  email: String
+  phone: String
+  email_verified: Boolean
+  phone_verified: Boolean
+  send_email: Boolean
+  send_text: Boolean
+  send_push: Boolean
+  send_voice: Boolean
   tags: [Tag]
 }
 
@@ -51,7 +53,6 @@ extend type Query {
   person(id: ID): Person
   tag(id: ID): Tag
   tags: [Tag]
-  topics: [Topic]
 }
 
 extend type Mutation {
