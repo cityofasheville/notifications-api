@@ -1,8 +1,8 @@
 const schema = `
 
 type Message {
-  id: ID
-  message: String
+  id: ID!
+  message: String!
   sent: Boolean
   datesent: String
   topic: Topic
@@ -10,29 +10,29 @@ type Message {
 }
 
 type Topic {
-  id: ID
-  name: String
+  id: ID!
+  name: String!
   tags: [Tag]
   messages: [Message]
 }
 
 type Tag {
-  id: ID
-  name: String
+  id: ID!
+  name: String!
   topics: [Topic]
   category: Category
   people: [Person]
 }
 
 type Category {
-  id: ID
-  name: String
+  id: ID!
+  name: String!
   tags: [Tag]
 }
 
 type Subscr {
-  person: Person
-  tag: Tag
+  person: Person!
+  tag: Tag!
 }
 
 type Person {
@@ -48,19 +48,19 @@ type Person {
 }
 
 extend type Query {
-  message(id: ID): Message
-  category(id: ID): Category
-  person(id: ID): Person
-  tag(id: ID): Tag
+  message(id: ID!): Message
+  category(id: ID!): Category
+  person(id: ID!): Person
+  tag(id: ID!): Tag
   tags: [Tag]
+  topics: [Topic]
 }
 
 extend type Mutation {
-  createTopic(input: String): Topic
-  """
-  Dummy is defined in ../schema.js
-  """
-  test2: Dummy 
+  createTopic(name: String!): Topic
+  deleteTopic(id: ID!): Topic
+  createTag(name: String!, category: ID!): Tag
+  deleteTag(id: ID!): Tag
 }
 `;
 module.exports = schema;

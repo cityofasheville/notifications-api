@@ -39,6 +39,15 @@ async function getMessage(parent, args, context) { // gets a message, its topic,
   } catch (e) { return Promise.reject(e); }
 }
 
+async function getCategory(parent, args, context) {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('select id, name from note.categories where id = $1', [args.id]);
+    client.release();
+    return Promise.resolve(result.rows[0]);
+  } catch (e) { return Promise.reject(e); }
+}
+
 // gets a person and the tags they are subscribed to.
 async function getPerson(parent, args, context) {
   try {
@@ -68,25 +77,6 @@ async function getPerson(parent, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-async function getCategory(parent, args, context) {
-  try {
-    const client = await pool.connect();
-    const result = await client.query('select id, name from note.categories where id = $1', [args.id]);
-    client.release();
-    return Promise.resolve(result.rows[0]);
-  } catch (e) { return Promise.reject(e); }
-}
-
-async function getTagsForCategory(category, args, context) {
-  try {
-    const client = await pool.connect();
-    const result = await client.query('select id, name, category_id from note.tags where category_id = $1', [category.id]);
-    client.release();
-    // console.log(result.rows);
-    return Promise.resolve(result.rows);
-  } catch (e) { return Promise.reject(e); }
-}
-
 async function getTag(parent, args, context) {
   try {
     const client = await pool.connect();
@@ -101,13 +91,26 @@ async function getTags(parent, args, context) {
     const client = await pool.connect();
     const result = await client.query('select id, name, category_id from note.tags');
     client.release();
-    // console.log(result.rows);
     return Promise.resolve(result.rows);
   } catch (e) { return Promise.reject(e); }
 }
 
-function test2(obj, args, context) {
-  return { message: 'You have successfully called the test2 mutation' };
+async function getTopics(parent, args, context) {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('select id, name from note.topics');
+    client.release();
+    return Promise.resolve(result.rows);
+  } catch (e) { return Promise.reject(e); }
+}
+
+async function getTagsForCategory(category, args, context) {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('select id, name, category_id from note.tags where category_id = $1', [category.id]);
+    client.release();
+    return Promise.resolve(result.rows);
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function getCategoryFromTag(tag, args, context) {
@@ -169,6 +172,54 @@ async function getTopicsFromTag(tag, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
+async function createTopic(obj, args, context) {
+  try {
+    const client = await pool.connect();
+    const { rows } = await client.query(`  
+    insert into note.topics(name)VALUES($1) RETURNING id, name;
+    `, [args.name]);
+    client.release();
+    const ret = rows[0];
+    return Promise.resolve(ret);
+  } catch (e) { return Promise.reject(e); }
+}
+
+async function deleteTopic(obj, args, context) {
+  try {
+    const client = await pool.connect();
+    const { rows } = await client.query(`  
+    delete from note.topics where id = $1 RETURNING id, name;
+    `, [args.id]);
+    client.release();
+    const ret = rows[0];
+    return Promise.resolve(ret);
+  } catch (e) { return Promise.reject(e); }
+}
+
+async function createTag(obj, args, context) {
+  try {
+    const client = await pool.connect();
+    const { rows } = await client.query(`  
+    insert into note.tags(name, category_id)VALUES($1, $2) RETURNING id, name, category_id;
+    `, [args.name, args.category]);
+    client.release();
+    const ret = rows[0];
+    return Promise.resolve(ret);
+  } catch (e) { return Promise.reject(e); }
+}
+
+async function deleteTag(obj, args, context) {
+  try {
+    const client = await pool.connect();
+    const { rows } = await client.query(`  
+    delete from note.tags where id = $1 RETURNING id, name, category_id;
+    `, [args.id]);
+    client.release();
+    const ret = rows[0];
+    return Promise.resolve(ret);
+  } catch (e) { return Promise.reject(e); }
+}
+
 const resolvers = {
   Query: {
     message: getMessage,
@@ -176,6 +227,7 @@ const resolvers = {
     person: getPerson,
     tag: getTag,
     tags: getTags,
+    topics: getTopics,
   },
   Category: {
     tags: getTagsForCategory,
@@ -183,10 +235,13 @@ const resolvers = {
   Tag: {
     category: getCategoryFromTag,
     people: getPeopleFromTag,
-    topics: getTopicsFromTag
+    topics: getTopicsFromTag,
   },
   Mutation: {
-    test2,
+    createTopic,
+    deleteTopic,
+    createTag,
+    deleteTag,
   },
 };
 

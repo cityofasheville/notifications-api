@@ -1,3 +1,4 @@
+-- This was the version with additional foreign keys (maybe don't need?)
 /*
 SELECT id, name	FROM note.tags;
 SELECT id, name	FROM note.topics;
