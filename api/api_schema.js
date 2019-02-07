@@ -20,7 +20,7 @@ type Tag {
   id: ID!
   name: String!
   topics: [Topic]
-  category: Category
+  category: Category!
   people: [Person]
 }
 
@@ -36,6 +36,7 @@ type Subscr {
 }
 
 type Person {
+  id: ID!
   email: String
   phone: String
   email_verified: Boolean
@@ -61,6 +62,25 @@ extend type Mutation {
   deleteTopic(id: ID!): Topic
   createTag(name: String!, category: ID!): Tag
   deleteTag(id: ID!): Tag
+  createPeople(person: PersonInput!): Person
+  deletePeople(id: ID!): Person
 }
+
+input PersonInput {
+  email: String
+  phone: String
+  email_verified: Boolean
+  phone_verified: Boolean
+  send_email: Boolean
+  send_text: Boolean
+  send_push: Boolean
+  send_voice: Boolean
+  tags: [TagInput]
+}
+
+input TagInput {
+  tagID: ID!
+}
+
 `;
 module.exports = schema;

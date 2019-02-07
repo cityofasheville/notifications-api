@@ -37,7 +37,8 @@ INSERT INTO note.tags(name,category_id)VALUES('28801',1),('28803',1),('Affordabl
 INSERT INTO note.topics(name)VALUES('Montford Gardens'),('West Estates');
 INSERT INTO note.topic_tags(topic_id,tag_id)VALUES(1,1),(1,3),(2,2);
 
-INSERT INTO note.people(email,send_email)VALUES('jtwilson@ashevillenc.gov',true);
+INSERT INTO note.people DEFAULT VALUES;
+INSERT INTO note.send(user_id,type,email,phone,verified)VALUES(1,'EMAIL','jtwilson@ashevillenc.gov',null,true);
 INSERT INTO note.subscriptions(user_id,tag_id)VALUES(1,1),(1,3);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(1, 'Montford Gardens Apartments coming soon',false);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury Condos replacing Pub',false);
@@ -45,7 +46,7 @@ INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury
 -------------------------------------
 -- CREATE DB 
 
-DROP TABLE note.categories CASCADE;
+-- DROP TABLE note.categories CASCADE;
 
 CREATE TABLE note.categories
 (
@@ -55,7 +56,7 @@ CREATE TABLE note.categories
 );
 
 ---------------------------------------------------------------------------------
-DROP TABLE note.tags CASCADE;
+-- DROP TABLE note.tags CASCADE;
 
 CREATE TABLE note.tags
 (
@@ -65,7 +66,7 @@ CREATE TABLE note.tags
     CONSTRAINT tags_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
-DROP TABLE note.topics CASCADE;
+-- DROP TABLE note.topics CASCADE;
 
 CREATE TABLE note.topics
 (
@@ -74,7 +75,7 @@ CREATE TABLE note.topics
     CONSTRAINT topics_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
- DROP TABLE note.topic_tags CASCADE;
+ -- DROP TABLE note.topic_tags CASCADE;
 
 CREATE TABLE note.topic_tags
 (
@@ -83,7 +84,7 @@ CREATE TABLE note.topic_tags
     topic_id integer NOT NULL REFERENCES note.topics(id),
     CONSTRAINT topic_tags_pkey PRIMARY KEY (id)
 );---------------------------------------------------------------------------------
-DROP TABLE note.messages CASCADE;
+-- DROP TABLE note.messages CASCADE;
 
 CREATE TABLE note.messages
 (
@@ -95,23 +96,29 @@ CREATE TABLE note.messages
     CONSTRAINT messages_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
-DROP TABLE note.people CASCADE;
+-- DROP TABLE note.people CASCADE;
 
 CREATE TABLE note.people
 (
     id SERIAL,
-    email character varying COLLATE pg_catalog."default",
-    phone character varying COLLATE pg_catalog."default",
-    email_verified boolean,
-    phone_verified boolean,
-    send_email boolean,
-    send_text boolean,
-    send_push boolean,
-    send_voice boolean,
     CONSTRAINT people_pkey PRIMARY KEY (id)
 );
+
 ---------------------------------------------------------------------------------
-DROP TABLE note.subscriptions CASCADE;
+-- DROP TABLE note.send CASCADE;
+
+CREATE TABLE note.send
+(
+    id SERIAL,
+    user_id integer NOT NULL REFERENCES note.people(id),
+    type character varying (10) COLLATE pg_catalog."default", --EMAIL TEXT PUSH VOICE
+    email character varying COLLATE pg_catalog."default",
+    phone character varying COLLATE pg_catalog."default",
+    verified boolean,
+    CONSTRAINT send_pkey PRIMARY KEY (id)
+);
+---------------------------------------------------------------------------------
+-- DROP TABLE note.subscriptions CASCADE;
 
 CREATE TABLE note.subscriptions
 (
@@ -121,5 +128,21 @@ CREATE TABLE note.subscriptions
     CONSTRAINT subscriptions_pkey PRIMARY KEY (id)
 );
 
+-----------------------
+--ACCESS DB
+REVOKE CONNECT ON DATABASE notifications FROM PUBLIC;
+GRANT  CONNECT ON DATABASE notifications  TO notedb;
 
+--ACCESS SCHEMA
+REVOKE ALL     ON SCHEMA note FROM PUBLIC;
+GRANT  USAGE   ON SCHEMA note  TO notedb;
 
+--ACCESS TABLES
+REVOKE ALL ON ALL TABLES IN SCHEMA note FROM PUBLIC ;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO notedb ;
+
+grant SELECT, INSERT, UPDATE, DELETE on all tables in schema note to notedb;
+
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA note TO notedb;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA note TO notedb;

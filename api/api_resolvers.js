@@ -55,7 +55,7 @@ async function getPerson(parent, args, context) {
     const { rows } = await client.query(`
     select row_to_json(peep) results
     from (
-      select people.email, people.phone, 
+      select people.id, people.email, people.phone, 
       people.email_verified, people.phone_verified,
       people.send_email, people.send_text, people.send_push, people.send_voice,
       (
@@ -220,6 +220,31 @@ async function deleteTag(obj, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
+async function createPeople(obj, args, context) {
+  try {
+    const client = await pool.connect();
+    const { rows } = await client.query(`  
+    insert into note.people DEFAULT VALUES RETURNING id;
+    `, [args.name, args.category]);
+    client.release();
+    const ret = rows[0];
+    return Promise.resolve(ret);
+  } catch (e) { return Promise.reject(e); }
+}
+
+async function deletePeople(obj, args, context) {
+  try {
+    const client = await pool.connect();
+    const { rows } = await client.query(`  
+    delete from note.send where user_id = $1;
+    delete from note.people where id = $1 RETURNING id, email, phone;
+    `, [args.id]);
+    client.release();
+    const ret = rows[0];
+    return Promise.resolve(ret);
+  } catch (e) { return Promise.reject(e); }
+}
+
 const resolvers = {
   Query: {
     message: getMessage,
@@ -242,6 +267,8 @@ const resolvers = {
     deleteTopic,
     createTag,
     deleteTag,
+    createPeople,
+    deletePeople,
   },
 };
 
