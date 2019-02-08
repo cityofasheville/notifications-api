@@ -6,7 +6,6 @@ type Message {
   sent: Boolean
   datesent: String
   topic: Topic
-  subscrs: [Subscr]
 }
 
 type Topic {
@@ -37,15 +36,17 @@ type Subscr {
 
 type Person {
   id: ID!
+  send_types: [SendType]
+  tags: [Tag]
+}
+
+type SendType {
+  id: ID!
+  person: Person!
+  send_type: SendEnum!
   email: String
   phone: String
-  email_verified: Boolean
-  phone_verified: Boolean
-  send_email: Boolean
-  send_text: Boolean
-  send_push: Boolean
-  send_voice: Boolean
-  tags: [Tag]
+  verified: Boolean
 }
 
 extend type Query {
@@ -60,27 +61,56 @@ extend type Query {
 extend type Mutation {
   createTopic(name: String!): Topic
   deleteTopic(id: ID!): Topic
-  createTag(name: String!, category: ID!): Tag
+  createTag(tag: TagInput!): Tag
   deleteTag(id: ID!): Tag
-  createPeople(person: PersonInput!): Person
-  deletePeople(id: ID!): Person
+  createPerson(person: PersonInput!): Person
+  deletePerson(id: ID!): Person
 }
 
 input PersonInput {
+  send_types: [SendTypeInput]
+  tags: [TagIDInput]
+}
+
+input SendTypeInput {
+  send_type: SendEnum!
   email: String
   phone: String
-  email_verified: Boolean
-  phone_verified: Boolean
-  send_email: Boolean
-  send_text: Boolean
-  send_push: Boolean
-  send_voice: Boolean
-  tags: [TagInput]
+  verified: Boolean
 }
 
 input TagInput {
-  tagID: ID!
+  name: String!
+  category: ID!
 }
 
+input TagIDInput {
+  tag_id: ID!
+}
+
+enum SendEnum {
+  EMAIL
+  TEXT
+  VOICE
+  PUSH
+}
 `;
 module.exports = schema;
+
+/* deletePerson(email: String, phone: String): Person
+
+let PersonInput = {
+  "send_types": [
+    {
+      "send_type": "EMAIL",
+      "email": "aoc@house.gov",
+      "verified": false
+    }
+  ],
+  "tags": [
+    {
+      "tag_id": "2"
+    }
+  ]
+}
+*/

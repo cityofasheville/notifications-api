@@ -5,8 +5,8 @@ SELECT * FROM note.topic_tags;
 
 SELECT id, topic_id, message, sent, datesent FROM note.messages;
 
-SELECT id, email, phone, email_verified, phone_verified, 
-send_email, send_text, send_push, send_voice FROM note.people;
+SELECT * FROM note.people;
+SELECT * FROM note.send_types;
 
 SELECT * FROM note.subscriptions;
 
@@ -38,7 +38,7 @@ INSERT INTO note.topics(name)VALUES('Montford Gardens'),('West Estates');
 INSERT INTO note.topic_tags(topic_id,tag_id)VALUES(1,1),(1,3),(2,2);
 
 INSERT INTO note.people DEFAULT VALUES;
-INSERT INTO note.send(user_id,type,email,phone,verified)VALUES(1,'EMAIL','jtwilson@ashevillenc.gov',null,true);
+INSERT INTO note.send_types(user_id,type,email,phone,verified)VALUES(1,'EMAIL','jtwilson@ashevillenc.gov',null,true);
 INSERT INTO note.subscriptions(user_id,tag_id)VALUES(1,1),(1,3);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(1, 'Montford Gardens Apartments coming soon',false);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury Condos replacing Pub',false);
@@ -105,9 +105,9 @@ CREATE TABLE note.people
 );
 
 ---------------------------------------------------------------------------------
--- DROP TABLE note.send CASCADE;
+-- DROP TABLE note.send_type CASCADE;
 
-CREATE TABLE note.send
+CREATE TABLE note.send_types
 (
     id SERIAL,
     user_id integer NOT NULL REFERENCES note.people(id),
@@ -115,7 +115,7 @@ CREATE TABLE note.send
     email character varying COLLATE pg_catalog."default",
     phone character varying COLLATE pg_catalog."default",
     verified boolean,
-    CONSTRAINT send_pkey PRIMARY KEY (id)
+    CONSTRAINT send_types_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
 -- DROP TABLE note.subscriptions CASCADE;
@@ -124,7 +124,7 @@ CREATE TABLE note.subscriptions
 (
     id SERIAL,
     user_id integer NOT NULL REFERENCES note.people(id),
-    tag_id integer,
+    tag_id integer NOT NULL REFERENCES note.tags(id),
     CONSTRAINT subscriptions_pkey PRIMARY KEY (id)
 );
 
