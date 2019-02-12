@@ -56,6 +56,7 @@ extend type Query {
   tag(id: ID!): Tag
   tags: [Tag]
   topics: [Topic]
+  categories: [Category]
 }
 
 extend type Mutation {

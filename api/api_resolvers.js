@@ -111,6 +111,14 @@ async function getTopics(parent, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
+async function getCategories(parent, args, context) {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('select id, name from note.categories');
+    client.release();
+    return Promise.resolve(result.rows);
+  } catch (e) { return Promise.reject(e); }
+}
 async function getTagsForCategory(category, args, context) {
   try {
     const client = await pool.connect();
@@ -285,6 +293,7 @@ const resolvers = {
     tag: getTag,
     tags: getTags,
     topics: getTopics,
+    categories: getCategories,
   },
   Category: {
     tags: getTagsForCategory,
