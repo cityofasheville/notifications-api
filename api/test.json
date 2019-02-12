@@ -59,5 +59,43 @@
                 }
             ]
         }
+    ],
+    {
+        "id": 1,
+        "tags": [
+            {
+                "id": 1,
+                "category_id": 1,
+                "name": "28801"
+            },
+            {
+                "id": 3,
+                "category_id": 1,
+                "name": "Affordable"
+            }
+        ],
+        "send_types": [
+            {
+                "id": 1,
+                "type": "EMAIL",
+                "email": "jtwilson@ashevillenc.gov",
+                "phone": null,
+                "verified": true
+            }
+        ]
+    },
+    [
+        {
+            "id": 1,
+            "send_types": [
+                {
+                    "id": 1,
+                    "type": "EMAIL",
+                    "email": "jtwilson@ashevillenc.gov",
+                    "phone": null,
+                    "verified": true
+                }
+            ]
+        }
     ]
 ]
