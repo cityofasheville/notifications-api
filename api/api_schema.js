@@ -43,7 +43,7 @@ type Person {
 type SendType {
   id: ID!
   person: Person!
-  send_type: SendEnum!
+  type: SendEnum!
   email: String
   phone: String
   verified: Boolean
@@ -74,7 +74,7 @@ input PersonInput {
 }
 
 input SendTypeInput {
-  send_type: SendEnum!
+  type: SendEnum!
   email: String
   phone: String
   verified: Boolean
@@ -86,7 +86,7 @@ input TagInput {
 }
 
 input TagIDInput {
-  tag_id: ID!
+  id: ID!
 }
 
 enum SendEnum {

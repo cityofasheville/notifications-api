@@ -69,7 +69,7 @@ async function getPerson(parent, args, context) {
       (
         select array_to_json(array_agg(row_to_json(s))) 
         from (
-          select send_types.id, send_types.send_type, send_types.email, 
+          select send_types.id, send_types.type, send_types.email, 
 		      	send_types.phone, send_types.verified
           from note.send_types
           WHERE people.id = send_types.user_id
@@ -79,7 +79,7 @@ async function getPerson(parent, args, context) {
       where people.id = $1
     ) as peep`, [args.id]);
     client.release();
-    const ret = rows[0].results;
+    const ret = rows[0] ? rows[0].results : null;
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
 }
@@ -148,7 +148,7 @@ async function getPeopleFromTag(tag, args, context) {
       (
         select array_to_json(array_agg(row_to_json(s))) 
         from (
-          select send_types.id, send_types.send_type, send_types.email, 
+          select send_types.id, send_types.type, send_types.email, 
 		      	send_types.phone, send_types.verified
           from note.send_types
           WHERE people.id = send_types.user_id
@@ -244,30 +244,30 @@ async function deleteTag(obj, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-async function createPerson(obj, args, context) {   console.log(args);
+async function createPerson(obj, args, context) {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`  
     insert into note.people DEFAULT VALUES RETURNING id;
     `);
     const user_id = rows[0].id;
-    for(send_type of args.send_types){
+    for(send_type of args.person.send_types){
       const { rows } = await client.query(`  
         INSERT INTO note.send_types(
-          user_id, send_type, email, phone, verified)
-        VALUES(user_id, $1, $2, $3, $4)
-      `, [ user_id, send_type.send_type, send_type.email, 
-      send_type.phone, send_type,verified ]);
+          user_id, type, email, phone, verified)
+        VALUES($1, $2, $3, $4, $5)
+      `, [ user_id, send_type.type, send_type.email, 
+      send_type.phone, send_type.verified ]);
     }
-    for(tag of args.tags){
+    for(tag of args.person.tags){
       const { rows } = await client.query(`  
         INSERT INTO note.subscriptions(
           user_id, tag_id)
         VALUES($1, $2)
-      `, [ user_id, tag.tag_id ]);
+      `, [ user_id, tag.id ]);
     }
     client.release();
-    const ret = Object.assign({},args,{id: user_id})
+    const ret = Object.assign({},args.person,{id: user_id})
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
 }
@@ -275,9 +275,14 @@ async function createPerson(obj, args, context) {   console.log(args);
 async function deletePerson(obj, args, context) {
   try {
     const client = await pool.connect();
+    await client.query(`  
+    delete from note.subscriptions where user_id = $1;
+  `, [args.id]);
+    await client.query(`  
+      delete from note.send_types where user_id = $1;
+    `, [args.id]);
     const { rows } = await client.query(`  
-    delete from note.send_types where user_id = $1;
-    delete from note.people where id = $1 RETURNING id, email, phone;
+      delete from note.people where id = $1 RETURNING id;
     `, [args.id]);
     client.release();
     const ret = rows[0];
