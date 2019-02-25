@@ -102,6 +102,7 @@ DROP TABLE note.people CASCADE;
 CREATE TABLE note.people
 (
     id SERIAL,
+    uuid character (36),
     CONSTRAINT people_pkey PRIMARY KEY (id)
 );
 

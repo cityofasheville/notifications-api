@@ -36,6 +36,7 @@ type Subscr {
 
 type Person {
   id: ID!
+  uuid: String
   send_types: [SendType]
   tags: [Tag]
 }

@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 
 const getDbConnection = require('../common/db');
-
+const uuidv1 = require('uuid/v1');
 const pool = getDbConnection('mds'); // Initialize the connection.
 
 async function getMessage(parent, args, context) { // gets a message, its topic, and lists tags
@@ -55,7 +55,7 @@ async function getPerson(parent, args, context) {
     const { rows } = await client.query(`
     select row_to_json(peep) results
     from (
-      select people.id,
+      select people.id, people.uuid,
       (
         select array_to_json(array_agg(row_to_json(t))) 
         from (
@@ -144,7 +144,7 @@ async function getPeopleFromTag(tag, args, context) {
     const { rows } = await client.query(`
     select array_to_json(array_agg(row_to_json(p))) results
     from (
-      SELECT people.id,
+      SELECT people.id, people.uuid,
       (
         select array_to_json(array_agg(row_to_json(s))) 
         from (
@@ -246,11 +246,13 @@ async function deleteTag(obj, args, context) {
 
 async function createPerson(obj, args, context) {
   try {
+    const uuid = uuidv1(); console.log(uuid);
     const client = await pool.connect();
     const { rows } = await client.query(`  
-    insert into note.people DEFAULT VALUES RETURNING id;
-    `);
+    insert into note.people(uuid)VALUES($1) RETURNING id, uuid;
+    `, [ uuid ]);
     const user_id = rows[0].id;
+    const user_uuid = rows[0].uuid;
     for(send_type of args.person.send_types){
       const { rows } = await client.query(`  
         INSERT INTO note.send_types(
@@ -267,7 +269,7 @@ async function createPerson(obj, args, context) {
       `, [ user_id, tag.id ]);
     }
     client.release();
-    const ret = Object.assign({},args.person,{id: user_id})
+    const ret = Object.assign({},args.person,{id: user_id, uuid: user_uuid})
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
 }
