@@ -11,8 +11,10 @@ SELECT * FROM note.send_types;
 
 SELECT * FROM note.subscriptions;
 
-SELECT people.*, tags.id AS tags_id, topics.name, messages.* 
+SELECT people.*, send_types.type, email, tags.id AS tags_id, topics.name, messages.* 
 FROM note.people
+INNER JOIN note.send_types
+	ON people.id = send_types.user_id
 INNER JOIN note.subscriptions
 	ON people.id = subscriptions.user_id	
 INNER JOIN note.tags
@@ -39,7 +41,7 @@ INSERT INTO note.topics(name)VALUES('Montford Gardens'),('West Estates');
 INSERT INTO note.topic_tags(topic_id,tag_id)VALUES(1,1),(1,3),(2,2);
 
 INSERT INTO note.people DEFAULT VALUES;
-INSERT INTO note.send_types(user_id,type,email,phone,verified)VALUES(1,'EMAIL','jtwilson@ashevillenc.gov',null,true);
+INSERT INTO note.send_types(user_id,type,email,phone,verified)VALUES(1,'EMAIL','jtwilson@ashevillenc.gov',null,false);
 INSERT INTO note.subscriptions(user_id,tag_id)VALUES(1,1),(1,3);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(1, 'Montford Gardens Apartments coming soon',false);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury Condos replacing Pub',false);

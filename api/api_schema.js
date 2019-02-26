@@ -54,6 +54,7 @@ extend type Query {
   message(id: ID!): Message
   category(id: ID!): Category
   person(id: ID!): Person
+  people: [Person]
   tag(id: ID!): Tag
   tags: [Tag]
   topics: [Topic]
@@ -66,7 +67,14 @@ extend type Mutation {
   createTag(tag: TagInput!): Tag
   deleteTag(id: ID!): Tag
   createPerson(person: PersonInput!): Person
-  deletePerson(id: ID!): Person
+  deletePerson(delids: DeletePersonInput!): Int
+  verify(verification: VerifyInput!): Int
+
+}
+
+input VerifyInput {
+  uuid: String!
+  send_type: SendTypeInput
 }
 
 input PersonInput {
@@ -74,6 +82,10 @@ input PersonInput {
   tags: [TagIDInput]
 }
 
+input DeletePersonInput {
+  id: ID!
+  uuid: String!
+}
 input SendTypeInput {
   type: SendEnum!
   email: String
