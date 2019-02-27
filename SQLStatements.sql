@@ -1,8 +1,7 @@
 /*
-<<<<<<< HEAD
-=======
+
 SELECT * FROM note.categories;
->>>>>>> graph1
+
 SELECT * FROM note.tags;
 SELECT * FROM note.topics;
 SELECT * FROM note.topic_tags;
@@ -14,8 +13,12 @@ SELECT * FROM note.send_types;
 
 SELECT * FROM note.subscriptions;
 
-SELECT people.*, tags.id AS tags_id, topics.name, messages.* 
+
+SELECT people.*, send_types.type, email, tags.id AS tags_id, topics.name, messages.* 
 FROM note.people
+INNER JOIN note.send_types
+	ON people.id = send_types.user_id
+
 INNER JOIN note.subscriptions
 	ON people.id = subscriptions.user_id	
 INNER JOIN note.tags
@@ -42,7 +45,7 @@ INSERT INTO note.topics(name)VALUES('Montford Gardens'),('West Estates');
 INSERT INTO note.topic_tags(topic_id,tag_id)VALUES(1,1),(1,3),(2,2);
 
 INSERT INTO note.people DEFAULT VALUES;
-INSERT INTO note.send_types(user_id,type,email,phone,verified)VALUES(1,'EMAIL','jtwilson@ashevillenc.gov',null,true);
+INSERT INTO note.send_types(user_id,type,email,phone,verified)VALUES(1,'EMAIL','jtwilson@ashevillenc.gov',null,false);
 INSERT INTO note.subscriptions(user_id,tag_id)VALUES(1,1),(1,3);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(1, 'Montford Gardens Apartments coming soon',false);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury Condos replacing Pub',false);
@@ -105,6 +108,7 @@ DROP TABLE note.people CASCADE;
 CREATE TABLE note.people
 (
     id SERIAL,
+    uuid character (36),
     CONSTRAINT people_pkey PRIMARY KEY (id)
 );
 
@@ -149,4 +153,5 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO notedb ;
 grant SELECT, INSERT, UPDATE, DELETE on all tables in schema note to notedb;
 
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA note TO notedb;
+
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA note TO notedb;
