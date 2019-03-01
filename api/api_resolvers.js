@@ -269,6 +269,7 @@ async function deleteTag(obj, args, context) {
 }
 
 async function createPerson(obj, args, context) {
+  //This function will also send a verification email/text (I need to remove verified=false option?)
   try {
     const uuid = uuidv1(); console.log(uuid);
     const client = await pool.connect();
