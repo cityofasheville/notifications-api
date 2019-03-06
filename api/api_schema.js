@@ -36,7 +36,6 @@ type Subscr {
 
 type Person {
   id: ID!
-  uuid: String
   send_types: [SendType]
   tags: [Tag]
 }
@@ -47,7 +46,6 @@ type SendType {
   type: SendEnum!
   email: String
   phone: String
-  verified: Boolean
 }
 
 extend type Query {
@@ -68,13 +66,6 @@ extend type Mutation {
   deleteTag(id: ID!): Tag
   createPerson(person: PersonInput!): Person
   deletePerson(delids: DeletePersonInput!): Int
-  verify(verification: VerifyInput!): Int
-
-}
-
-input VerifyInput {
-  uuid: String!
-  send_type: SendTypeInput
 }
 
 input PersonInput {
@@ -84,13 +75,12 @@ input PersonInput {
 
 input DeletePersonInput {
   id: ID!
-  uuid: String!
 }
+
 input SendTypeInput {
   type: SendEnum!
   email: String
   phone: String
-  verified: Boolean
 }
 
 input TagInput {
@@ -118,7 +108,6 @@ let PersonInput = {
     {
       "send_type": "EMAIL",
       "email": "aoc@house.gov",
-      "verified": false
     }
   ],
   "tags": [

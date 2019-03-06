@@ -7,5 +7,5 @@ left join internal.permit_contractors
 on permits.permit_num = permit_contractors.permit_num 
 left join internal.permit_comments
 on permits.permit_num = permit_comments.permit_num 
-where permits.permit_num = '05-06385'
+where permits.applied_date >= NOW() - '4 days'::INTERVAL
 order by permits.permit_num desc limit 100;
