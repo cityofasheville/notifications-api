@@ -97,5 +97,64 @@
                 }
             ]
         }
+    ],
+    [
+        {
+            "id": 1,
+            "location_x": -82.5510696999999993,
+            "location_y": 35.5955682999999965,
+            "tags": [
+                {
+                    "id": 1,
+                    "category_id": 1,
+                    "name": "Minor"
+                },
+                {
+                    "id": 2,
+                    "category_id": 1,
+                    "name": "Major"
+                }
+            ],
+            "send_types": [
+                {
+                    "id": 1,
+                    "type": "EMAIL",
+                    "email": "jtwilson@ashevillenc.gov",
+                    "phone": null
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "location_x": 0,
+            "location_y": 0,
+            "tags": null,
+            "send_types": null
+        },
+        {
+            "id": 3,
+            "location_x": 0,
+            "location_y": 0,
+            "tags": [
+                {
+                    "id": 1,
+                    "category_id": 1,
+                    "name": "Minor"
+                },
+                {
+                    "id": 3,
+                    "category_id": 1,
+                    "name": "Affordable"
+                }
+            ],
+            "send_types": [
+                {
+                    "id": 2,
+                    "type": "EMAIL",
+                    "email": "jontwilson@gmail.com",
+                    "phone": null
+                }
+            ]
+        }
     ]
 ]

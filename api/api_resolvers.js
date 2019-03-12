@@ -83,29 +83,40 @@ async function getSubscriber(parent, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-async function getSubscribers(parent, args, context) {
+async function getSubscribers(parent, args, context) { 
   try {
     const client = await pool.connect();
-    const result = await client.query('select id, location_x, location_y, from note.subscribers');
+    const result = await client.query(`
+    select array_to_json(array_agg(row_to_json(p))) subscribers
+    from (
+          select subscribers.id, subscribers.location_x, subscribers.location_y,
+          (
+            select array_to_json(array_agg(row_to_json(t))) 
+            from (
+              select tags.id, tags.category_id, tags.name
+              from note.subscriptions
+              INNER JOIN note.tags
+              ON subscriptions.tag_id = tags.id
+              WHERE subscribers.id = subscriptions.user_id
+            ) as t
+          ) as tags, 
+          (
+            select array_to_json(array_agg(row_to_json(s))) 
+            from (
+              select send_types.id, send_types.type, send_types.email, 
+                send_types.phone
+              from note.send_types
+              WHERE subscribers.id = send_types.user_id
+            ) as s
+          ) as send_types
+          from note.subscribers
+    ) as p
+  `);
     client.release();
-    return Promise.resolve(result.rows);
+    return Promise.resolve(result.rows[0].subscribers);
   } catch (e) { return Promise.reject(e); }
 }
 
-// trying but no workie
-// async function getSubscribers(parent, args, context) {
-//   try {
-//     const client = await pool.connect();
-//     const result = await client.query('select id from note.subscribers');
-//     client.release();
-//     let subscribers = result.rows.reduce(function (acc, subscriber) {
-//       let newargs;
-//       newargs.id = subscriber.id;
-//       return acc.push(getSubscriber(parent, newargs, context));
-//     }, []);
-//     return Promise.resolve(subscribers);
-//   } catch (e) { return Promise.reject(e); }
-// }
 async function getTag(parent, args, context) {
   try {
     const client = await pool.connect();
