@@ -1,26 +1,22 @@
 /*
-
 SELECT * FROM note.categories;
-
 SELECT * FROM note.tags;
 SELECT * FROM note.topics;
 SELECT * FROM note.topic_tags;
 
 SELECT id, topic_id, message, sent, datesent FROM note.messages;
 
-SELECT * FROM note.people;
+SELECT * FROM note.subscribers;
 SELECT * FROM note.send_types;
 
 SELECT * FROM note.subscriptions;
 
-
-SELECT people.*, send_types.type, email, tags.id AS tags_id, topics.name, messages.* 
-FROM note.people
+SELECT subscribers.*, send_types.type, email, tags.id AS tags_id, topics.name, messages.* 
+FROM note.subscribers
 INNER JOIN note.send_types
-	ON people.id = send_types.user_id
-
+	ON subscribers.id = send_types.user_id
 INNER JOIN note.subscriptions
-	ON people.id = subscriptions.user_id	
+	ON subscribers.id = subscriptions.user_id	
 INNER JOIN note.tags
 	ON subscriptions.tag_id = tags.id
 INNER JOIN note.topic_tags
@@ -40,16 +36,16 @@ INNER JOIN note.tags
 ON tags.id = topic_tags.tag_id
 ---------
 INSERT INTO note.categories(name)VALUES('Development');
-INSERT INTO note.tags(name,category_id)VALUES('28801',1),('28803',1),('Affordable',1);
-INSERT INTO note.topics(name)VALUES('Montford Gardens'),('West Estates');
-INSERT INTO note.topic_tags(topic_id,tag_id)VALUES(1,1),(1,3),(2,2);
+INSERT INTO note.tags(name,category_id)VALUES('Minor',1),('Major',1),('Affordable',1),('Slope',1);
+INSERT INTO note.topics(name,permit_num,location_x,location_y)VALUES('Basilica','19-01612',-82.5557605,35.5962723);
+INSERT INTO note.topic_tags(topic_id,tag_id)VALUES(1,1),(1,3);
 
-INSERT INTO note.people DEFAULT VALUES;
-INSERT INTO note.send_types(user_id,type,email,phone,verified)VALUES(1,'EMAIL','jtwilson@ashevillenc.gov',null,false);
-INSERT INTO note.subscriptions(user_id,tag_id)VALUES(1,1),(1,3);
+INSERT INTO note.subscribers(location_x,location_y)VALUES(-82.5510697,35.5955683);
+INSERT INTO note.send_types(user_id,type,email,phone)VALUES(1,'EMAIL','jtwilson@ashevillenc.gov',null);
+INSERT INTO note.subscriptions(user_id,tag_id,radius_miles,whole_city)VALUES(1,1,0.5,false),(1,2,null,true);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(1, 'Montford Gardens Apartments coming soon',false);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury Condos replacing Pub',false);
-*/
+*/    
 -------------------------------------
 -- CREATE DB 
 
@@ -79,6 +75,9 @@ CREATE TABLE note.topics
 (
     id SERIAL,
     name character varying COLLATE pg_catalog."default" NOT NULL,
+    permit_num character varying (30) COLLATE pg_catalog."default",
+    location_x float,
+    location_y float,
     CONSTRAINT topics_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
@@ -103,13 +102,14 @@ CREATE TABLE note.messages
     CONSTRAINT messages_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
-DROP TABLE note.people CASCADE;
+DROP TABLE note.subscribers CASCADE;
 
-CREATE TABLE note.people
+CREATE TABLE note.subscribers
 (
     id SERIAL,
-    uuid character (36),
-    CONSTRAINT people_pkey PRIMARY KEY (id)
+    location_x float,
+    location_y float,
+    CONSTRAINT subscribers_pkey PRIMARY KEY (id)
 );
 
 ---------------------------------------------------------------------------------
@@ -118,11 +118,10 @@ DROP TABLE note.send_types CASCADE;
 CREATE TABLE note.send_types
 (
     id SERIAL,
-    user_id integer NOT NULL REFERENCES note.people(id),
+    user_id integer NOT NULL REFERENCES note.subscribers(id),
     type character varying (10) COLLATE pg_catalog."default", --EMAIL TEXT PUSH VOICE
     email character varying COLLATE pg_catalog."default",
     phone character varying COLLATE pg_catalog."default",
-    verified boolean,
     CONSTRAINT send_types_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
@@ -131,10 +130,32 @@ DROP TABLE note.subscriptions CASCADE;
 CREATE TABLE note.subscriptions
 (
     id SERIAL,
-    user_id integer NOT NULL REFERENCES note.people(id),
+    user_id integer NOT NULL REFERENCES note.subscribers(id),
     tag_id integer NOT NULL REFERENCES note.tags(id),
+    radius_miles float,
+    whole_city boolean,
     CONSTRAINT subscriptions_pkey PRIMARY KEY (id)
 );
+
+---------------------------------------------------------------------------------
+DROP TABLE note.project_types CASCADE;
+
+CREATE TABLE note.project_types
+(
+    project_type character varying (30) COLLATE pg_catalog."default" NOT NULL,
+    permit_group character varying (30) COLLATE pg_catalog."default" NOT NULL,
+    permit_type character varying (30) COLLATE pg_catalog."default" NOT NULL,
+    permit_subtype character varying (30) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT project_types_pkey PRIMARY KEY (project_type)
+);
+
+INSERT INTO note.project_types(project_type,permit_group,permit_type,permit_subtype)VALUES
+('Level I','Planning','Development','Level I'),
+('Major Subdivision','Planning','Subdivision','Major'),
+('Level II','Planning','Development','Level II'),
+('Level III','Planning','Development','Level III'),
+('Conditional Zoning','Planning','Development','Conditional Zoning'),
+('Conditional Use Permit','Planning','Development','Conditional Use');
 
 -----------------------
 --ACCESS DB
@@ -153,5 +174,4 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO notedb ;
 grant SELECT, INSERT, UPDATE, DELETE on all tables in schema note to notedb;
 
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA note TO notedb;
-
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA note TO notedb;

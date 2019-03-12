@@ -2,7 +2,6 @@
 /* eslint-disable no-console */
 
 const getDbConnection = require('../common/db');
-const uuidv1 = require('uuid/v1');
 const pool = getDbConnection('mds'); // Initialize the connection.
 
 async function getMessage(parent, args, context) { // gets a message, its topic, and lists tags
@@ -48,14 +47,14 @@ async function getCategory(parent, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-// gets a person, the tags they are subscribed to, and their send types.
-async function getPerson(parent, args, context) {
+// gets a subscriber, the tags they are subscribed to, and their send types.
+async function getSubscriber(parent, args, context) {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`
     select row_to_json(peep) results
     from (
-      select people.id, people.uuid,
+      select subscribers.id, subscribers.location_x, subscribers.location_y,
       (
         select array_to_json(array_agg(row_to_json(t))) 
         from (
@@ -63,20 +62,20 @@ async function getPerson(parent, args, context) {
           from note.subscriptions
           INNER JOIN note.tags
           ON subscriptions.tag_id = tags.id
-          WHERE people.id = subscriptions.user_id
+          WHERE subscribers.id = subscriptions.user_id
         ) as t
       ) as tags, 
       (
         select array_to_json(array_agg(row_to_json(s))) 
         from (
           select send_types.id, send_types.type, send_types.email, 
-		      	send_types.phone, send_types.verified
+		      	send_types.phone
           from note.send_types
-          WHERE people.id = send_types.user_id
+          WHERE subscribers.id = send_types.user_id
         ) as s
       ) as send_types
-      from note.people
-      where people.id = $1
+      from note.subscribers
+      where subscribers.id = $1
     ) as peep`, [args.id]);
     client.release();
     const ret = rows[0] ? rows[0].results : null;
@@ -84,29 +83,40 @@ async function getPerson(parent, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-async function getPeople(parent, args, context) {
+async function getSubscribers(parent, args, context) { 
   try {
     const client = await pool.connect();
-    const result = await client.query('select id, uuid from note.people');
+    const result = await client.query(`
+    select array_to_json(array_agg(row_to_json(p))) subscribers
+    from (
+          select subscribers.id, subscribers.location_x, subscribers.location_y,
+          (
+            select array_to_json(array_agg(row_to_json(t))) 
+            from (
+              select tags.id, tags.category_id, tags.name
+              from note.subscriptions
+              INNER JOIN note.tags
+              ON subscriptions.tag_id = tags.id
+              WHERE subscribers.id = subscriptions.user_id
+            ) as t
+          ) as tags, 
+          (
+            select array_to_json(array_agg(row_to_json(s))) 
+            from (
+              select send_types.id, send_types.type, send_types.email, 
+                send_types.phone
+              from note.send_types
+              WHERE subscribers.id = send_types.user_id
+            ) as s
+          ) as send_types
+          from note.subscribers
+    ) as p
+  `);
     client.release();
-    return Promise.resolve(result.rows);
+    return Promise.resolve(result.rows[0].subscribers);
   } catch (e) { return Promise.reject(e); }
 }
 
-// trying but no workie
-// async function getPeople(parent, args, context) {
-//   try {
-//     const client = await pool.connect();
-//     const result = await client.query('select id from note.people');
-//     client.release();
-//     let people = result.rows.reduce(function (acc, person) {
-//       let newargs;
-//       newargs.id = person.id;
-//       return acc.push(getPerson(parent, newargs, context));
-//     }, []);
-//     return Promise.resolve(people);
-//   } catch (e) { return Promise.reject(e); }
-// }
 async function getTag(parent, args, context) {
   try {
     const client = await pool.connect();
@@ -142,6 +152,7 @@ async function getCategories(parent, args, context) {
     return Promise.resolve(result.rows);
   } catch (e) { return Promise.reject(e); }
 }
+
 async function getTagsForCategory(category, args, context) {
   try {
     const client = await pool.connect();
@@ -161,27 +172,27 @@ async function getCategoryFromTag(tag, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-async function getPeopleFromTag(tag, args, context) {
+async function getSubscribersFromTag(tag, args, context) {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`
     select array_to_json(array_agg(row_to_json(p))) results
     from (
-      SELECT people.id, people.uuid,
+      SELECT subscribers.id, subscribers.location_x, subscribers.location_y,
       (
         select array_to_json(array_agg(row_to_json(s))) 
         from (
           select send_types.id, send_types.type, send_types.email, 
-		      	send_types.phone, send_types.verified
+		      	send_types.phone
           from note.send_types
-          WHERE people.id = send_types.user_id
+          WHERE subscribers.id = send_types.user_id
         ) as s
       ) as send_types
       FROM note.tags
       INNER JOIN note.subscriptions
         ON subscriptions.tag_id = tags.id
-      INNER JOIN note.people
-        ON people.id = subscriptions.user_id	
+      INNER JOIN note.subscribers
+        ON subscribers.id = subscriptions.user_id	
       WHERE tags.id = $1
     ) as p`, [tag.id]);
     client.release();
@@ -267,24 +278,24 @@ async function deleteTag(obj, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-async function createPerson(obj, args, context) {
+async function createSubscriber(obj, args, context) {
   try {
-    const uuid = uuidv1(); console.log(uuid);
     const client = await pool.connect();
     const { rows } = await client.query(`  
-    insert into note.people(uuid)VALUES($1) RETURNING id, uuid;
-    `, [ uuid ]);
+    insert into note.subscribers(location_x, location_y)VALUES($1, $2) RETURNING id, location_x, location_y;
+    `, [ args.subscriber.location_x, args.subscriber.location_y ]);
     const user_id = rows[0].id;
-    const user_uuid = rows[0].uuid;
-    for(send_type of args.person.send_types){
+    const user_location_x = rows[0].location_x;
+    const user_location_y = rows[0].location_y;
+    for(send_type of args.subscriber.send_types){
       const { rows } = await client.query(`  
       insert into note.send_types(
-          user_id, type, email, phone, verified)
-        VALUES($1, $2, $3, $4, $5)
+          user_id, type, email, phone)
+        VALUES($1, $2, $3, $4)
       `, [ user_id, send_type.type, send_type.email, 
-      send_type.phone, send_type.verified ]);
+      send_type.phone ]);
     }
-    for(tag of args.person.tags){
+    for(tag of args.subscriber.tags){
       const { rows } = await client.query(`  
       insert into note.subscriptions(
           user_id, tag_id)
@@ -292,18 +303,18 @@ async function createPerson(obj, args, context) {
       `, [ user_id, tag.id ]);
     }
     client.release();
-    const ret = Object.assign({},args.person,{id: user_id, uuid: user_uuid})
+    const ret = Object.assign({},args.subscriber,{id: user_id, location_x: user_location_x, location_y: user_location_y})
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
 }
 
-async function deletePerson(obj, args, context) {
+async function deleteSubscriber(obj, args, context) {
   try {
     const delids = args.delids;
     const client = await pool.connect();
     const result = await client.query(`  
-      select id from note.people where id = $1 AND uuid = $2;
-    `, [delids.id, delids.uuid]);
+      select id from note.subscribers where id = $1;
+    `, [delids.id]);
     if(result.rowCount > 0){
       await client.query(`  
         delete from note.subscriptions where user_id = $1;
@@ -312,7 +323,7 @@ async function deletePerson(obj, args, context) {
         delete from note.send_types where user_id = $1;
       `, [delids.id]);
       await client.query(`  
-        delete from note.people where id = $1;
+        delete from note.subscribers where id = $1;
       `, [delids.id]);
     }
     client.release();
@@ -320,32 +331,10 @@ async function deletePerson(obj, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-async function verify(obj, args, context) {
-  try {
-      const ver = args.verification;
-      const client = await pool.connect();
-      const result = await client.query(`  
-      UPDATE note.send_types
-      SET verified = $1
-      FROM note.people
-      WHERE send_types.user_id = people.id
-      AND uuid = $2
-      AND (
-        ($3 = 'EMAIL' AND email = $4)
-        OR
-        ($3 IN ('TEXT','VOICE','PUSH') AND phone = $5)
-      );
-    `, [ver.send_type.verified, ver.uuid, ver.send_type.type, ver.send_type.email, ver.send_type.phone ]);
-
-    client.release();
-    return Promise.resolve(result.rowCount);
-  } catch (e) { return Promise.reject(e); }
-}
-
-// async function getTagsForPerson(obj, args, context) {
+// async function getTagsForSubscriber(obj, args, context) {
 //   return [];
 // }
-// async function getSendTypesForPerson(obj, args, context) {
+// async function getSendTypesForSubscriber(obj, args, context) {
 //   return [];
 // }
 
@@ -353,8 +342,8 @@ const resolvers = {
   Query: {
     message: getMessage,
     category: getCategory,
-    person: getPerson,
-    people: getPeople,
+    subscriber: getSubscriber,
+    subscribers: getSubscribers,
     tag: getTag,
     tags: getTags,
     topics: getTopics,
@@ -363,13 +352,13 @@ const resolvers = {
   Category: {
     tags: getTagsForCategory,
   },
-  // Person: {
-  //   tags: getTagsForPerson,
-  //   send_types: getSendTypesForPerson,
+  // Subscriber: {
+  //   tags: getTagsForSubscriber,
+  //   send_types: getSendTypesForSubscriber,
   // },
   Tag: {
     category: getCategoryFromTag,
-    people: getPeopleFromTag,
+    subscribers: getSubscribersFromTag,
     topics: getTopicsFromTag,
   },
   Mutation: {
@@ -377,9 +366,8 @@ const resolvers = {
     deleteTopic,
     createTag,
     deleteTag,
-    createPerson,
-    deletePerson,
-    verify,
+    createSubscriber,
+    deleteSubscriber,
   },
 };
 

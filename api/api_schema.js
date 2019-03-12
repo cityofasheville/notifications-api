@@ -20,7 +20,7 @@ type Tag {
   name: String!
   topics: [Topic]
   category: Category!
-  people: [Person]
+  subscribers: [Subscriber]
 }
 
 type Category {
@@ -30,31 +30,31 @@ type Category {
 }
 
 type Subscr {
-  person: Person!
+  subscriber: Subscriber!
   tag: Tag!
 }
 
-type Person {
+type Subscriber {
   id: ID!
-  uuid: String
+  location_x: Float
+  location_y: Float
   send_types: [SendType]
   tags: [Tag]
 }
 
 type SendType {
   id: ID!
-  person: Person!
+  subscriber: Subscriber!
   type: SendEnum!
   email: String
   phone: String
-  verified: Boolean
 }
 
 extend type Query {
   message(id: ID!): Message
   category(id: ID!): Category
-  person(id: ID!): Person
-  people: [Person]
+  subscriber(id: ID!): Subscriber
+  subscribers: [Subscriber]
   tag(id: ID!): Tag
   tags: [Tag]
   topics: [Topic]
@@ -66,31 +66,25 @@ extend type Mutation {
   deleteTopic(id: ID!): Topic
   createTag(tag: TagInput!): Tag
   deleteTag(id: ID!): Tag
-  createPerson(person: PersonInput!): Person
-  deletePerson(delids: DeletePersonInput!): Int
-  verify(verification: VerifyInput!): Int
-
+  createSubscriber(subscriber: SubscriberInput!): Subscriber
+  deleteSubscriber(delids: DeleteSubscriberInput!): Int
 }
 
-input VerifyInput {
-  uuid: String!
-  send_type: SendTypeInput
-}
-
-input PersonInput {
+input SubscriberInput {
+  location_x: Float
+  location_y: Float
   send_types: [SendTypeInput]
   tags: [TagIDInput]
 }
 
-input DeletePersonInput {
+input DeleteSubscriberInput {
   id: ID!
-  uuid: String!
 }
+
 input SendTypeInput {
   type: SendEnum!
   email: String
   phone: String
-  verified: Boolean
 }
 
 input TagInput {
@@ -111,14 +105,13 @@ enum SendEnum {
 `;
 module.exports = schema;
 
-/* deletePerson(email: String, phone: String): Person
+/* deleteSubscriber(email: String, phone: String): Subscriber
 
-let PersonInput = {
+let SubscriberInput = {
   "send_types": [
     {
       "send_type": "EMAIL",
       "email": "aoc@house.gov",
-      "verified": false
     }
   ],
   "tags": [
