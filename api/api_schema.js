@@ -20,7 +20,7 @@ type Tag {
   name: String!
   topics: [Topic]
   category: Category!
-  subscribers: [Subscriber]
+  subscriptions: [Subscription]
 }
 
 type Category {
@@ -29,22 +29,25 @@ type Category {
   tags: [Tag]
 }
 
-type Subscr {
-  subscriber: Subscriber!
-  tag: Tag!
-}
-
-type Subscriber {
+type Person {
   id: ID!
   location_x: Float
   location_y: Float
   send_types: [SendType]
-  tags: [Tag]
+  subscriptions: [Subscription]
+}
+
+type Subscription {
+  id: ID!
+  person: Person!
+  tag: Tag!
+  radius_miles: Float
+  whole_city: Boolean
 }
 
 type SendType {
   id: ID!
-  subscriber: Subscriber!
+  person: Person!
   type: SendEnum!
   email: String
   phone: String
@@ -53,8 +56,8 @@ type SendType {
 extend type Query {
   message(id: ID!): Message
   category(id: ID!): Category
-  subscriber(id: ID!): Subscriber
-  subscribers: [Subscriber]
+  person(id: ID!): Person
+  people: [Person]
   tag(id: ID!): Tag
   tags: [Tag]
   topics: [Topic]
@@ -66,19 +69,21 @@ extend type Mutation {
   deleteTopic(id: ID!): Topic
   createTag(tag: TagInput!): Tag
   deleteTag(id: ID!): Tag
-  createSubscriber(subscriber: SubscriberInput!): Subscriber
-  deleteSubscriber(delids: DeleteSubscriberInput!): Int
+  createPerson(person: PersonInput!): Person
+  deletePerson(id: ID!): Int
 }
 
-input SubscriberInput {
+input PersonInput {
   location_x: Float
   location_y: Float
   send_types: [SendTypeInput]
-  tags: [TagIDInput]
+  subscriptions: [SubscriptionInput]
 }
 
-input DeleteSubscriberInput {
-  id: ID!
+input SubscriptionInput {
+  tag_id: ID!
+  radius_miles: Float
+  whole_city: Boolean
 }
 
 input SendTypeInput {
@@ -92,10 +97,6 @@ input TagInput {
   category: ID!
 }
 
-input TagIDInput {
-  id: ID!
-}
-
 enum SendEnum {
   EMAIL
   TEXT
@@ -104,20 +105,3 @@ enum SendEnum {
 }
 `;
 module.exports = schema;
-
-/* deleteSubscriber(email: String, phone: String): Subscriber
-
-let SubscriberInput = {
-  "send_types": [
-    {
-      "send_type": "EMAIL",
-      "email": "aoc@house.gov",
-    }
-  ],
-  "tags": [
-    {
-      "tag_id": "2"
-    }
-  ]
-}
-*/

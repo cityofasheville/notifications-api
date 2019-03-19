@@ -1,160 +1,31 @@
-[
-    {
-        "message": "Montford Gardens Apartments coming soon",
-        "sent": false,
-        "datesent": null,
-        "topic": "Montford Gardens",
-        "tags": [
-            {
-                "id": 1,
-                "category_id": 1,
-                "name": "28801"
-            },
-            {
-                "id": 3,
-                "category_id": 1,
-                "name": "Affordable"
-            }
-        ]
-    },
-    {
-        "message": "Montford Gardens Apartments coming soon",
-        "sent": false,
-        "datesent": null,
-        "topic": {
-            "name": "Montford Gardens",
-            "tags": [
-                {
-                    "id": 1,
-                    "category_id": 1,
-                    "name": "28801"
-                },
-                {
-                    "id": 3,
-                    "category_id": 1,
-                    "name": "Affordable"
-                }
-            ]
-        }
-    },
-    [
+{
+    "id": 1,
+    "location_x": -82.5510696999999993,
+    "location_y": 35.5955682999999965,
+    "subscriptions": [
         {
             "id": 1,
-            "emailaddress": "jtwilson@ashevillenc.gov",
-            "phonenumber": null,
-            "send_email": true,
-            "send_text": null,
-            "send_push": null,
-            "send_voice": null
-        }
-    ],
-    [
-        {
-            "name": "Montford Gardens",
-            "messages": [
+            "radius_miles": 0.5,
+            "whole_city": false,
+            "tag": [
                 {
-                    "message": "Montford Gardens Apartments coming soon",
-                    "sent": false,
-                    "datesent": null
-                }
-            ]
-        }
-    ],
-    {
-        "id": 1,
-        "tags": [
-            {
-                "id": 1,
-                "category_id": 1,
-                "name": "28801"
-            },
-            {
-                "id": 3,
-                "category_id": 1,
-                "name": "Affordable"
-            }
-        ],
-        "send_types": [
-            {
-                "id": 1,
-                "type": "EMAIL",
-                "email": "jtwilson@ashevillenc.gov",
-                "phone": null,
-                "verified": true
-            }
-        ]
-    },
-    [
-        {
-            "id": 1,
-            "send_types": [
-                {
-                    "id": 1,
-                    "type": "EMAIL",
-                    "email": "jtwilson@ashevillenc.gov",
-                    "phone": null,
-                    "verified": true
-                }
-            ]
-        }
-    ],
-    [
-        {
-            "id": 1,
-            "location_x": -82.5510696999999993,
-            "location_y": 35.5955682999999965,
-            "tags": [
-                {
-                    "id": 1,
+                    "tag_id": 1,
                     "category_id": 1,
                     "name": "Minor"
-                },
-                {
-                    "id": 2,
-                    "category_id": 1,
-                    "name": "Major"
-                }
-            ],
-            "send_types": [
-                {
-                    "id": 1,
-                    "type": "EMAIL",
-                    "email": "jtwilson@ashevillenc.gov",
-                    "phone": null
                 }
             ]
         },
         {
             "id": 2,
-            "location_x": 0,
-            "location_y": 0,
-            "tags": null,
-            "send_types": null
-        },
-        {
-            "id": 3,
-            "location_x": 0,
-            "location_y": 0,
-            "tags": [
+            "radius_miles": null,
+            "whole_city": true,
+            "tag": [
                 {
-                    "id": 1,
+                    "tag_id": 2,
                     "category_id": 1,
-                    "name": "Minor"
-                },
-                {
-                    "id": 3,
-                    "category_id": 1,
-                    "name": "Affordable"
-                }
-            ],
-            "send_types": [
-                {
-                    "id": 2,
-                    "type": "EMAIL",
-                    "email": "jontwilson@gmail.com",
-                    "phone": null
+                    "name": "Major"
                 }
             ]
         }
     ]
-]
+}
