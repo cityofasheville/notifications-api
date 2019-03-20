@@ -69,10 +69,19 @@ async function getPerson(parent, args, context) {
           	) as t
           ) as tag
           from note.subscriptions
-
           WHERE people.id = subscriptions.user_id
         ) as s
-      ) as subscriptions
+      ) as subscriptions,
+      (
+        select array_to_json(array_agg(row_to_json(st))) 
+        from (
+          select send_types.id, send_types.type, send_types.email, 
+            send_types.phone
+          from note.send_types
+          WHERE people.id = send_types.user_id
+        ) as st
+      ) as send_types      
+      
       from note.people
       where people.id = $1
     ) as peep`, [args.id]);

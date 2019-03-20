@@ -1,15 +1,17 @@
 const pug = require('pug');
+const path = require('path');
 const getDbConnection = require('../common/db');
-const note_pool = getDbConnection('note');
 
-const compiledFunction = pug.compileFile(__dirname + '/template.pug');
+const notePool = getDbConnection('note');
+
+const compiledFunction = pug.compileFile(path.join(__dirname, '/template.pug'));
 
 
-async function recipientSelection(){
+async function recipientSelection() {
   try {
-    const note_client = await note_pool.connect();
+    const noteClient = await notePool.connect();
    
-    const tags = await note_client.query(`
+    const tags = await noteClient.query(`
     select distinct send_types.type, send_types.email, send_types.phone, topics.name, topics.permit_num
     from note.people
     INNER JOIN note.send_types
@@ -32,19 +34,20 @@ async function recipientSelection(){
         )
         ORDER BY type, email, name;
     `);
-    const tag_rows = tags.rows;
+    const tagRows = tags.rows;
 
+    // build recipients object grouped by email
     let recipients = {};
-    tag_rows.forEach(function(row){
+    tagRows.forEach(function(row){
       let list = recipients[row.email];
-
       if(list) {
           list.push(row);
       } else {
         recipients[row.email] = [row];
       }
     });
-    console.log(recipients);
+
+    // send emails
     Object.keys(recipients).forEach(key => {
       let recipient = recipients[key];
       console.log('sendto:', recipient[0].email);
@@ -55,7 +58,7 @@ async function recipientSelection(){
         }));
       }
     });
-    note_client.release();
+    noteClient.release();
     return Promise.resolve(0);
   } catch (e) { 
     return Promise.reject(e);

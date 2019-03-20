@@ -1,0 +1,74 @@
+query Cats{
+  categories {
+    name
+    tags {
+      id
+      name
+    }
+  }
+}
+
+mutation createPeep($person: PersonInput!) {
+  createPerson(person: $person) {
+    id
+    location_x
+    location_y
+    send_types {
+      email
+      type
+    }
+  }
+}
+
+{
+  "person": {
+    "location_x": "-82.55138447",
+    "location_y": "35.59251607",
+    "send_types": [
+      {
+        "type": "EMAIL",
+        "email": "jontwilson@gmail.com"
+      }
+    ],
+    "subscriptions": [
+      {
+        "tag_id": "1",
+        "radius_miles": null,
+        "whole_city": true
+      },
+      {
+        "tag_id": "2",
+        "radius_miles": 1.5,
+        "whole_city": false
+      }
+    ]
+  }
+}
+
+mutation deletePeep($id: ID!) {
+  deletePerson(id: $id) 
+}
+
+{
+  "id": "7"
+}
+
+query GetPerson {
+  person(id: 9) {
+    id
+    location_x
+    location_y
+    subscriptions {
+      id
+      radius_miles
+      whole_city
+
+    }
+    send_types {
+      type 
+      email
+    }
+
+  }
+}
+
