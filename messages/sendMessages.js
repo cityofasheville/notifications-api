@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const sendPermitMsgs = require('./sendPermitMsgs');
+const sendPermitMsgs = require('./sendPermitMsgs/sendPermitMsgs');
 
 sendPermitMsgs();
 

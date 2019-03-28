@@ -1,8 +1,9 @@
 
-const getDbConnection = require('../common/db');
+const getDbConnection = require('../../common/db');
 const mds_pool = getDbConnection('mds');   // MDAStore DB has permits
 const note_pool = getDbConnection('note'); //Notification DB has people
 
+// Loads permits from Simplicity into Notifications DB
 async function loadPermits() {
   try {
     const mds_client = await mds_pool.connect();
@@ -62,14 +63,4 @@ async function loadPermits() {
 module.exports = loadPermits;
 
 
-
-
-
-// PUG
-// const compiledFunction = pug.compileFile('./template.pug');
-
-// // Render a set of data
-// console.log(compiledFunction({
-//   name: 'Timothy'
-// }));
 

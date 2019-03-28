@@ -9,6 +9,12 @@
             "request": "launch",
             "name": "send Messages",
             "program": "${workspaceFolder}\\messages\\sendMessages.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "pug",
+            "program": "${workspaceFolder}\\pug\\index.js"
         }
     ]
 }

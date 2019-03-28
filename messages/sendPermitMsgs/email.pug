@@ -1,0 +1,8 @@
+html
+  body
+    h3 The following permits were issued yesterday.
+
+    ul
+      each val in listOfTopics
+        li
+            a(href='https://dev-simplicity.ashevillenc.gov/permits/'+val.permit_num) #{val.name}

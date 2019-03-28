@@ -1,12 +1,8 @@
-const pug = require('pug');
-const path = require('path');
-const getDbConnection = require('../common/db');
+const getDbConnection = require('../../common/db');
 
 const notePool = getDbConnection('note');
 
-const compiledFunction = pug.compileFile(path.join(__dirname, '/template.pug'));
-
-
+// Finds who to send email to based on thier subscribed tags and radiuses, and project locations
 async function recipientSelection() {
   try {
     const noteClient = await notePool.connect();
@@ -47,19 +43,9 @@ async function recipientSelection() {
       }
     });
 
-    // send emails
-    Object.keys(recipients).forEach(key => {
-      let recipient = recipients[key];
-      console.log('sendto:', recipient[0].email);
-      for( row of recipient){
-        console.log(compiledFunction({
-          name: row.name,
-          permit_num: row.permit_num
-        }));
-      }
-    });
+
     noteClient.release();
-    return Promise.resolve(0);
+    return Promise.resolve(recipients);
   } catch (e) { 
     return Promise.reject(e);
   }
