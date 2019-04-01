@@ -29,7 +29,7 @@ type Category {
   tags: [Tag]
 }
 
-type Person {
+type UserPreference {
   id: ID!
   location_x: Float
   location_y: Float
@@ -39,7 +39,7 @@ type Person {
 
 type Subscription {
   id: ID!
-  person: Person!
+  user_preference: UserPreference!
   tag: Tag!
   radius_miles: Float
   whole_city: Boolean
@@ -47,7 +47,7 @@ type Subscription {
 
 type SendType {
   id: ID!
-  person: Person!
+  user_preference: UserPreference!
   type: SendEnum!
   email: String
   phone: String
@@ -56,8 +56,8 @@ type SendType {
 extend type Query {
   message(id: ID!): Message
   category(id: ID!): Category
-  person(id: ID!): Person
-  people: [Person]
+  user_preference(id: ID!): UserPreference
+  user_preferences: [UserPreference]
   tag(id: ID!): Tag
   tags: [Tag]
   topics: [Topic]
@@ -69,11 +69,11 @@ extend type Mutation {
   deleteTopic(id: ID!): Topic
   createTag(tag: TagInput!): Tag
   deleteTag(id: ID!): Tag
-  createPerson(person: PersonInput!): Person
-  deletePerson(id: ID!): Int
+  createUserPreference(user_preference: UserPreferenceInput!): UserPreference
+  deleteUserPreference(id: ID!): Int
 }
 
-input PersonInput {
+input UserPreferenceInput {
   location_x: Float
   location_y: Float
   send_types: [SendTypeInput]

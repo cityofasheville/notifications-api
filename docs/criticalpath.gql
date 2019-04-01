@@ -8,8 +8,8 @@ query Cats{
   }
 }
 
-mutation createPeep($person: PersonInput!) {
-  createPerson(person: $person) {
+mutation createPeep($user_preference: UserPreferenceInput!) {
+  createUserPreference(user_preference: $user_preference) {
     id
     location_x
     location_y
@@ -21,7 +21,7 @@ mutation createPeep($person: PersonInput!) {
 }
 
 {
-  "person": {
+  "user_preference": {
     "location_x": "-82.55138447",
     "location_y": "35.59251607",
     "send_types": [
@@ -46,15 +46,15 @@ mutation createPeep($person: PersonInput!) {
 }
 
 mutation deletePeep($id: ID!) {
-  deletePerson(id: $id) 
+  deleteUserPreference(id: $id) 
 }
 
 {
   "id": "7"
 }
 
-query GetPerson {
-  person(id: 9) {
+query GetUserPreference {
+  user_preference(id: 9) {
     id
     location_x
     location_y

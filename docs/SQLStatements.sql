@@ -6,17 +6,17 @@ SELECT * FROM note.topic_tags;
 
 SELECT id, topic_id, message, sent, datesent FROM note.messages;
 
-SELECT * FROM note.people;
+SELECT * FROM note.user_preferences;
 SELECT * FROM note.send_types;
 
 SELECT * FROM note.subscriptions;
 
-SELECT people.*, send_types.type, email, tags.id AS tags_id, topics.name, messages.* 
-FROM note.people
+SELECT user_preferences.*, send_types.type, email, tags.id AS tags_id, topics.name, messages.* 
+FROM note.user_preferences
 INNER JOIN note.send_types
-	ON people.id = send_types.user_id
+	ON user_preferences.id = send_types.user_id
 INNER JOIN note.subscriptions
-	ON people.id = subscriptions.user_id	
+	ON user_preferences.id = subscriptions.user_id	
 INNER JOIN note.tags
 	ON subscriptions.tag_id = tags.id
 INNER JOIN note.topic_tags
@@ -41,7 +41,7 @@ INSERT INTO note.topics(name,permit_num,location_x,location_y)VALUES('Basilica',
 INSERT INTO note.topics(name,permit_num,location_x,location_y)VALUES('West Estates','x0213-jjj',-82.5550000,35.5960000);
 INSERT INTO note.topic_tags(topic_id,tag_id)VALUES(1,1),(2,1),(1,3);
 
-INSERT INTO note.people(location_x,location_y)VALUES(-82.5510697,35.5955683);
+INSERT INTO note.user_preferences(location_x,location_y)VALUES(-82.5510697,35.5955683);
 INSERT INTO note.send_types(user_id,type,email,phone)VALUES(1,'EMAIL','jtwilson@ashevillenc.gov',null);
 INSERT INTO note.subscriptions(user_id,tag_id,radius_miles,whole_city)VALUES(1,1,0.5,false),(1,2,null,true);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(1, 'Paint door black',false);
@@ -103,14 +103,14 @@ CREATE TABLE note.messages
     CONSTRAINT messages_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
-DROP TABLE note.people CASCADE;
+DROP TABLE note.user_preferences CASCADE;
 
-CREATE TABLE note.people
+CREATE TABLE note.user_preferences
 (
     id SERIAL,
     location_x float,
     location_y float,
-    CONSTRAINT people_pkey PRIMARY KEY (id)
+    CONSTRAINT user_preferences_pkey PRIMARY KEY (id)
 );
 
 ---------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ DROP TABLE note.send_types CASCADE;
 CREATE TABLE note.send_types
 (
     id SERIAL,
-    user_id integer NOT NULL REFERENCES note.people(id),
+    user_id integer NOT NULL REFERENCES note.user_preferences(id),
     type character varying (10) COLLATE pg_catalog."default", --EMAIL TEXT PUSH VOICE
     email character varying COLLATE pg_catalog."default",
     phone character varying COLLATE pg_catalog."default",
@@ -131,7 +131,7 @@ DROP TABLE note.subscriptions CASCADE;
 CREATE TABLE note.subscriptions
 (
     id SERIAL,
-    user_id integer NOT NULL REFERENCES note.people(id),
+    user_id integer NOT NULL REFERENCES note.user_preferences(id),
     tag_id integer NOT NULL REFERENCES note.tags(id),
     radius_miles float,
     whole_city boolean,

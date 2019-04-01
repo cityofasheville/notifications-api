@@ -1,7 +1,7 @@
 
 const getDbConnection = require('../../common/db');
 const mds_pool = getDbConnection('mds');   // MDAStore DB has permits
-const note_pool = getDbConnection('note'); //Notification DB has people
+const note_pool = getDbConnection('note'); //Notification DB has user_preferences
 
 // Loads permits from Simplicity into Notifications DB
 async function loadPermits() {
@@ -14,26 +14,44 @@ async function loadPermits() {
     const tags = await note_client.query(`
     select id, name from note.tags;
     `);
-    const tag_rows = tags.rows;
+    const tagRows = tags.rows;
     const permits = await mds_client.query(`
-    select true as minor, false as major, permit_num, 
-    case when coalesce(applicant_name,'')='' Then address else applicant_name end as name, x, y
-    FROM simplicity.simplicity_permits_view
-    where permit_group = 'Planning'
-    and permit_type = 'Development'
-    and permit_subtype = 'Level I'
-    and applied_date >= NOW() - '16 days'::interval
-    union
-    select false as minor, true as major, permit_num, 
-    case when coalesce(applicant_name,'')='' Then address else applicant_name end as name, x, y
-    FROM simplicity.simplicity_permits_view
-    where permit_group = 'Planning'
-    and (
-      (permit_type = 'Subdivision' and permit_subtype = 'Major')
-      or
-      (permit_type = 'Development' and permit_subtype IN ('Level II','Level III','Conditional Zoning','Conditional Use'))
-      )
-    and applied_date >= NOW() - '16 days'::interval
+    select * from (
+      select 'Minor' as tag, permit_num, applied_date, 
+      case when coalesce(applicant_name,'')='' Then address else applicant_name end as name, x, y
+      FROM simplicity.simplicity_permits_view
+      where permit_group = 'Planning'
+      and permit_type = 'Development'
+      and permit_subtype = 'Level I'
+      union
+      select 'Major' as tag, permit_num, applied_date, 
+      case when coalesce(applicant_name,'')='' Then address else applicant_name end as name, x, y
+      FROM simplicity.simplicity_permits_view
+      where permit_group = 'Planning'
+      and (
+        (permit_type = 'Subdivision' and permit_subtype = 'Major')
+        or
+        (permit_type = 'Development' and permit_subtype IN ('Level II','Level III','Conditional Zoning','Conditional Use'))
+        )
+      union
+      select distinct 'Affordable' as tag, simplicity_permits_view.permit_num, applied_date, 
+      case when coalesce(applicant_name,'')='' Then address else applicant_name end as name, x, y
+      FROM simplicity.simplicity_permits_view
+      inner join simplicity.permit_custom_fields
+      on simplicity_permits_view.permit_num = permit_custom_fields.permit_num
+      where permit_custom_fields.name ilike '%Affordable%'
+      and permit_custom_fields.value = 'Yes'
+      union
+      select distinct 'Slope' as tag, simplicity_permits_view.permit_num, applied_date, 
+      case when coalesce(applicant_name,'')='' Then address else applicant_name end as name, x, y
+      FROM simplicity.simplicity_permits_view
+      inner join simplicity.permit_custom_fields
+      on simplicity_permits_view.permit_num = permit_custom_fields.permit_num
+      where permit_custom_fields.name ilike '%Steep Slope%'
+      and permit_custom_fields.value = 'Yes' 
+--      union select 'Slope', '06-05107', '2019-03-28'::date, 'testslope', -82.57691772, 35.57963755   
+  ) as inr
+  where applied_date >= NOW() - '16 days'::interval
     `);
     for(row of permits.rows){
       const topics = await note_client.query(`
@@ -42,8 +60,8 @@ async function loadPermits() {
       VALUES($1, $2, $3, $4) RETURNING id;
       `, [ row.name, row.permit_num, row.x, row.y ]);
       const topic_id = topics.rows[0].id;
-      const topics_tag = tag_rows.find(tagrow=>{
-        return row.minor && tagrow.name==='Minor' || row.major && tagrow.name==='Major'
+      const topics_tag = tagRows.find(tagrow=>{ // get the id of the matching tag (Major, Minor, etc)
+        return row.tag===tagrow.name;
       })
       const tag_id = topics_tag.id;
       await note_client.query(`

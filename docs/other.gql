@@ -13,8 +13,8 @@ query GetMsg {
   }
 }
 
-query GetPeep {
-  people {
+query GetUserPreferences {
+  UserPreferences {
     id
     location_x
     location_y

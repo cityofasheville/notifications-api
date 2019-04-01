@@ -47,14 +47,14 @@ async function getCategory(parent, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-// gets a person, their subscriptions, and their send types.
-async function getPerson(parent, args, context) {
+// gets a user_preference, their subscriptions, and their send types.
+async function getUserPreference(parent, args, context) {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`
     select row_to_json(peep) results
     from (
-      select people.id, people.location_x, people.location_y,
+      select user_preferences.id, user_preferences.location_x, user_preferences.location_y,
       (
         select array_to_json(array_agg(row_to_json(s))) 
         from (
@@ -69,7 +69,7 @@ async function getPerson(parent, args, context) {
           	) as t
           ) as tag
           from note.subscriptions
-          WHERE people.id = subscriptions.user_id
+          WHERE user_preferences.id = subscriptions.user_id
         ) as s
       ) as subscriptions,
       (
@@ -78,52 +78,18 @@ async function getPerson(parent, args, context) {
           select send_types.id, send_types.type, send_types.email, 
             send_types.phone
           from note.send_types
-          WHERE people.id = send_types.user_id
+          WHERE user_preferences.id = send_types.user_id
         ) as st
       ) as send_types      
       
-      from note.people
-      where people.id = $1
+      from note.user_preferences
+      where user_preferences.id = $1
     ) as peep`, [args.id]);
     client.release();
     const ret = rows[0] ? rows[0].results : null;
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
 }
-
-// async function getPeople(parent, args, context) { 
-//   try {
-//     const client = await pool.connect();
-//     const result = await client.query(`
-//     select array_to_json(array_agg(row_to_json(p))) people
-//     from (
-//           select people.id, people.location_x, people.location_y,
-//           (
-//             select array_to_json(array_agg(row_to_json(t))) 
-//             from (
-//               select tags.id, tags.category_id, tags.name
-//               from note.subscriptions
-//               INNER JOIN note.tags
-//               ON subscriptions.tag_id = tags.id
-//               WHERE people.id = subscriptions.user_id
-//             ) as t
-//           ) as tags, 
-//           (
-//             select array_to_json(array_agg(row_to_json(s))) 
-//             from (
-//               select send_types.id, send_types.type, send_types.email, 
-//                 send_types.phone
-//               from note.send_types
-//               WHERE people.id = send_types.user_id
-//             ) as s
-//           ) as send_types
-//           from note.people
-//     ) as p
-//   `);
-//     client.release();
-//     return Promise.resolve(result.rows[0].people);
-//   } catch (e) { return Promise.reject(e); }
-// }
 
 async function getTag(parent, args, context) {
   try {
@@ -186,21 +152,21 @@ async function getSubscriptionsFromTag(tag, args, context) {
     const { rows } = await client.query(`
     select array_to_json(array_agg(row_to_json(p))) results
     from (
-      SELECT people.id, people.location_x, people.location_y,
+      SELECT user_preferences.id, user_preferences.location_x, user_preferences.location_y,
       (
         select array_to_json(array_agg(row_to_json(s))) 
         from (
           select send_types.id, send_types.type, send_types.email, 
 		      	send_types.phone
           from note.send_types
-          WHERE people.id = send_types.user_id
+          WHERE user_preferences.id = send_types.user_id
         ) as s
       ) as send_types
       FROM note.tags
       INNER JOIN note.subscriptions
         ON subscriptions.tag_id = tags.id
-      INNER JOIN note.people
-        ON people.id = subscriptions.user_id	
+      INNER JOIN note.user_preferences
+        ON user_preferences.id = subscriptions.user_id	
       WHERE tags.id = $1
     ) as p`, [tag.id]);
     client.release();
@@ -286,16 +252,16 @@ async function deleteTag(obj, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-async function createPerson(obj, args, context) {
+async function createUserPreference(obj, args, context) {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`  
-    insert into note.people(location_x, location_y)VALUES($1, $2) RETURNING id, location_x, location_y;
-    `, [ args.person.location_x, args.person.location_y ]);
+    insert into note.user_preferences(location_x, location_y)VALUES($1, $2) RETURNING id, location_x, location_y;
+    `, [ args.user_preference.location_x, args.user_preference.location_y ]);
     const user_id = rows[0].id;
     const user_location_x = rows[0].location_x;
     const user_location_y = rows[0].location_y;
-    for(send_type of args.person.send_types){
+    for(send_type of args.user_preference.send_types){
       const { rows } = await client.query(`  
       insert into note.send_types(
           user_id, type, email, phone)
@@ -303,7 +269,7 @@ async function createPerson(obj, args, context) {
       `, [ user_id, send_type.type, send_type.email, 
       send_type.phone ]);
     }
-    for(subscription of args.person.subscriptions){
+    for(subscription of args.user_preference.subscriptions){
       const { rows } = await client.query(`  
       insert into note.subscriptions(
           user_id, tag_id, radius_miles, whole_city)
@@ -311,17 +277,17 @@ async function createPerson(obj, args, context) {
       `, [ user_id, subscription.tag_id, subscription.radius_miles, subscription.whole_city ]);
     }
     client.release();
-    const ret = Object.assign({},args.person,{id: user_id, location_x: user_location_x, location_y: user_location_y})
+    const ret = Object.assign({},args.user_preference,{id: user_id, location_x: user_location_x, location_y: user_location_y})
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
 }
 
-async function deletePerson(obj, args, context) {
+async function deleteUserPreference(obj, args, context) {
   let ret;
   try {
     const client = await pool.connect();
     const result = await client.query(`  
-      select id from note.people where id = $1;
+      select id from note.user_preferences where id = $1;
     `, [args.id]);
     if(result.rowCount > 0){
       await client.query(`  
@@ -331,7 +297,7 @@ async function deletePerson(obj, args, context) {
         delete from note.send_types where user_id = $1;
       `, [args.id]);
       const { rows } = await client.query(`  
-        delete from note.people where id = $1 RETURNING id;
+        delete from note.user_preferences where id = $1 RETURNING id;
       `, [args.id]);
       ret = rows[0].id;
     }
@@ -341,19 +307,11 @@ async function deletePerson(obj, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-// async function getTagsForperson(obj, args, context) {
-//   return [];
-// }
-// async function getSendTypesForperson(obj, args, context) {
-//   return [];
-// }
-
 const resolvers = {
   Query: {
     message: getMessage,
     category: getCategory,
-    person: getPerson,
-    // people: getPeople,
+    user_preference: getUserPreference,
     tag: getTag,
     tags: getTags,
     topics: getTopics,
@@ -362,10 +320,6 @@ const resolvers = {
   Category: {
     tags: getTagsForCategory,
   },
-  // person: {
-  //   tags: getTagsForperson,
-  //   send_types: getSendTypesForperson,
-  // },
   Tag: {
     category: getCategoryFromTag,
     subscriptions: getSubscriptionsFromTag,
@@ -376,8 +330,8 @@ const resolvers = {
     deleteTopic,
     createTag,
     deleteTag,
-    createPerson,
-    deletePerson,
+    createUserPreference,
+    deleteUserPreference,
   },
 };
 

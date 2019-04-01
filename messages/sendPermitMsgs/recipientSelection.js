@@ -9,11 +9,11 @@ async function recipientSelection() {
    
     const tags = await noteClient.query(`
     select distinct send_types.type, send_types.email, send_types.phone, topics.name, topics.permit_num
-    from note.people
+    from note.user_preferences
     INNER JOIN note.send_types
-      ON people.id = send_types.user_id
+      ON user_preferences.id = send_types.user_id
     INNER JOIN note.subscriptions
-      ON people.id = subscriptions.user_id	
+      ON user_preferences.id = subscriptions.user_id	
     INNER JOIN note.tags
       ON subscriptions.tag_id = tags.id
     INNER JOIN note.topic_tags
@@ -24,7 +24,7 @@ async function recipientSelection() {
         (subscriptions.whole_city = true) 
         or 
         (
-         (ST_Distance_Sphere(ST_MakePoint(people.location_x, people.location_y),ST_MakePoint(topics.location_x, topics.location_y)) / 1609.34) 
+         (ST_Distance_Sphere(ST_MakePoint(user_preferences.location_x, user_preferences.location_y),ST_MakePoint(topics.location_x, topics.location_y)) / 1609.34) 
          < subscriptions.radius_miles
         )
         )
