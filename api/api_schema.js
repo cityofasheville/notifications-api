@@ -56,7 +56,7 @@ type SendType {
 extend type Query {
   message(id: ID!): Message
   category(id: ID!): Category
-  user_preference(id: ID!): UserPreference
+  user_preference(email: String!): UserPreference
   user_preferences: [UserPreference]
   tag(id: ID!): Tag
   tags: [Tag]
