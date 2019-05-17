@@ -47,7 +47,7 @@ async function getCategory(parent, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
-// gets a user_preference, their subscriptions, and their send types, given either an id or an email.
+// gets a user_preference, their subscriptions, and their send types, given an email.
 async function getUserPreference(parent, args, context) {
   try {
     const client = await pool.connect();
@@ -60,9 +60,9 @@ async function getUserPreference(parent, args, context) {
         from (
           select subscriptions.id, subscriptions.radius_miles, subscriptions.whole_city,
           (
-          	select array_to_json(array_agg(row_to_json(t)))
+          	select row_to_json(t)
           	from (
-          		select tags.id tag_id, tags.category_id, tags.name
+          		select tags.id id, tags.category_id, tags.name
           		from note.tags
           		where subscriptions.tag_id = tags.id
           	) as t
@@ -78,13 +78,13 @@ async function getUserPreference(parent, args, context) {
             send_types.phone
           from note.send_types
           WHERE user_preferences.id = send_types.user_id
-          and send_types.email = $1
         ) as st
       ) as send_types        
       from note.user_preferences
       inner join note.send_types
       on user_preferences.id = send_types.user_id
       where send_types.user_id is not null
+      and send_types.email = $1
     ) as peep
     `, [args.email]);
     client.release();
