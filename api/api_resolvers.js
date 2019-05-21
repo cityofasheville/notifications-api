@@ -257,6 +257,22 @@ async function deleteTag(obj, args, context) {
 async function createUserPreference(obj, args, context) {
   try {
     const client = await pool.connect();
+    //delete out any existing records for this email
+    for(send_type of args.user_preference.send_types){
+      const { rows } = await client.query(`  
+      delete from note.send_types where email = $1 returning user_id;
+      `, [send_type.email]);
+      if (rows[0]){
+        const ret = rows[0];
+        await client.query(`  
+        delete from note.subscriptions where user_id = $1;
+        `, [ret.user_id]);
+        await client.query(`  
+        delete from note.user_preferences where id = $1;
+        `, [ret.user_id]);
+      }
+    }
+    //insert
     const { rows } = await client.query(`  
     insert into note.user_preferences(location_x, location_y)VALUES($1, $2) RETURNING id, location_x, location_y;
     `, [ args.user_preference.location_x, args.user_preference.location_y ]);
