@@ -57,7 +57,6 @@ extend type Query {
   message(id: ID!): Message
   category(id: ID!): Category
   user_preference(email: String!): UserPreference
-  user_preferences: [UserPreference]
   tag(id: ID!): Tag
   tags: [Tag]
   topics: [Topic]
@@ -70,7 +69,9 @@ extend type Mutation {
   createTag(tag: TagInput!): Tag
   deleteTag(id: ID!): Tag
   createUserPreference(user_preference: UserPreferenceInput!): UserPreference
+  updateUserPreference(user_preference: UserPreferenceInput!): UserPreference
   deleteUserPreference(id: ID!): Int
+  deleteUserPreferenceSecure(email: String!, expires: String!, hash: String!): Int
 }
 
 input UserPreferenceInput {

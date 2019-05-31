@@ -210,7 +210,7 @@ async function createTopic(obj, args, context) {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`  
-    insert into note.topics(name)VALUES($1) RETURNING id, name;
+    insert into note.topics(name)VALUES($1) returning id, name;
     `, [args.name]);
     client.release();
     const ret = rows[0];
@@ -222,7 +222,7 @@ async function deleteTopic(obj, args, context) {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`  
-    delete from note.topics where id = $1 RETURNING id, name;
+    delete from note.topics where id = $1 returning id, name;
     `, [args.id]);
     client.release();
     const ret = rows[0];
@@ -234,7 +234,7 @@ async function createTag(obj, args, context) {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`  
-    insert into note.tags(name, category_id)VALUES($1, $2) RETURNING id, name, category_id;
+    insert into note.tags(name, category_id)VALUES($1, $2) returning id, name, category_id;
     `, [args.tag.name, args.tag.category]);
     client.release();
     const ret = rows[0];
@@ -246,7 +246,7 @@ async function deleteTag(obj, args, context) {
   try {
     const client = await pool.connect();
     const { rows } = await client.query(`  
-    delete from note.tags where id = $1 RETURNING id, name, category_id;
+    delete from note.tags where id = $1 returning id, name, category_id;
     `, [args.id]);
     client.release();
     const ret = rows[0];
@@ -274,7 +274,7 @@ async function createUserPreference(obj, args, context) {
     }
     //insert
     const { rows } = await client.query(`  
-    insert into note.user_preferences(location_x, location_y)VALUES($1, $2) RETURNING id, location_x, location_y;
+    insert into note.user_preferences(location_x, location_y)VALUES($1, $2) returning id, location_x, location_y;
     `, [ args.user_preference.location_x, args.user_preference.location_y ]);
     const user_id = rows[0].id;
     const user_location_x = rows[0].location_x;
@@ -300,6 +300,49 @@ async function createUserPreference(obj, args, context) {
   } catch (e) { return Promise.reject(e); }
 }
 
+async function updateUserPreference(obj, args, context) {
+  try {
+    const emailsendtype = args.user_preference.send_types.find(function(sendtype) {
+      return sendtype.type = 'EMAIL';
+    }); 
+
+    const client = await pool.connect();
+    const { rows } = await client.query(`  
+    select send_types.user_id from note.send_types where email = $1;
+    `, [ emailsendtype.email ]);
+    const user_id = rows[0].user_id;
+
+    await client.query(`
+    update note.user_preferences set location_x = $2, location_y = $3 where id = $1;
+    `, [ user_id, args.user_preference.location_x, args.user_preference.location_y]);
+
+    for(send_type of args.user_preference.send_types){
+      await client.query(` 
+      insert into note.send_types(
+        user_id, type, email, phone)
+      VALUES($1, $2, $3, $4)
+      on conflict (user_id, type) do
+      update set email = $3, phone = $4
+      where send_types.user_id = $1 and send_types.type = $2;
+      `, [ user_id, send_type.type, send_type.email, send_type.phone ]);
+    }
+    for(subscription of args.user_preference.subscriptions){
+      await client.query(`
+      insert into note.subscriptions(
+        user_id, tag_id, radius_miles, whole_city)
+      VALUES($1, $2, $3, $4)
+      on conflict (user_id, tag_id) do
+      update set radius_miles = $3, whole_city = $4
+      where subscriptions.user_id = $1 and subscriptions.tag_id = $2
+      `, [ user_id, subscription.tag_id, subscription.radius_miles, subscription.whole_city ]);
+    }
+    client.release();
+    const ret = Object.assign({},args.user_preference,{id: user_id, location_x: args.user_preference.location_x, location_y: args.user_preference.location_y})
+    return Promise.resolve(ret);
+  } catch (e) { return Promise.reject(e); }
+
+}
+
 async function deleteUserPreference(obj, args, context) {
   let ret;
   try {
@@ -315,7 +358,7 @@ async function deleteUserPreference(obj, args, context) {
         delete from note.send_types where user_id = $1;
       `, [args.id]);
       const { rows } = await client.query(`  
-        delete from note.user_preferences where id = $1 RETURNING id;
+        delete from note.user_preferences where id = $1 returning id;
       `, [args.id]);
       ret = rows[0].id;
     }
@@ -349,6 +392,7 @@ const resolvers = {
     createTag,
     deleteTag,
     createUserPreference,
+    updateUserPreference,
     deleteUserPreference,
   },
 };

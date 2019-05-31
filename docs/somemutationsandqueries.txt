@@ -1,0 +1,92 @@
+mutation createPeep($user_preference: UserPreferenceInput!) {
+  createUserPreference(user_preference: $user_preference) {
+    id
+    location_x
+    location_y
+    send_types {
+      email
+      type
+    }
+  }
+}
+
+{
+  "user_preference": {
+    "location_x": "-82.511",
+    "location_y": "35.311",
+    "send_types": [
+      {
+        "type": "EMAIL",
+        "email": "jontwilson@gmail.com"
+      }
+    ],
+    "subscriptions": [
+      {
+        "radius_miles": 1,
+        "whole_city": false,
+        "tag_id": "1"
+      },
+            {
+        "radius_miles": 3,
+        "whole_city": false,
+        "tag_id": "3"
+      }
+    ]
+  }
+}
+
+query GetUserPreference {
+  user_preference(email: "jtwilson@ashevillenc.gov") {
+id
+    location_x
+    location_y
+    send_types {
+      type
+      email
+    }
+    subscriptions {
+			radius_miles
+      whole_city
+      tag {
+        id
+        topics {
+          id
+        }
+      }
+
+    }
+  }
+}
+
+mutation updeePeep($email: String!, $user_preference: UserPreferenceInput!) {
+  updateUserPreference(email: $email, user_preference: $user_preference) {
+    id
+    location_x
+    location_y
+    send_types {
+      email
+      type
+    }
+  }
+}
+
+{
+  "email": "jontwilson@gmail.com",
+  "user_preference": {
+    "location_x": "-82.555",
+    "location_y": "35.333",
+    "send_types": [
+      {
+        "type": "EMAIL",
+        "email": "jontwilson@gmail.com"
+      }
+    ],
+    "subscriptions": [
+      {
+        "radius_miles": 1,
+        "whole_city": false,
+        "tag_id": "1"
+      }
+    ]
+  }
+}
