@@ -40,6 +40,7 @@ type UserPreference {
 type Subscription {
   id: ID!
   user_preference: UserPreference!
+  tag_id: ID!
   tag: Tag!
   radius_miles: Float
   whole_city: Boolean
