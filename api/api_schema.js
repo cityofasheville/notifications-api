@@ -71,8 +71,8 @@ extend type Mutation {
   deleteTag(id: ID!): Tag
   createUserPreference(user_preference: UserPreferenceInput!): UserPreference
   updateUserPreference(user_preference: UserPreferenceInput!): UserPreference
-  deleteUserPreference(id: ID!): Int
-  deleteUserPreferenceSecure(email: String!, expires: String!, hash: String!): Int
+  deleteUserPreference(email: String!): Int
+  deleteUserPreferenceSecure(url: String!): Int
 }
 
 input UserPreferenceInput {

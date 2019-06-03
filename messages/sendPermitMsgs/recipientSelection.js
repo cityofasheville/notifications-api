@@ -1,5 +1,15 @@
-const getDbConnection = require('../../common/db');
+// Returns objects shaped like this:
+// { 'jtwilson@ashevillenc.gov':
+//   [ 
+//     { type: 'EMAIL',
+//       email: 'jtwilson@ashevillenc.gov',
+//       phone: null,
+//       name: '30 Watauga Street Subdivision',
+//       permit_num: '19-03813PZ' },
+// ...
 
+
+const getDbConnection = require('../../common/db');
 const notePool = getDbConnection('note');
 
 // Finds who to send email to based on thier subscribed tags and radiuses, and project locations
@@ -43,6 +53,7 @@ async function recipientSelection() {
       }
     });
 
+console.log(recipients);
 
     noteClient.release();
     return Promise.resolve(recipients);
