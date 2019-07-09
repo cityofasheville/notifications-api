@@ -335,19 +335,22 @@ async function updateUserPreference(obj, args, context) {
       on conflict (user_id, tag_id) do
       update set radius_miles = $3, whole_city = $4
       where subscriptions.user_id = $1 and subscriptions.tag_id = $2
-      `, [ user_id, subscription.tag_id, subscription.radius_miles, subscription.whole_city ]);
+      `, [ user_id, subscription.tag.id, subscription.radius_miles, subscription.whole_city ]);
     }
     client.release();
-    const retsubscrip = args.user_preference.subscriptions.map(subscr=>({...subscr,"tag":{"id":subscr.tag_id}}));
+    const retsubscrip = args.user_preference.subscriptions.map(subscr=>(
+        {...subscr,"tag":{"id":subscr.tag.id}}
+      ));
     console.log("retsubscrip",retsubscrip);
-    const ret = Object.assign({},args.user_preference,
+    const ret = Object.assign({},
       { id: user_id, 
         location_x: args.user_preference.location_x, 
         location_y: args.user_preference.location_y,
         subscriptions: retsubscrip,
         send_types: args.user_preference.send_types    
       }); 
-    console.log("ret",ret);
+    // console.log("ret",ret);
+    // console.log("retO",ret.subscriptions[0].tag);
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
 

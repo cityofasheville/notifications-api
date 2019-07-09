@@ -83,7 +83,8 @@ input UserPreferenceInput {
 }
 
 input SubscriptionInput {
-  tag_id: ID!
+  id: ID
+  tag: TagInput!
   radius_miles: Float
   whole_city: Boolean
 }
@@ -95,8 +96,9 @@ input SendTypeInput {
 }
 
 input TagInput {
-  name: String!
-  category: ID!
+  id: ID
+  name: String
+  category: ID
 }
 
 enum SendEnum {
