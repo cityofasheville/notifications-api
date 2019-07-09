@@ -59,7 +59,7 @@ async function getUserPreference(parent, args, context) {
       (
         select array_to_json(array_agg(row_to_json(s))) 
         from (
-          select subscriptions.id, subscriptions.radius_miles, subscriptions.whole_city,
+          select subscriptions.id, subscriptions.radius_miles, subscriptions.whole_city, tag_id,
           (
           	select row_to_json(t)
           	from (
