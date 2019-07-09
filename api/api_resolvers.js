@@ -338,9 +338,18 @@ async function updateUserPreference(obj, args, context) {
       `, [ user_id, subscription.tag_id, subscription.radius_miles, subscription.whole_city ]);
     }
     client.release();
-    const ret = Object.assign({},args.user_preference,{id: user_id, location_x: args.user_preference.location_x, location_y: args.user_preference.location_y})
+    const retsubscrip = args.user_preference.subscriptions.map(subscr=>({...subscr,"tag":{"id":subscr.tag_id}}));
+    console.log("retsubscrip",retsubscrip);
+    const ret = Object.assign({},args.user_preference,
+      { id: user_id, 
+        location_x: args.user_preference.location_x, 
+        location_y: args.user_preference.location_y,
+        subscriptions: retsubscrip,
+        send_types: args.user_preference.send_types    
+      }); 
+    console.log("ret",ret);
     return Promise.resolve(ret);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 
 }
 
