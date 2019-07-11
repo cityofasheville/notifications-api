@@ -76,6 +76,7 @@ extend type Mutation {
 }
 
 input UserPreferenceInput {
+  id: ID
   location_x: Float
   location_y: Float
   send_types: [SendTypeInput]
