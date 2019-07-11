@@ -338,17 +338,17 @@ async function updateUserPreference(obj, args, context) {
       `, [ user_id, subscription.tag.id, subscription.radius_miles, subscription.whole_city ]);
     }
     client.release();
-    const retsubscrip = args.user_preference.subscriptions.map(subscr=>(
-        {...subscr,"tag":{"id":subscr.tag.id}}
-      ));
-    console.log("retsubscrip",retsubscrip);
-    const ret = Object.assign({},
-      { id: user_id, 
-        location_x: args.user_preference.location_x, 
-        location_y: args.user_preference.location_y,
-        subscriptions: retsubscrip,
-        send_types: args.user_preference.send_types    
-      }); 
+    // const retsubscrip = args.user_preference.subscriptions.map(subscr=>(
+    //     {...subscr,"tag":{"id":subscr.tag.id}}
+    //   ));
+    // console.log("retsubscrip",retsubscrip);
+    // const ret = Object.assign({},
+    //   { id: user_id, 
+    //     location_x: args.user_preference.location_x, 
+    //     location_y: args.user_preference.location_y,
+    //     subscriptions: retsubscrip,
+    //     send_types: args.user_preference.send_types    
+    //   }); 
     // console.log("ret",ret);
     // console.log("retO",ret.subscriptions[0].tag);
     return Promise.resolve(ret);
