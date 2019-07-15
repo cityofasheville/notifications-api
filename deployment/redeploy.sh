@@ -1,4 +1,6 @@
+#log in as apiadmin
 git pull
-sudo systemctl restart notifications1
-sudo systemctl restart notifications2
+ #and then as root
+systemctl restart devnotifications1
+systemctl restart devnotifications2
 

@@ -317,24 +317,27 @@ async function updateUserPreference(obj, args, context) {
     update note.user_preferences set location_x = $2, location_y = $3 where id = $1;
     `, [ user_id, args.user_preference.location_x, args.user_preference.location_y]);
 
+    await client.query(`
+    delete from note.send_types
+    where send_types.user_id = $1;
+    `, [ user_id ]);
     for(send_type of args.user_preference.send_types){
       await client.query(` 
       insert into note.send_types(
         user_id, type, email, phone)
-      VALUES($1, $2, $3, $4)
-      on conflict (user_id, type) do
-      update set email = $3, phone = $4
-      where send_types.user_id = $1 and send_types.type = $2;
+      VALUES($1, $2, $3, $4);
       `, [ user_id, send_type.type, send_type.email, send_type.phone ]);
     }
+
+    await client.query(`
+    delete from note.subscriptions
+    where subscriptions.user_id = $1;
+    `, [ user_id ]);
     for(subscription of args.user_preference.subscriptions){
       await client.query(`
       insert into note.subscriptions(
         user_id, tag_id, radius_miles, whole_city)
-      VALUES($1, $2, $3, $4)
-      on conflict (user_id, tag_id) do
-      update set radius_miles = $3, whole_city = $4
-      where subscriptions.user_id = $1 and subscriptions.tag_id = $2
+      VALUES($1, $2, $3, $4);
       `, [ user_id, subscription.tag.id, subscription.radius_miles, subscription.whole_city ]);
     }
     client.release();
