@@ -307,44 +307,63 @@ async function updateUserPreference(obj, args, context) {
       return sendtype.type = 'EMAIL';
     }); 
 
+    //Get the user_id
     const client = await pool.connect();
     const { rows } = await client.query(`  
     select send_types.user_id from note.send_types where email = $1;
     `, [ emailsendtype.email ]);
     const user_id = rows[0].user_id;
 
+    //update user
     await client.query(`
     update note.user_preferences set location_x = $2, location_y = $3 where id = $1;
     `, [ user_id, args.user_preference.location_x, args.user_preference.location_y]);
 
-    await client.query(`
-    delete from note.send_types
-    where send_types.user_id = $1;
-    `, [ user_id ]);
+    //update or insert send_types (TODO: is delete needed?)
     for(send_type of args.user_preference.send_types){
       await client.query(` 
       insert into note.send_types(
         user_id, type, email, phone)
-      VALUES($1, $2, $3, $4);
+      VALUES($1, $2, $3, $4)
+      on conflict (user_id, type) do
+      update set email = $3, phone = $4
+      where send_types.user_id = $1 and send_types.type = $2;
       `, [ user_id, send_type.type, send_type.email, send_type.phone ]);
     }
 
-    await client.query(`
-    delete from note.subscriptions
+    // delete subscriptions not in array
+    const keepTags = args.user_preference.subscriptions.map(scrip=>parseInt(scrip.tag.id));
+    const res = await client.query(`
+    select * from note.subscriptions
     where subscriptions.user_id = $1;
     `, [ user_id ]);
+    for ( row of res.rows) {
+      if (keepTags.indexOf(row.tag_id) === -1) {
+        await client.query(`
+        delete from note.subscriptions
+        where subscriptions.user_id = $1
+        and subscriptions.tag_id = $2;
+        `, [ user_id, row.tag_id ])
+      }
+    };
+
+    // insert or update subscriptions
     for(subscription of args.user_preference.subscriptions){
       await client.query(`
       insert into note.subscriptions(
         user_id, tag_id, radius_miles, whole_city)
-      VALUES($1, $2, $3, $4);
+      VALUES($1, $2, $3, $4)
+      on conflict (user_id, tag_id) do
+      update set radius_miles = $3, whole_city = $4
+      where subscriptions.user_id = $1 and subscriptions.tag_id = $2
       `, [ user_id, subscription.tag.id, subscription.radius_miles, subscription.whole_city ]);
     }
+////////////////////////////////////////////////////////
+
     client.release();
     const retsubscrip = args.user_preference.subscriptions.map(subscr=>(
         {...subscr,"tag":{"id":subscr.tag.id}}
       ));
-    // console.log("retsubscrip",retsubscrip);
     const ret = Object.assign({},
       { id: user_id, 
         location_x: args.user_preference.location_x, 
@@ -352,8 +371,6 @@ async function updateUserPreference(obj, args, context) {
         subscriptions: retsubscrip,
         send_types: args.user_preference.send_types    
       }); 
-    // console.log("ret",ret);
-    // console.log("retO",ret.subscriptions[0].tag);
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
 
@@ -388,8 +405,6 @@ async function deleteUserPreference(obj, args, context) {
 async function deleteUserPreferenceSecure(obj, args, context) {
   let ret;
   const urlObj = new URL(args.url);
-
-
   try {
     const decodedEmail = urlObj.searchParams.get('e');
     const encodedEmail = encodeURIComponent(decodedEmail);
@@ -398,8 +413,6 @@ async function deleteUserPreferenceSecure(obj, args, context) {
     const hashShouldBe = cryptofuncs.getHash(encodedEmail,urlExpireEpoch)
     if (urlExpireEpoch > Date.now()) { //not expired
       if(hashShouldBe === urlHash){    //hash matches
-        console.log('Hashes match: ',hashShouldBe,' = ',urlHash);
-        console.log("Not expired: ", urlExpireEpoch, Date.now());
         const client = await pool.connect();
         const result = await client.query(`  
           select send_types.user_id from note.send_types where email = $1;

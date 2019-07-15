@@ -12,24 +12,21 @@ mutation createPeep($user_preference: UserPreferenceInput!) {
 
 {
   "user_preference": {
-    "location_x": "-82.511",
-    "location_y": "35.311",
+    "location_x": "-82.543",
+    "location_y": "35.345",
     "send_types": [
       {
         "type": "EMAIL",
-        "email": "jontwilson@gmail.com"
+        "email": "jtwilson@ashevillenc.gov"
       }
     ],
     "subscriptions": [
       {
-        "radius_miles": 1,
-        "whole_city": false,
-        "tag_id": "1"
-      },
-            {
         "radius_miles": 3,
         "whole_city": false,
-        "tag_id": "3"
+        "tag": {
+          "id": "2"
+        }
       }
     ]
   }
@@ -58,34 +55,45 @@ id
   }
 }
 
-mutation updeePeep($email: String!, $user_preference: UserPreferenceInput!) {
-  updateUserPreference(email: $email, user_preference: $user_preference) {
-    id
-    location_x
-    location_y
-    send_types {
-      email
-      type
+  mutation updateUserPreference(
+    $user_preference: UserPreferenceInput!,
+  ) {
+    updateUserPreference(
+      user_preference: $user_preference,
+    ) {
+      location_x
+      location_y
+      send_types {
+        type
+        email
+      }
+      subscriptions {
+        tag {
+          id
+        }
+        radius_miles
+        whole_city
+      }
     }
   }
-}
 
 {
-  "email": "jontwilson@gmail.com",
   "user_preference": {
-    "location_x": "-82.555",
-    "location_y": "35.333",
+    "location_x": "-82.543",
+    "location_y": "35.345",
     "send_types": [
       {
         "type": "EMAIL",
-        "email": "jontwilson@gmail.com"
+        "email": "jtwilson@ashevillenc.gov"
       }
     ],
     "subscriptions": [
       {
-        "radius_miles": 1,
+        "radius_miles": 3,
         "whole_city": false,
-        "tag_id": "1"
+        "tag": {
+          "id": "2"
+        }
       }
     ]
   }
