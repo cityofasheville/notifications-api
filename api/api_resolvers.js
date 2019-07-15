@@ -36,7 +36,7 @@ async function getMessage(parent, args, context) { // gets a message, its topic,
     client.release();
     const ret = rows[0].results;
     return Promise.resolve(ret);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function getCategory(parent, args, context) {
@@ -45,7 +45,7 @@ async function getCategory(parent, args, context) {
     const result = await client.query('select id, name from note.categories where id = $1', [args.id]);
     client.release();
     return Promise.resolve(result.rows[0]);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 // gets a user_preference, their subscriptions, and their send types, given an email.
@@ -91,7 +91,7 @@ async function getUserPreference(parent, args, context) {
     client.release();
     const ret = rows[0] ? rows[0].results : null;
     return Promise.resolve(ret);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function getTag(parent, args, context) {
@@ -100,7 +100,7 @@ async function getTag(parent, args, context) {
     const result = await client.query('select id, name, category_id from note.tags where id = $1', [args.id]);
     client.release();
     return Promise.resolve(result.rows[0]);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function getTags(parent, args, context) {
@@ -109,7 +109,7 @@ async function getTags(parent, args, context) {
     const result = await client.query('select id, name, category_id from note.tags');
     client.release();
     return Promise.resolve(result.rows);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function getTopics(parent, args, context) {
@@ -118,7 +118,7 @@ async function getTopics(parent, args, context) {
     const result = await client.query('select id, name from note.topics');
     client.release();
     return Promise.resolve(result.rows);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function getCategories(parent, args, context) {
@@ -127,7 +127,7 @@ async function getCategories(parent, args, context) {
     const result = await client.query('select id, name from note.categories');
     client.release();
     return Promise.resolve(result.rows);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function getTagsForCategory(category, args, context) {
@@ -136,7 +136,7 @@ async function getTagsForCategory(category, args, context) {
     const result = await client.query('select id, name, category_id from note.tags where category_id = $1', [category.id]);
     client.release();
     return Promise.resolve(result.rows);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function getCategoryFromTag(tag, args, context) {
@@ -146,7 +146,7 @@ async function getCategoryFromTag(tag, args, context) {
       [tag.category_id]);
     client.release();
     return Promise.resolve(result.rows[0]);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function getSubscriptionsFromTag(tag, args, context) {
@@ -175,7 +175,7 @@ async function getSubscriptionsFromTag(tag, args, context) {
     client.release();
     const ret = rows[0].results;
     return Promise.resolve(ret);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function getTopicsFromTag(tag, args, context) {
@@ -204,7 +204,7 @@ async function getTopicsFromTag(tag, args, context) {
     client.release();
     const ret = rows[0].results;
     return Promise.resolve(ret);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function createTopic(obj, args, context) {
@@ -216,7 +216,7 @@ async function createTopic(obj, args, context) {
     client.release();
     const ret = rows[0];
     return Promise.resolve(ret);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function deleteTopic(obj, args, context) {
@@ -228,7 +228,7 @@ async function deleteTopic(obj, args, context) {
     client.release();
     const ret = rows[0];
     return Promise.resolve(ret);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function createTag(obj, args, context) {
@@ -240,7 +240,7 @@ async function createTag(obj, args, context) {
     client.release();
     const ret = rows[0];
     return Promise.resolve(ret);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function deleteTag(obj, args, context) {
@@ -252,7 +252,7 @@ async function deleteTag(obj, args, context) {
     client.release();
     const ret = rows[0];
     return Promise.resolve(ret);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function createUserPreference(obj, args, context) {
@@ -298,7 +298,7 @@ async function createUserPreference(obj, args, context) {
     client.release();
     const ret = Object.assign({},args.user_preference,{id: user_id, location_x: user_location_x, location_y: user_location_y})
     return Promise.resolve(ret);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function updateUserPreference(obj, args, context) {
@@ -338,17 +338,17 @@ async function updateUserPreference(obj, args, context) {
       `, [ user_id, subscription.tag.id, subscription.radius_miles, subscription.whole_city ]);
     }
     client.release();
-    // const retsubscrip = args.user_preference.subscriptions.map(subscr=>(
-    //     {...subscr,"tag":{"id":subscr.tag.id}}
-    //   ));
+    const retsubscrip = args.user_preference.subscriptions.map(subscr=>(
+        {...subscr,"tag":{"id":subscr.tag.id}}
+      ));
     // console.log("retsubscrip",retsubscrip);
-    // const ret = Object.assign({},
-    //   { id: user_id, 
-    //     location_x: args.user_preference.location_x, 
-    //     location_y: args.user_preference.location_y,
-    //     subscriptions: retsubscrip,
-    //     send_types: args.user_preference.send_types    
-    //   }); 
+    const ret = Object.assign({},
+      { id: user_id, 
+        location_x: args.user_preference.location_x, 
+        location_y: args.user_preference.location_y,
+        subscriptions: retsubscrip,
+        send_types: args.user_preference.send_types    
+      }); 
     // console.log("ret",ret);
     // console.log("retO",ret.subscriptions[0].tag);
     return Promise.resolve(ret);
@@ -379,7 +379,7 @@ async function deleteUserPreference(obj, args, context) {
     client.release();
     
     return Promise.resolve(ret);
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 async function deleteUserPreferenceSecure(obj, args, context) {
@@ -419,7 +419,7 @@ async function deleteUserPreferenceSecure(obj, args, context) {
         return Promise.resolve(ret);
       }
     }
-  } catch (e) { client.release(); return Promise.reject(e); }
+  } catch (e) { return Promise.reject(e); }
 }
 
 const resolvers = {
