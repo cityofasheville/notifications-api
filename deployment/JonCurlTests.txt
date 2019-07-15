@@ -1,0 +1,23 @@
+curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --data '{ "query": "{ tags { id } }" }' \
+  http://localhost:4000/graphql
+
+
+DEV
+
+curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --data '{ "query": "{ tags { id } }" }' \
+http://ec2-34-199-118-56.compute-1.amazonaws.com/graphql
+
+
+PROD
+
+curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --data '{ "query": "{ tags { id } }" }' \
+  http://34.199.118.56/graphql

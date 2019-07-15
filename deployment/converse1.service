@@ -1,0 +1,14 @@
+[Service]
+WorkingDirectory=/opt/coa-converse-api
+ExecStart=/usr/bin/node /opt/coa-converse-api/server.js
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=coa-converse-1
+User=apiadmin
+Group=apiadmin
+Environment=NODE_ENV=production PORT=5002
+
+[Install]
+WantedBy=multi-user.target
+
