@@ -1,4 +1,4 @@
 git pull
-systemctl restart converse1
-systemctl restart converse2
+systemctl restart notifications1
+systemctl restart notifications2
 

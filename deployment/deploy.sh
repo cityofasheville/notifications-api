@@ -9,6 +9,6 @@ systemctl start notifications2
 systemctl enable notifications2
 
 # Install the NGINX configuration file
-cp ./converse.conf /etc/nginx/conf.d/
+cp ./notifications.conf /etc/nginx/conf.d/
 sudo systemctl restart nginx
 

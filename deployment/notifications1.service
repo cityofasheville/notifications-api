@@ -1,0 +1,13 @@
+[Service]
+WorkingDirectory=/opt/notifications
+ExecStart=/usr/bin/node /opt/notifications/index.js
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=notifications-1
+User=apiadmin
+Group=apiadmin
+Environment=NODE_ENV=production PORT=5009
+
+[Install]
+WantedBy=multi-user.target

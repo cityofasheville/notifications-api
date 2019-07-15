@@ -1,6 +1,6 @@
-# Deploying the Simplicity GraphQL Server
+# Deploying the Notifications GraphQL Server
 
-These instructions are to run two SimpliCity GraphQL node server instances behind an NGINX proxy server.
+These instructions are to run Notifications GraphQL node server instances behind an NGINX proxy server.
 
 To deploy, simply run 
 ````
@@ -14,11 +14,11 @@ To update from Github and redeploy, run:
 
 ````
   git pull
-  sudo systemctl restart converse1
-  sudo systemctl restart converse2
+  sudo systemctl restart notifications1
+  sudo systemctl restart notifications2
 ````
 
-To see the status of the node services, run, e.g., ````sudo systemctl status converse1```` or ````sudo journalctl -u converse1````.
+To see the status of the node services, run, e.g., ````sudo systemctl status notifications1```` or ````sudo journalctl -u notifications1````.
 
 Node console logging goes to /var/log/messages
 
