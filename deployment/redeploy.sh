@@ -4,3 +4,6 @@ git pull
 systemctl restart devnotifications1
 systemctl restart devnotifications2
 
+# or for production:
+systemctl restart notifications1
+systemctl restart notifications2
