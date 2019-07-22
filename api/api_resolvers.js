@@ -2,8 +2,9 @@
 /* eslint-disable no-console */
 
 const getDbConnection = require('../common/db');
-const pool = getDbConnection('note'); // Initialize the connection.
 const cryptofuncs = require('./cryptofuncs');
+
+const pool = getDbConnection('note'); // Initialize the connection.
 
 async function getMessage(parent, args, context) { // gets a message, its topic, and lists tags
   try {
@@ -61,12 +62,12 @@ async function getUserPreference(parent, args, context) {
         from (
           select subscriptions.id, subscriptions.radius_miles, subscriptions.whole_city, tag_id,
           (
-          	select row_to_json(t)
-          	from (
-          		select tags.id id, tags.category_id, tags.name
-          		from note.tags
-          		where subscriptions.tag_id = tags.id
-          	) as t
+            select row_to_json(t)
+            from (
+              select tags.id id, tags.category_id, tags.name
+              from note.tags
+              where subscriptions.tag_id = tags.id
+            ) as t
           ) as tag
           from note.subscriptions
           WHERE user_preferences.id = subscriptions.user_id
@@ -160,7 +161,7 @@ async function getSubscriptionsFromTag(tag, args, context) {
         select array_to_json(array_agg(row_to_json(s))) 
         from (
           select send_types.id, send_types.type, send_types.email, 
-		      	send_types.phone
+            send_types.phone
           from note.send_types
           WHERE user_preferences.id = send_types.user_id
         ) as s
@@ -169,7 +170,7 @@ async function getSubscriptionsFromTag(tag, args, context) {
       INNER JOIN note.subscriptions
         ON subscriptions.tag_id = tags.id
       INNER JOIN note.user_preferences
-        ON user_preferences.id = subscriptions.user_id	
+        ON user_preferences.id = subscriptions.user_id  
       WHERE tags.id = $1
     ) as p`, [tag.id]);
     client.release();
@@ -198,7 +199,7 @@ async function getTopicsFromTag(tag, args, context) {
         ON topics.id = topic_tags.topic_id
         INNER JOIN note.tags
         ON tags.id = topic_tags.tag_id
-        where tags.id = $1	
+        where tags.id = $1  
     ) as tp 
     `, [tag.id]);
     client.release();

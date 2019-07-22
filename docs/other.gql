@@ -82,7 +82,7 @@ mutation createTag($tag: TagInput!) {
   createTag(tag: $tag) {
     id
     name
-		category {
+    category {
       name
     }
   }

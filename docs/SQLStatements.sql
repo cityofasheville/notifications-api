@@ -14,17 +14,17 @@ SELECT * FROM note.subscriptions;
 SELECT user_preferences.*, send_types.type, email, tags.id AS tags_id, topics.name, messages.* 
 FROM note.user_preferences
 INNER JOIN note.send_types
-	ON user_preferences.id = send_types.user_id
+  ON user_preferences.id = send_types.user_id
 INNER JOIN note.subscriptions
-	ON user_preferences.id = subscriptions.user_id	
+  ON user_preferences.id = subscriptions.user_id  
 INNER JOIN note.tags
-	ON subscriptions.tag_id = tags.id
+  ON subscriptions.tag_id = tags.id
 INNER JOIN note.topic_tags
-	ON tags.id = topic_tags.tag_id
+  ON tags.id = topic_tags.tag_id
 INNER JOIN note.topics
-	ON topic_tags.topic_id = topics.id
+  ON topic_tags.topic_id = topics.id
 INNER JOIN note.messages
-	ON topics.id = messages.topic_id
+  ON topics.id = messages.topic_id
 AND topics.id = 1
 ---------
 SELECT * FROM note.messages

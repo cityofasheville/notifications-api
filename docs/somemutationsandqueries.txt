@@ -42,7 +42,7 @@ id
       email
     }
     subscriptions {
-			radius_miles
+      radius_miles
       whole_city
       tag {
         id

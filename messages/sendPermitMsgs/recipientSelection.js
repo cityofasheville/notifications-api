@@ -23,7 +23,7 @@ async function recipientSelection() {
     INNER JOIN note.send_types
       ON user_preferences.id = send_types.user_id
     INNER JOIN note.subscriptions
-      ON user_preferences.id = subscriptions.user_id	
+      ON user_preferences.id = subscriptions.user_id  
     INNER JOIN note.tags
       ON subscriptions.tag_id = tags.id
     INNER JOIN note.topic_tags
