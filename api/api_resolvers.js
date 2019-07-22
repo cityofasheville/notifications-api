@@ -362,16 +362,13 @@ async function updateUserPreference(obj, args, context) {
 ////////////////////////////////////////////////////////
 
     client.release();
-    const retsubscrip = args.user_preference.subscriptions.map(subscr=>(
-        {...subscr,"tag":{"id":subscr.tag.id}}
-      ));
     const ret = Object.assign({},
       { id: user_id, 
         location_x: args.user_preference.location_x, 
         location_y: args.user_preference.location_y,
-        subscriptions: retsubscrip,
+        subscriptions: args.user_preference.subscriptions,
         send_types: args.user_preference.send_types    
-      }); 
+      }); console.log(ret);console.log(ret.subscriptions);
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
 
