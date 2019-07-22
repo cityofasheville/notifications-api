@@ -7,20 +7,14 @@ curl \
 
 DEV (the k is insecure so it will accept the self-signed cert)
 
-curl -k \   
-  -X POST \
-  -H "Content-Type: application/json" \
-  --data '{ "query": "{ tags { id } }" }' \
-  https://dev-notify.ashevillenc.gov/graphql
+curl -k -X POST -H "Content-Type: application/json" --data '{ "query": "{ tags { id } }" }' \
+https://dev-notify.ashevillenc.gov/graphql
 
 
 PROD
 
-curl -k \
-  -X POST \
-  -H "Content-Type: application/json" \
-  --data '{ "query": "{ tags { id } }" }' \
-  https://notify-api.ashevillenc.gov/graphql
+curl -k -X POST -H "Content-Type: application/json" --data '{ "query": "{ tags { id } }" }' \
+https://notify-api.ashevillenc.gov/graphql
 
 
 Preflight Headers
