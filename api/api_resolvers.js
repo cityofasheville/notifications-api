@@ -359,8 +359,7 @@ async function updateUserPreference(obj, args, context) {
       where subscriptions.user_id = $1 and subscriptions.tag_id = $2
       `, [ user_id, subscription.tag.id, subscription.radius_miles, subscription.whole_city ]);
     }
-////////////////////////////////////////////////////////
-
+    
     client.release();
     const ret = Object.assign({},
       { id: user_id, 

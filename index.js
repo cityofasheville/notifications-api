@@ -27,7 +27,7 @@ const app = express();
 
 let sessionCache = null;
 const prunePeriod = 86400000; // prune expired entries every 24h
-const sessionCacheMethod = process.env.session_cache_method || 'memory';
+const sessionCacheMethod = process.env.session_cache_method || 'pg';
 if (sessionCacheMethod === 'memory') {
   sessionCache = new MemoryStore({
     checkPeriod: prunePeriod,
@@ -58,7 +58,7 @@ app.use(session({
 
 // Set up CORS
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'https://dev-notifications-frontend.ashevillenc.gov/',
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -102,6 +102,7 @@ const server = new ApolloServer({
   typeDefs,
   // mocks: true,
   resolvers,
+  uploads: false,
   context: ({ req }) => ({
     sessionId: req.session.id,
     session: req.session,
