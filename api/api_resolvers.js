@@ -374,7 +374,10 @@ async function updateUserPreference(obj, args, context) {
 }
 
 async function deleteUserPreference(obj, args, context) {
-  let ret;
+  let ret = {
+    error: null,
+    deletedEmail: args.email
+  }
   try {
     const client = await pool.connect();
     const result = await client.query(`  
@@ -391,7 +394,9 @@ async function deleteUserPreference(obj, args, context) {
       const { rows } = await client.query(`  
         delete from note.user_preferences where id = $1 returning id;
       `, [user_id]);
-      ret = rows[0].id;
+      // if(!rows[0].id){
+      //   ret.error = 'NOTINDB';
+      // }  
     }
     client.release();
     
@@ -400,10 +405,12 @@ async function deleteUserPreference(obj, args, context) {
 }
 
 async function deleteUserPreferenceSecure(obj, args, context) {
-  let ret;
+  let ret = {};
+  ret.error = null;
   const urlObj = new URL(args.url);
   try {
     const decodedEmail = urlObj.searchParams.get('e');
+    ret.deletedEmail = decodedEmail;
     const encodedEmail = encodeURIComponent(decodedEmail);
     const urlHash = urlObj.searchParams.get('h');
     const urlExpireEpoch = urlObj.searchParams.get('x');
@@ -423,15 +430,19 @@ async function deleteUserPreferenceSecure(obj, args, context) {
             delete from note.send_types where user_id = $1;
           `, [user_id]);
           const { rows } = await client.query(`  
-            delete from note.user_preferences where id = $1;
+            delete from note.user_preferences where id = $1 returning id;
           `, [user_id]);
+          // if(!rows[0].id){
         }
-        client.release();
-        
-        return Promise.resolve(decodedEmail);
-      }
-    }
-  } catch (e) { return Promise.reject(e); }
+        client.release();     
+      }else{
+        ret.error = 'BADHASH';
+      }  
+    }else{
+      ret.error = 'EXPIRED';
+    }  
+    return Promise.resolve(ret);
+  } catch (e) {  return Promise.reject(e); }
 }
 
 const resolvers = {

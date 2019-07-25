@@ -53,6 +53,11 @@ type SendType {
   phone: String
 }
 
+type DeleteReturn {
+  deletedEmail: String
+  error: ErrorMsg
+}
+
 extend type Query {
   message(id: ID!): Message
   category(id: ID!): Category
@@ -70,8 +75,8 @@ extend type Mutation {
   deleteTag(id: ID!): Tag
   createUserPreference(user_preference: UserPreferenceInput!): UserPreference
   updateUserPreference(user_preference: UserPreferenceInput!): UserPreference
-  deleteUserPreference(email: String!): Int
-  deleteUserPreferenceSecure(url: String!): String
+  deleteUserPreference(email: String!): DeleteReturn
+  deleteUserPreferenceSecure(url: String!): DeleteReturn
 }
 
 input UserPreferenceInput {
@@ -106,6 +111,11 @@ enum SendEnum {
   TEXT
   VOICE
   PUSH
+}
+
+enum ErrorMsg {
+  BADHASH
+  EXPIRED
 }
 `;
 module.exports = schema;

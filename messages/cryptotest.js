@@ -8,21 +8,21 @@ function getHash(encodedEmail,expires){
   return hash;
 }
 
-function createUnsubURL(email){ // build a url to unsubscribe this email
+function createunsub_url(email){ // build a url to unsubscribe this email
   const encodedEmail = encodeURIComponent(email);
-  const unsubUrl = 'https://ashevillenc.gov/unsubscribe/'
+  const unsub_url = 'https://ashevillenc.gov/unsubscribe/'
   
   var now = Date.now(); //milliseconds since epoch
   var THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000; // in ms
   var thirtyDaysFromNow = now + THIRTY_DAYS; 
 
   const hash = getHash(encodedEmail,thirtyDaysFromNow)
-  const fullUrl = unsubUrl + '?e=' + encodedEmail + '&x=' + thirtyDaysFromNow + '&h=' + hash;
+  const fullUrl = unsub_url + '?e=' + encodedEmail + '&x=' + thirtyDaysFromNow + '&h=' + hash;
   return fullUrl;
 }
 
 
-const testUrl = createUnsubURL('jtwilson@ashevillenc.gov');
+const testUrl = createunsub_url('jtwilson@ashevillenc.gov');
 
 console.log('testUrl: ',testUrl);
 

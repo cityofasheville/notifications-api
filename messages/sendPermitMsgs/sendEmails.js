@@ -11,7 +11,7 @@ async function sendEmails(recipients) { console.log(recipients)
         Object.keys(recipients).forEach(emailAddr => {
             let recipient = {};
             recipient.listOfTopics = recipients[emailAddr];
-            recipient.unsubURL = cryptofuncs.createUnsubURL(emailAddr);
+            recipient.unsub_url = cryptofuncs.createunsub_url(emailAddr);
             console.log('Email sent to:', emailAddr);
             let htmlEmail = compiledFunction(recipient);
             console.log(htmlEmail);
