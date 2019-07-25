@@ -423,13 +423,12 @@ async function deleteUserPreferenceSecure(obj, args, context) {
             delete from note.send_types where user_id = $1;
           `, [user_id]);
           const { rows } = await client.query(`  
-            delete from note.user_preferences where id = $1 returning id;
+            delete from note.user_preferences where id = $1;
           `, [user_id]);
-          ret = rows[0].id;
         }
         client.release();
         
-        return Promise.resolve(ret);
+        return Promise.resolve(decodedEmail);
       }
     }
   } catch (e) { return Promise.reject(e); }
