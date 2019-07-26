@@ -3,6 +3,7 @@
 
 const getDbConnection = require('../common/db');
 const cryptofuncs = require('./cryptofuncs');
+const { URL  }= require('url');
 
 const pool = getDbConnection('note'); // Initialize the connection.
 
