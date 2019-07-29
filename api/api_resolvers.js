@@ -323,8 +323,8 @@ async function createUserPreference(obj, args, context) {
       }
     }
     if(args.user_preference.subscriptions) {
-      tag_id = args.user_preference.subscriptions.tag.id;
       for(subscription of args.user_preference.subscriptions){
+        tag_id = subscription.tag.id;
         const { rows } = await client.query(`  
         insert into note.subscriptions(
             user_id, tag_id, radius_miles, whole_city)
