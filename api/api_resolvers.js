@@ -8,8 +8,8 @@ const { URL  }= require('url');
 const pool = getDbConnection('note'); // Initialize the connection.
 
 async function getMessage(parent, args, context) { // gets a message, its topic, and lists tags
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const { rows } = await client.query(`
     select row_to_json(msg) results
     from (
@@ -44,8 +44,8 @@ async function getMessage(parent, args, context) { // gets a message, its topic,
 }
 
 async function getCategory(parent, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const result = await client.query('select id, name from note.categories where id = $1', [args.id]);
     return Promise.resolve(result.rows[0]);
   } catch (e) { return Promise.reject(e); }
@@ -56,8 +56,8 @@ async function getCategory(parent, args, context) {
 
 // gets a user_preference, their subscriptions, and their send types, given an email.
 async function getUserPreference(parent, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const { rows } = await client.query(`
     select row_to_json(peep) results
     from (
@@ -103,8 +103,8 @@ async function getUserPreference(parent, args, context) {
 }
 
 async function getTag(parent, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const result = await client.query('select id, name, category_id from note.tags where id = $1', [args.id]);
     return Promise.resolve(result.rows[0]);
   } catch (e) { return Promise.reject(e); }
@@ -114,8 +114,8 @@ async function getTag(parent, args, context) {
 }
 
 async function getTags(parent, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const result = await client.query('select id, name, category_id from note.tags');
     return Promise.resolve(result.rows);
   } catch (e) { return Promise.reject(e); }
@@ -125,8 +125,8 @@ async function getTags(parent, args, context) {
 }
 
 async function getTopics(parent, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const result = await client.query('select id, name from note.topics');
     return Promise.resolve(result.rows);
   } catch (e) { return Promise.reject(e); }
@@ -136,8 +136,8 @@ async function getTopics(parent, args, context) {
 }
 
 async function getCategories(parent, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const result = await client.query('select id, name from note.categories');
     return Promise.resolve(result.rows);
   } catch (e) { return Promise.reject(e); }
@@ -147,8 +147,8 @@ async function getCategories(parent, args, context) {
 }
 
 async function getTagsForCategory(category, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const result = await client.query('select id, name, category_id from note.tags where category_id = $1', [category.id]);
     return Promise.resolve(result.rows);
   } catch (e) { return Promise.reject(e); }
@@ -158,8 +158,8 @@ async function getTagsForCategory(category, args, context) {
 }
 
 async function getCategoryFromTag(tag, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const result = await client.query('select id, name from note.categories where id = $1',
       [tag.category_id]);
     return Promise.resolve(result.rows[0]);
@@ -170,8 +170,8 @@ async function getCategoryFromTag(tag, args, context) {
 }
 
 async function getSubscriptionsFromTag(tag, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const { rows } = await client.query(`
     select array_to_json(array_agg(row_to_json(p))) results
     from (
@@ -201,8 +201,8 @@ async function getSubscriptionsFromTag(tag, args, context) {
 }
 
 async function getTopicsFromTag(tag, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const { rows } = await client.query(`  
     select array_to_json(array_agg(row_to_json(tp))) results
       from (
@@ -232,8 +232,8 @@ async function getTopicsFromTag(tag, args, context) {
 }
 
 async function createTopic(obj, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const { rows } = await client.query(`  
     insert into note.topics(name)VALUES($1) returning id, name;
     `, [args.name]);
@@ -246,8 +246,8 @@ async function createTopic(obj, args, context) {
 }
 
 async function deleteTopic(obj, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const { rows } = await client.query(`  
     delete from note.topics where id = $1 returning id, name;
     `, [args.id]);
@@ -260,8 +260,8 @@ async function deleteTopic(obj, args, context) {
 }
 
 async function createTag(obj, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const { rows } = await client.query(`  
     insert into note.tags(name, category_id)VALUES($1, $2) returning id, name, category_id;
     `, [args.tag.name, args.tag.category]);
@@ -274,8 +274,8 @@ async function createTag(obj, args, context) {
 }
 
 async function deleteTag(obj, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const { rows } = await client.query(`  
     delete from note.tags where id = $1 returning id, name, category_id;
     `, [args.id]);
@@ -288,8 +288,8 @@ async function deleteTag(obj, args, context) {
 }
 
 async function createUserPreference(obj, args, context) {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     //delete out any existing records for this email
     for(send_type of args.user_preference.send_types){
       const { rows } = await client.query(`  
@@ -336,13 +336,13 @@ async function createUserPreference(obj, args, context) {
 }
 
 async function updateUserPreference(obj, args, context) {
+  const client = await pool.connect();
   try {
     const emailsendtype = args.user_preference.send_types.find(function(sendtype) {
       return sendtype.type = 'EMAIL';
     }); 
 
     //Get the user_id
-    const client = await pool.connect();
     const { rows } = await client.query(`  
     select send_types.user_id from note.send_types where email = $1;
     `, [ emailsendtype.email ]);
@@ -413,8 +413,8 @@ async function deleteUserPreference(obj, args, context) {
     error: null,
     deletedEmail: args.email
   }
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
     const result = await client.query(`  
       select send_types.user_id from note.send_types where email = $1;
     `, [args.email]);
@@ -444,6 +444,7 @@ async function deleteUserPreferenceSecure(obj, args, context) {
   let ret = {};
   ret.error = null;
   const urlObj = new URL(args.url);
+  const client = await pool.connect();
   try {
     const decodedEmail = urlObj.searchParams.get('e');
     ret.deletedEmail = decodedEmail;
@@ -453,7 +454,6 @@ async function deleteUserPreferenceSecure(obj, args, context) {
     const hashShouldBe = cryptofuncs.getHash(encodedEmail,urlExpireEpoch)
     if (urlExpireEpoch > Date.now()) { //not expired
       if(hashShouldBe === urlHash){    //hash matches
-        const client = await pool.connect();
         const result = await client.query(`  
           select send_types.user_id from note.send_types where email = $1;
         `, [ decodedEmail ]);
