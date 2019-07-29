@@ -39,7 +39,7 @@ async function getMessage(parent, args, context) { // gets a message, its topic,
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -50,7 +50,7 @@ async function getCategory(parent, args, context) {
     return Promise.resolve(result.rows[0]);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -98,7 +98,7 @@ async function getUserPreference(parent, args, context) {
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -109,7 +109,7 @@ async function getTag(parent, args, context) {
     return Promise.resolve(result.rows[0]);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -120,7 +120,7 @@ async function getTags(parent, args, context) {
     return Promise.resolve(result.rows);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -131,7 +131,7 @@ async function getTopics(parent, args, context) {
     return Promise.resolve(result.rows);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -142,7 +142,7 @@ async function getCategories(parent, args, context) {
     return Promise.resolve(result.rows);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -153,7 +153,7 @@ async function getTagsForCategory(category, args, context) {
     return Promise.resolve(result.rows);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -165,7 +165,7 @@ async function getCategoryFromTag(tag, args, context) {
     return Promise.resolve(result.rows[0]);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -196,7 +196,7 @@ async function getSubscriptionsFromTag(tag, args, context) {
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -227,7 +227,7 @@ async function getTopicsFromTag(tag, args, context) {
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -241,7 +241,7 @@ async function createTopic(obj, args, context) {
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -255,7 +255,7 @@ async function deleteTopic(obj, args, context) {
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -269,7 +269,7 @@ async function createTag(obj, args, context) {
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -283,7 +283,7 @@ async function deleteTag(obj, args, context) {
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -312,26 +312,30 @@ async function createUserPreference(obj, args, context) {
     const user_id = rows[0].id;
     const user_location_x = rows[0].location_x;
     const user_location_y = rows[0].location_y;
-    for(send_type of args.user_preference.send_types){
-      const { rows } = await client.query(`  
-      insert into note.send_types(
-          user_id, type, email, phone)
-        VALUES($1, $2, $3, $4)
-      `, [ user_id, send_type.type, send_type.email, 
-      send_type.phone ]);
+    if(args.user_preference.send_types) {
+     for(send_type of args.user_preference.send_types){
+        const { rows } = await client.query(`  
+        insert into note.send_types(
+            user_id, type, email, phone)
+          VALUES($1, $2, $3, $4)
+        `, [ user_id, send_type.type, send_type.email, 
+        send_type.phone ]);
+      }
     }
-    for(subscription of args.user_preference.subscriptions){
-      const { rows } = await client.query(`  
-      insert into note.subscriptions(
-          user_id, tag_id, radius_miles, whole_city)
-        VALUES($1, $2, $3, $4)
-      `, [ user_id, subscription.tag_id, subscription.radius_miles, subscription.whole_city ]);
+    if(args.user_preference.subscriptions) {
+      for(subscription of args.user_preference.subscriptions){
+        const { rows } = await client.query(`  
+        insert into note.subscriptions(
+            user_id, tag_id, radius_miles, whole_city)
+          VALUES($1, $2, $3, $4)
+        `, [ user_id, subscription.tag_id, subscription.radius_miles, subscription.whole_city ]);
+      }
     }
     const ret = Object.assign({},args.user_preference,{id: user_id, location_x: user_location_x, location_y: user_location_y})
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -403,7 +407,7 @@ async function updateUserPreference(obj, args, context) {
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 
 }
@@ -436,7 +440,7 @@ async function deleteUserPreference(obj, args, context) {
     return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
@@ -479,7 +483,7 @@ async function deleteUserPreferenceSecure(obj, args, context) {
     return Promise.resolve(ret);
   } catch (e) {  return Promise.reject(e); }
   finally {
-    client.release()
+    client.release();
   }
 }
 
