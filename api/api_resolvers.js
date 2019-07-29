@@ -323,12 +323,13 @@ async function createUserPreference(obj, args, context) {
       }
     }
     if(args.user_preference.subscriptions) {
+      tag_id = args.user_preference.subscriptions.tag.id;
       for(subscription of args.user_preference.subscriptions){
         const { rows } = await client.query(`  
         insert into note.subscriptions(
             user_id, tag_id, radius_miles, whole_city)
           VALUES($1, $2, $3, $4)
-        `, [ user_id, subscription.tag_id, subscription.radius_miles, subscription.whole_city ]);
+        `, [ user_id, tag_id, subscription.radius_miles, subscription.whole_city ]);
       }
     }
     const ret = Object.assign({},args.user_preference,{id: user_id, location_x: user_location_x, location_y: user_location_y})
