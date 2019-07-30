@@ -1,5 +1,5 @@
 let AWS = require('aws-sdk');
-require('dotenv').config({ path: '../../.env' })
+require('dotenv').config({ path: __dirname+'/./../../.env' })
 
 AWS.config.update({region: 'us-east-1'});
 
@@ -44,7 +44,7 @@ function ses_sendemail(emailAddr, htmlEmail, callback){
     data => {
       callback("Email sent: " + emailAddr + " " + data.MessageId);
     }).catch( function(err) {
-      callback("Error sending email: " + emailAddr);
+      callback("Error sending email: " + emailAddr + ' Err: ' + err);
     });
 }
 
