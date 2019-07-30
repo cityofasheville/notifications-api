@@ -4,6 +4,8 @@
   template repository, and will interfere with the ability to upgrade common code from
   the template repository.
 ***************************************************************************************** */
+require('dotenv').config({ path: __dirname+'/./../.env' })
+
 const apiConfigs = require('../api/db_configs');
 
 const defaultConfigs = {

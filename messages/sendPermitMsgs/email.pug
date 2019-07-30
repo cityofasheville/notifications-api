@@ -1,11 +1,26 @@
 html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="x-apple-disable-message-reformatting")
+    link(rel="stylesheet", href="style.css", data-inline)
+    title Development Notification
   body
-    h3 The following permits were issued yesterday.
-
+    h1 New Development Applications
+    p The following permit applications were submitted to the City of Asheville.  Follow the link to learn more about each proposed project.
+    br
     ul
       each val in listOfTopics
         li
-            a(href='https://dev-simplicity.ashevillenc.gov/permits/'+val.permit_num) #{val.name}
-
-
-    a(href=unsub_url) Unsubscribe
+            a(href='https://simplicity.ashevillenc.gov/permits/'+val.permit_num) #{val.name}
+    br
+    br
+    br
+    p You are receiving this email because you signed up for notifications.  No longer interested?
+    br
+    ul
+      li
+        a(href=unsub_url) Unsubscribe
+      li
+        a(href='https://notifications.ashevillenc.gov') Change your preferences

@@ -23,7 +23,7 @@ async function recipientSelection() {
     INNER JOIN note.send_types
       ON user_preferences.id = send_types.user_id
     INNER JOIN note.subscriptions
-      ON user_preferences.id = subscriptions.user_id  
+      ON user_preferences.id = subscriptions.user_id	
     INNER JOIN note.tags
       ON subscriptions.tag_id = tags.id
     INNER JOIN note.topic_tags
@@ -53,14 +53,19 @@ async function recipientSelection() {
       }
     });
 
-console.log(recipients);
-
     noteClient.release();
     return Promise.resolve(recipients);
   } catch (e) { 
     return Promise.reject(e);
   }
 };
+
+//This allows module to be called directly from command line for testing
+if (require.main === module) {
+  recipientSelection().then(
+    result => console.log(result)
+  )
+}
 
 module.exports = recipientSelection;
 

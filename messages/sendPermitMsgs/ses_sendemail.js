@@ -1,4 +1,5 @@
 let AWS = require('aws-sdk');
+require('dotenv').config({ path: '../../.env' })
 
 AWS.config.update({region: 'us-east-1'});
 
@@ -24,13 +25,13 @@ let params = {
       Data: 'City of Asheville Notifications'
      }
     },
-  Source: process.env.EMAIL_SENDER, /* required */
+  Source: process.env.email_sender, /* required */
   ReplyToAddresses: [
-     process.env.EMAIL_SENDER,
+     process.env.email_sender,
   ],
 };
 
-function ses_sendemail(emailAddr, htmlEmail){
+function ses_sendemail(emailAddr, htmlEmail, callback){
     params.Destination.ToAddresses[0] = emailAddr;
     params.Message.Body.Html.Data = htmlEmail;
     params.Message.Body.Text.Data = htmlEmail; //TODO: plain text
@@ -40,11 +41,10 @@ function ses_sendemail(emailAddr, htmlEmail){
     
     // Handle promise's fulfilled/rejected states
     sendPromise.then(
-    function(data) {
-        console.log(data.MessageId);
-    }).catch(
-        function(err) {
-        console.error(err, err.stack);
+    data => {
+      callback("Email sent: " + emailAddr + " " + data.MessageId);
+    }).catch( function(err) {
+      callback("Error sending email: " + emailAddr);
     });
 }
 
