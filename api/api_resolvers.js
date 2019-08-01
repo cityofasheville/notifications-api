@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
 
+const { URL } = require('url');
 const getDbConnection = require('../common/db');
 const cryptofuncs = require('./cryptofuncs');
-const { URL  }= require('url');
 
 const pool = getDbConnection('note'); // Initialize the connection.
 
@@ -37,8 +37,7 @@ async function getMessage(parent, args, context) { // gets a message, its topic,
     ) as msg`, [args.id]);
     const ret = rows[0].results;
     return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -48,8 +47,7 @@ async function getCategory(parent, args, context) {
   try {
     const result = await client.query('select id, name from note.categories where id = $1', [args.id]);
     return Promise.resolve(result.rows[0]);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -96,8 +94,7 @@ async function getUserPreference(parent, args, context) {
     `, [args.email]);
     const ret = rows[0] ? rows[0].results : null;
     return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -107,8 +104,7 @@ async function getTag(parent, args, context) {
   try {
     const result = await client.query('select id, name, category_id from note.tags where id = $1', [args.id]);
     return Promise.resolve(result.rows[0]);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -118,8 +114,7 @@ async function getTags(parent, args, context) {
   try {
     const result = await client.query('select id, name, category_id from note.tags');
     return Promise.resolve(result.rows);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -129,8 +124,7 @@ async function getTopics(parent, args, context) {
   try {
     const result = await client.query('select id, name from note.topics');
     return Promise.resolve(result.rows);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -140,8 +134,7 @@ async function getCategories(parent, args, context) {
   try {
     const result = await client.query('select id, name from note.categories');
     return Promise.resolve(result.rows);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -151,8 +144,7 @@ async function getTagsForCategory(category, args, context) {
   try {
     const result = await client.query('select id, name, category_id from note.tags where category_id = $1', [category.id]);
     return Promise.resolve(result.rows);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -163,8 +155,7 @@ async function getCategoryFromTag(tag, args, context) {
     const result = await client.query('select id, name from note.categories where id = $1',
       [tag.category_id]);
     return Promise.resolve(result.rows[0]);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -194,8 +185,7 @@ async function getSubscriptionsFromTag(tag, args, context) {
     ) as p`, [tag.id]);
     const ret = rows[0].results;
     return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -225,8 +215,7 @@ async function getTopicsFromTag(tag, args, context) {
     `, [tag.id]);
     const ret = rows[0].results;
     return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -239,8 +228,7 @@ async function createTopic(obj, args, context) {
     `, [args.name]);
     const ret = rows[0];
     return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -253,8 +241,7 @@ async function deleteTopic(obj, args, context) {
     `, [args.id]);
     const ret = rows[0];
     return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -267,8 +254,7 @@ async function createTag(obj, args, context) {
     `, [args.tag.name, args.tag.category]);
     const ret = rows[0];
     return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -281,54 +267,51 @@ async function deleteTag(obj, args, context) {
     `, [args.id]);
     const ret = rows[0];
     return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
 
 async function createUserPreference(obj, args, context) {
-  let user_id;
-  let user_location_x;
-  let user_location_y;
+  let userId;
+  let userLocationX;
+  let userLocationY;
   const client = await pool.connect();
   try {
     // see if they already exist
-    const emailsendtype = args.user_preference.send_types.find(function(sendtype) {
-      return sendtype.type = 'EMAIL';
-    }); 
+    const emailsendtype = args.user_preference.send_types.find(sendtype => sendtype.type === 'EMAIL');
     const { rows } = await client.query(`  
     select send_types.user_id from note.send_types where email = $1;
-    `, [ emailsendtype.email ]);
+    `, [emailsendtype.email]);
 
-    if(rows[0]) { //already exist
-      user_id = rows[0].user_id;
-      if(args.user_preference.location_x && args.user_preference.location_y) {
+    if (rows[0]) { // already exist
+      userId = rows[0].user_id;
+      if (args.user_preference.location_x && args.user_preference.location_y) {
         await client.query(`
         update note.user_preferences set location_x = $2, location_y = $3 where id = $1;
-        `, [ user_id, args.user_preference.location_x, args.user_preference.location_y]);
-        user_location_x = args.user_preference.location_x;
-        user_location_y = args.user_preference.location_y;  
-      }else{  //user exists but didn't send new x/y
-        const { rows } = await client.query(`
+        `, [userId, args.user_preference.location_x, args.user_preference.location_y]);
+        userLocationX = args.user_preference.location_x;
+        userLocationY = args.user_preference.location_y;
+      } else { // user exists but didn't send new x/y
+        const { rows: upRows } = await client.query(`
         SELECT user_preferences.location_x, user_preferences.location_y
         FROM note.user_preferences
         WHERE user_preferences.id = $1
-        `, [user_id]);
-        user_location_x = rows[0].location_x;
-        user_location_y = rows[0].location_y;  
+        `, [userId]);
+        userLocationX = upRows[0].location_x;
+        userLocationY = upRows[0].location_y;
       }
-    }else{ // new
-      const { rows } = await client.query(`  
+    } else { // new
+      const { rows: newUpRows } = await client.query(`  
       insert into note.user_preferences(location_x, location_y)VALUES($1, $2) returning id, location_x, location_y;
-      `, [ args.user_preference.location_x, args.user_preference.location_y ]);
-      user_id = rows[0].id;
-      user_location_x = rows[0].location_x;
-      user_location_y = rows[0].location_y;      
+      `, [args.user_preference.location_x, args.user_preference.location_y]);
+      userId = newUpRows[0].id;
+      userLocationX = newUpRows[0].location_x;
+      userLocationY = newUpRows[0].location_y;
     }
 
-    if(args.user_preference.send_types) {
-      for(send_type of args.user_preference.send_types){
+    if (args.user_preference.send_types) {
+      args.user_preference.send_types.map(async (sendType) => {
         await client.query(` 
         insert into note.send_types(
           user_id, type, email, phone)
@@ -336,27 +319,27 @@ async function createUserPreference(obj, args, context) {
         on conflict (user_id, type) do
         update set email = $3, phone = $4
         where send_types.user_id = $1 and send_types.type = $2;
-        `, [ user_id, send_type.type, send_type.email, send_type.phone ]);
-      }
+        `, [userId, sendType.type, sendType.email, sendType.phone]);
+      });
     }
 
-    if(args.user_preference.subscriptions) {
+    if (args.user_preference.subscriptions) {
       // delete subscriptions not in array
-      const keepTags = args.user_preference.subscriptions.map(scrip=>parseInt(scrip.tag.id));
+      const keepTags = args.user_preference.subscriptions.map(scrip => parseInt(scrip.tag.id, 10));
       const res = await client.query(`
       select * from note.subscriptions
       where subscriptions.user_id = $1;
-      `, [ user_id ]);
-      for ( row of res.rows) {
+      `, [userId]);
+      res.rows.map(async (row) => {
         if (keepTags.indexOf(row.tag_id) === -1) {
           await client.query(`
           delete from note.subscriptions
           where subscriptions.user_id = $1
           and subscriptions.tag_id = $2;
-          `, [ user_id, row.tag_id ])
+          `, [userId, row.tag_id]);
         }
-      };
-      for(subscription of args.user_preference.subscriptions){
+      });
+      args.user_preference.subscriptions.map(async (subscription) => {
         await client.query(`
         insert into note.subscriptions(
           user_id, tag_id, radius_miles, whole_city)
@@ -364,18 +347,18 @@ async function createUserPreference(obj, args, context) {
         on conflict (user_id, tag_id) do
         update set radius_miles = $3, whole_city = $4
         where subscriptions.user_id = $1 and subscriptions.tag_id = $2
-        `, [ user_id, subscription.tag.id, subscription.radius_miles, subscription.whole_city ]);
-      }
-    }else{
+        `, [userId, subscription.tag.id, subscription.radius_miles, subscription.whole_city]);
+      });
+    } else {
       await client.query(`
       delete from note.subscriptions
       where subscriptions.user_id = $1;
-      `, [ user_id ]);
+      `, [userId]);
     }
-    const ret = Object.assign({},args.user_preference,{id: user_id, location_x: user_location_x, location_y: user_location_y})
+    const ret = Object.assign({}, args.user_preference,
+      { id: userId, location_x: userLocationX, location_y: userLocationY });
     return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
@@ -383,23 +366,21 @@ async function createUserPreference(obj, args, context) {
 async function updateUserPreference(obj, args, context) {
   const client = await pool.connect();
   try {
-    const emailsendtype = args.user_preference.send_types.find(function(sendtype) {
-      return sendtype.type = 'EMAIL';
-    }); 
+    const emailsendtype = args.user_preference.send_types.find(sendtype => sendtype.type === 'EMAIL');
 
-    //Get the user_id
+    // Get the user_id
     const { rows } = await client.query(`  
     select send_types.user_id from note.send_types where email = $1;
-    `, [ emailsendtype.email ]);
-    const user_id = rows[0].user_id;
+    `, [emailsendtype.email]);
+    const userId = rows[0].user_id;
 
-    //update user
+    // update user
     await client.query(`
     update note.user_preferences set location_x = $2, location_y = $3 where id = $1;
-    `, [ user_id, args.user_preference.location_x, args.user_preference.location_y]);
+    `, [userId, args.user_preference.location_x, args.user_preference.location_y]);
 
-    //update or insert send_types (TODO: is delete needed?)
-    for(send_type of args.user_preference.send_types){
+    // update or insert send_types (TODO: is delete needed?)
+    args.user_preference.send_types.map(async (sendType) => {
       await client.query(` 
       insert into note.send_types(
         user_id, type, email, phone)
@@ -407,27 +388,27 @@ async function updateUserPreference(obj, args, context) {
       on conflict (user_id, type) do
       update set email = $3, phone = $4
       where send_types.user_id = $1 and send_types.type = $2;
-      `, [ user_id, send_type.type, send_type.email, send_type.phone ]);
-    }
+      `, [userId, sendType.type, sendType.email, sendType.phone]);
+    });
 
     // delete subscriptions not in array
-    const keepTags = args.user_preference.subscriptions.map(scrip=>parseInt(scrip.tag.id));
+    const keepTags = args.user_preference.subscriptions.map(scrip => parseInt(scrip.tag.id, 10));
     const res = await client.query(`
     select * from note.subscriptions
     where subscriptions.user_id = $1;
-    `, [ user_id ]);
-    for ( row of res.rows) {
+    `, [userId]);
+    res.rows.map(async (row) => {
       if (keepTags.indexOf(row.tag_id) === -1) {
         await client.query(`
         delete from note.subscriptions
         where subscriptions.user_id = $1
         and subscriptions.tag_id = $2;
-        `, [ user_id, row.tag_id ])
+        `, [userId, row.tag_id]);
       }
-    };
+    });
 
     // insert or update subscriptions
-    for(subscription of args.user_preference.subscriptions){
+    args.user_preference.subscriptions.map(async (subscription) => {
       await client.query(`
       insert into note.subscriptions(
         user_id, tag_id, radius_miles, whole_city)
@@ -435,58 +416,56 @@ async function updateUserPreference(obj, args, context) {
       on conflict (user_id, tag_id) do
       update set radius_miles = $3, whole_city = $4
       where subscriptions.user_id = $1 and subscriptions.tag_id = $2
-      `, [ user_id, subscription.tag.id, subscription.radius_miles, subscription.whole_city ]);
-    }
-    
+      `, [userId, subscription.tag.id, subscription.radius_miles, subscription.whole_city]);
+    });
+
     const ret = Object.assign({},
-      { id: user_id, 
-        location_x: args.user_preference.location_x, 
+      {
+        id: userId,
+        location_x: args.user_preference.location_x,
         location_y: args.user_preference.location_y,
         subscriptions: args.user_preference.subscriptions,
-        send_types: args.user_preference.send_types    
-      }); console.log(ret);console.log(ret.subscriptions);
+        send_types: args.user_preference.send_types,
+      }); console.log(ret); console.log(ret.subscriptions);
     return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
-
 }
 
 async function deleteUserPreference(obj, args, context) {
-  let ret = {
+  const ret = {
     error: null,
-    deletedEmail: args.email
-  }
+    deletedEmail: args.email,
+  };
   const client = await pool.connect();
   try {
     const result = await client.query(`  
       select send_types.user_id from note.send_types where email = $1;
     `, [args.email]);
-    if(result.rowCount > 0){
-      const user_id = result.rows[0].user_id;
+    if (result.rowCount > 0) {
+      const userId = result.rows[0].user_id;
       await client.query(`  
         delete from note.subscriptions where user_id = $1;
-      `, [user_id]);
+      `, [userId]);
       await client.query(`  
         delete from note.send_types where user_id = $1;
-      `, [user_id]);
+      `, [userId]);
       const { rows } = await client.query(`  
         delete from note.user_preferences where id = $1 returning id;
-      `, [user_id]);
+      `, [userId]);
       // if(!rows[0].id){
       //   ret.error = 'NOTINDB';
-      // }  
+      // }
     }
     return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }
 
 async function deleteUserPreferenceSecure(obj, args, context) {
-  let ret = {};
+  const ret = {};
   ret.error = null;
   const urlObj = new URL(args.url);
   const client = await pool.connect();
@@ -496,34 +475,33 @@ async function deleteUserPreferenceSecure(obj, args, context) {
     const encodedEmail = encodeURIComponent(decodedEmail);
     const urlHash = urlObj.searchParams.get('h');
     const urlExpireEpoch = urlObj.searchParams.get('x');
-    const hashShouldBe = cryptofuncs.getHash(encodedEmail,urlExpireEpoch)
-    if (urlExpireEpoch > Date.now()) { //not expired
-      if(hashShouldBe === urlHash){    //hash matches
+    const hashShouldBe = cryptofuncs.getHash(encodedEmail, urlExpireEpoch);
+    if (urlExpireEpoch > Date.now()) { // not expired
+      if (hashShouldBe === urlHash) { // hash matches
         const result = await client.query(`  
           select send_types.user_id from note.send_types where email = $1;
-        `, [ decodedEmail ]);
-        if(result.rowCount > 0){
-          const user_id = result.rows[0].user_id;
+        `, [decodedEmail]);
+        if (result.rowCount > 0) {
+          const userId = result.rows[0].user_id;
           await client.query(`  
             delete from note.subscriptions where user_id = $1;
-          `, [user_id]);
+          `, [userId]);
           await client.query(`  
             delete from note.send_types where user_id = $1;
-          `, [user_id]);
+          `, [userId]);
           const { rows } = await client.query(`  
             delete from note.user_preferences where id = $1 returning id;
-          `, [user_id]);
+          `, [userId]);
           // if(!rows[0].id){
         }
-      }else{
+      } else {
         ret.error = 'BADHASH';
-      }  
-    }else{
+      }
+    } else {
       ret.error = 'EXPIRED';
-    }  
+    }
     return Promise.resolve(ret);
-  } catch (e) {  return Promise.reject(e); }
-  finally {
+  } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
 }

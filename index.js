@@ -57,11 +57,11 @@ app.use(session({
 }));
 
 // Set up CORS
-//const origin = 'https://dev-notifications-frontend.ashevillenc.gov/';
-//const origin = 'http://localhost:3000';
+// const origin = 'https://dev-notifications-frontend.ashevillenc.gov/';
+// const origin = 'http://localhost:3000';
 const origin = true;
 const corsOptions = {
-  origin: origin,
+  origin,
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -117,5 +117,6 @@ server.applyMiddleware({ app, cors: corsOptions });
 
 // And off we go!
 app.listen({ port: GRAPHQL_PORT }, () => {
+  // eslint-disable-next-line no-console
   console.log(`Server ready at http://localhost:${GRAPHQL_PORT}${server.graphqlPath}`);
 });
