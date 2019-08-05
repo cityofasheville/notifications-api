@@ -23,7 +23,14 @@ UNION
     b.latitude_wgs AS y
    FROM permits a
      LEFT JOIN coa_bc_address_master b ON a.civic_address_id::text = b.civicaddress_id::character varying(50)::text
-  WHERE a.permit_group::text = 'Planning'::text AND (a.permit_type::text = 'Subdivision'::text AND a.permit_subtype::text = 'Major'::text OR a.permit_type::text = 'Development'::text AND (a.permit_subtype::text = ANY (ARRAY['Level II'::character varying, 'Level III'::character varying, 'Conditional Zoning'::character varying, 'Conditional Use'::character varying]::text[])))
+  WHERE a.permit_group::text = 'Planning'::text AND (
+      a.permit_type::text = 'Subdivision'::text AND a.permit_subtype::text = 'Major'::text OR 
+      a.permit_type::text = 'Development'::text AND (
+          a.permit_subtype::text = ANY (ARRAY[
+              'Level II'::character varying, 
+              'Level III'::character varying, 
+              'Conditional Zoning'::character varying, 
+              'Conditional Use'::character varying]::text[])))
 UNION
  SELECT 'Affordable'::text AS tag,
     a.permit_num,

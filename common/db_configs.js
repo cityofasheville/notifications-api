@@ -4,15 +4,16 @@
   template repository, and will interfere with the ability to upgrade common code from
   the template repository.
 ***************************************************************************************** */
-require('dotenv').config({ path: __dirname+'/./../.env' })
+const path = require('path');
 
+require('dotenv').config({ path: path.join(__dirname, '/./../.env') });
 const apiConfigs = require('../api/db_configs');
 
 const defaultConfigs = {
   note: {
     db_type: 'pg',
-    host:     process.env.note_host,
-    user:     process.env.note_user,
+    host: process.env.note_host,
+    user: process.env.note_user,
     password: process.env.note_password,
     database: process.env.note_database,
     port: 5432,
@@ -20,13 +21,13 @@ const defaultConfigs = {
   },
   mds: {
     db_type: 'pg',
-    host:     process.env.mds_host,
-    user:     process.env.mds_user,
+    host: process.env.mds_host,
+    user: process.env.mds_user,
     password: process.env.mds_password,
     database: process.env.mds_database,
     port: 5432,
     ssl: false,
-  },  
+  },
 };
 
 /*

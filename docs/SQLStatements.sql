@@ -50,7 +50,7 @@ INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury
 -------------------------------------
 -- CREATE DB 
 
-DROP TABLE note.categories CASCADE;
+-- DROP TABLE note.categories CASCADE;
 
 CREATE TABLE note.categories
 (
@@ -60,7 +60,7 @@ CREATE TABLE note.categories
 );
 
 ---------------------------------------------------------------------------------
-DROP TABLE note.tags CASCADE;
+-- DROP TABLE note.tags CASCADE;
 
 CREATE TABLE note.tags
 (
@@ -70,7 +70,7 @@ CREATE TABLE note.tags
     CONSTRAINT tags_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
-DROP TABLE note.topics CASCADE;
+-- DROP TABLE note.topics CASCADE;
 
 CREATE TABLE note.topics
 (
@@ -82,7 +82,7 @@ CREATE TABLE note.topics
     CONSTRAINT topics_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
- DROP TABLE note.topic_tags CASCADE;
+ -- DROP TABLE note.topic_tags CASCADE;
 
 CREATE TABLE note.topic_tags
 (
@@ -91,7 +91,7 @@ CREATE TABLE note.topic_tags
     topic_id integer NOT NULL REFERENCES note.topics(id),
     CONSTRAINT topic_tags_pkey PRIMARY KEY (id)
 );---------------------------------------------------------------------------------
-DROP TABLE note.messages CASCADE;
+-- DROP TABLE note.messages CASCADE;
 
 CREATE TABLE note.messages
 (
@@ -103,7 +103,7 @@ CREATE TABLE note.messages
     CONSTRAINT messages_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
-DROP TABLE note.user_preferences CASCADE;
+-- DROP TABLE note.user_preferences CASCADE;
 
 CREATE TABLE note.user_preferences
 (
@@ -114,7 +114,7 @@ CREATE TABLE note.user_preferences
 );
 
 ---------------------------------------------------------------------------------
-DROP TABLE note.send_types CASCADE;
+-- DROP TABLE note.send_types CASCADE;
 
 CREATE TABLE note.send_types
 (
@@ -126,7 +126,7 @@ CREATE TABLE note.send_types
     CONSTRAINT send_types_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
-DROP TABLE note.subscriptions CASCADE;
+-- DROP TABLE note.subscriptions CASCADE;
 
 CREATE TABLE note.subscriptions
 (
@@ -139,7 +139,7 @@ CREATE TABLE note.subscriptions
 );
 
 ---------------------------------------------------------------------------------
-DROP TABLE note.project_types CASCADE;
+-- DROP TABLE note.project_types CASCADE;
 
 CREATE TABLE note.project_types
 (
