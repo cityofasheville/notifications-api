@@ -125,6 +125,9 @@ CREATE TABLE note.send_types
     phone character varying COLLATE pg_catalog."default",
     CONSTRAINT send_types_pkey PRIMARY KEY (id)
 );
+
+CREATE UNIQUE INDEX send_types_user_id_type ON note.send_types USING btree (user_id, type);
+
 ---------------------------------------------------------------------------------
 -- DROP TABLE note.subscriptions CASCADE;
 
@@ -137,6 +140,8 @@ CREATE TABLE note.subscriptions
     whole_city boolean,
     CONSTRAINT subscriptions_pkey PRIMARY KEY (id)
 );
+
+CREATE UNIQUE INDEX subscriptions_user_id_tag_id ON note.subscriptions USING btree (user_id, tag_id);
 
 ---------------------------------------------------------------------------------
 -- DROP TABLE note.project_types CASCADE;
