@@ -6,9 +6,7 @@ AWS.config.update({ region: 'us-east-1' });
 
 const params = {
   Destination: { /* required */
-    ToAddresses: [
-      '',
-    ],
+    ToAddresses: [],
   },
   Message: { /* required */
     Body: { /* required */
@@ -33,7 +31,7 @@ const params = {
 };
 
 function sesSendemail(emailAddr, htmlEmail, callback) {
-  params.Destination.ToAddresses = emailAddr;
+  params.Destination.ToAddresses.push(emailAddr);
   params.Message.Body.Html.Data = htmlEmail;
   params.Message.Body.Text.Data = htmlEmail; // TODO: plain text
 
