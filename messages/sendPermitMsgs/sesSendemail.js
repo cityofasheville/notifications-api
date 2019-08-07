@@ -38,12 +38,12 @@ function sesSendemail(emailAddr, htmlEmail, callback) {
   params.Message.Body.Text.Data = htmlEmail; // TODO: plain text
 
   // Create the promise and SES service object
-  const sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+  sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
 
   // Handle promise's fulfilled/rejected states
   sendPromise.then(
     (data) => {
-      callback(`Email sent: ${JSON.stringify(data)} ${data.MessageId}`);
+      callback(`Email sent: ${JSON.stringify(params)} ${data.MessageId}`);
     },
   ).catch((err) => {
     callback(`Error sending email: ${emailAddr} Err: ${err}`);
