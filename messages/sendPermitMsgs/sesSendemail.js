@@ -4,7 +4,7 @@ require('dotenv').config({ path: path.join(__dirname, '/./../../.env') });
 
 AWS.config.update({ region: 'us-east-1' });
 
-const params = {
+let params = {
   Destination: { /* required */
     ToAddresses: [],
   },
@@ -31,12 +31,12 @@ const params = {
 };
 
 function sesSendemail(emailAddr, htmlEmail, callback) {
-  params.Destination.ToAddresses.push(emailAddr);
+  params.Destination.ToAddresses[0] = emailAddr;
   params.Message.Body.Html.Data = htmlEmail;
   params.Message.Body.Text.Data = htmlEmail; // TODO: plain text
 
   // Create the promise and SES service object
-  sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+  const sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
 
   // Handle promise's fulfilled/rejected states
   sendPromise.then(
