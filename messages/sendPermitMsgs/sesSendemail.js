@@ -7,7 +7,7 @@ AWS.config.update({ region: 'us-east-1' });
 
 
 function sesSendemail(emailAddr, htmlEmail, callback) {
-  let params = {
+  const params = {
     Destination: { /* required */
       ToAddresses: [emailAddr],
     },
@@ -35,7 +35,7 @@ function sesSendemail(emailAddr, htmlEmail, callback) {
 
   callback(`${params.Destination.ToAddresses[0]} ${params.Message.Body.Html.Data}\n`);
   // Create the promise and SES service object
-  sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+  const sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
 
   // Handle promise's fulfilled/rejected states
   sendPromise.then(
