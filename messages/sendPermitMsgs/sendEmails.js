@@ -18,6 +18,7 @@ async function sendEmails(recipients) {
       sesSendemail(emailAddr, htmlEmail, (returnmsg) => {
         // eslint-disable-next-line no-console
         console.log(returnmsg);
+        console.log(JSON.stringify(recipient));
         logFile.write(`${returnmsg}\n`);
       });
     });

@@ -20,7 +20,9 @@ async function loadPermits() {
       const permits = await mdsClient.query(`
       select tag, permit_num, applied_date, "name", x, y
       FROM internal.notification_emails
-      where applied_date::date = current_date - '1 days'::interval;
+--      where applied_date::date = current_date - '1 days'::interval;
+   where applied_date::date >= current_date - '30 days'::interval;
+
       `);
       Promise.all(
         permits.rows.map(async (row) => {
