@@ -33,7 +33,7 @@ const params = {
 };
 
 function sesSendemail(emailAddr, htmlEmail, callback) {
-  params.Destination.ToAddresses[0] = emailAddr;
+  params.Destination.ToAddresses = emailAddr;
   params.Message.Body.Html.Data = htmlEmail;
   params.Message.Body.Text.Data = htmlEmail; // TODO: plain text
 
