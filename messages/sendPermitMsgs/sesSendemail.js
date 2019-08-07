@@ -35,16 +35,16 @@ function sesSendemail(emailAddr, htmlEmail, callback) {
 
   callback(`${params.Destination.ToAddresses[0]} ${params.Message.Body.Html.Data}\n`);
   // Create the promise and SES service object
-  // sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+  sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
 
-  // // Handle promise's fulfilled/rejected states
-  // sendPromise.then(
-  //   (data) => {
-  //     callback(`Email sent: ${JSON.stringify(params)} ${data.MessageId}`);
-  //   },
-  // ).catch((err) => {
-  //   callback(`Error sending email: ${emailAddr} Err: ${err}`);
-  // });
+  // Handle promise's fulfilled/rejected states
+  sendPromise.then(
+    (data) => {
+      callback(`Email sent: ${JSON.stringify(params)} ${data.MessageId}`);
+    },
+  ).catch((err) => {
+    callback(`Error sending email: ${emailAddr} Err: ${err}`);
+  });
 }
 
 module.exports = sesSendemail;
