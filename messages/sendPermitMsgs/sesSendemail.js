@@ -4,48 +4,47 @@ require('dotenv').config({ path: path.join(__dirname, '/./../../.env') });
 
 AWS.config.update({ region: 'us-east-1' });
 
-let params = {
-  Destination: { /* required */
-    ToAddresses: [],
-  },
-  Message: { /* required */
-    Body: { /* required */
-      Html: {
-        Charset: 'UTF-8',
-        Data: '',
-      },
-      Text: {
-        Charset: 'UTF-8',
-        Data: '',
-      },
-    },
-    Subject: {
-      Charset: 'UTF-8',
-      Data: 'City of Asheville Notifications',
-    },
-  },
-  Source: process.env.email_sender, /* required */
-  ReplyToAddresses: [
-    process.env.email_sender,
-  ],
-};
+
 
 function sesSendemail(emailAddr, htmlEmail, callback) {
-  params.Destination.ToAddresses[0] = emailAddr;
-  params.Message.Body.Html.Data = htmlEmail;
-  params.Message.Body.Text.Data = htmlEmail; // TODO: plain text
-
-  // Create the promise and SES service object
-  const sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
-
-  // Handle promise's fulfilled/rejected states
-  sendPromise.then(
-    (data) => {
-      callback(`Email sent: ${JSON.stringify(params)} ${data.MessageId}`);
+  let params = {
+    Destination: { /* required */
+      ToAddresses: [emailAddr],
     },
-  ).catch((err) => {
-    callback(`Error sending email: ${emailAddr} Err: ${err}`);
-  });
+    Message: { /* required */
+      Body: { /* required */
+        Html: {
+          Charset: 'UTF-8',
+          Data: htmlEmail,
+        },
+        Text: {
+          Charset: 'UTF-8',
+          Data: htmlEmail,
+        },
+      },
+      Subject: {
+        Charset: 'UTF-8',
+        Data: 'City of Asheville Notifications',
+      },
+    },
+    Source: process.env.email_sender, /* required */
+    ReplyToAddresses: [
+      process.env.email_sender,
+    ],
+  };
+
+  callback(`${params.Destination.ToAddresses[0]} ${params.Message.Body.Html.Data}\n`);
+  // Create the promise and SES service object
+  // sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+
+  // // Handle promise's fulfilled/rejected states
+  // sendPromise.then(
+  //   (data) => {
+  //     callback(`Email sent: ${JSON.stringify(params)} ${data.MessageId}`);
+  //   },
+  // ).catch((err) => {
+  //   callback(`Error sending email: ${emailAddr} Err: ${err}`);
+  // });
 }
 
 module.exports = sesSendemail;
