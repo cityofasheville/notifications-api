@@ -19,7 +19,7 @@ async function sendEmails(recipients) {
       recipient.unsub_url = cryptofuncs.createUnsubUrl(emailAddr);
       const htmlEmail = compiledFunction(recipient);
       sesSendemail(emailAddr, htmlEmail, (returnmsg) => {
-        logger.info(`${returnmsg}\n`);
+        logger.info(returnmsg);
       });
     });
     return Promise.resolve();
