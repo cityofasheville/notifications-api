@@ -15,12 +15,14 @@ async function sendEmails(recipients) {
       recipient.listOfTopics = recipients[emailAddr];
       recipient.unsub_url = cryptofuncs.createUnsubUrl(emailAddr);
       const htmlEmail = compiledFunction(recipient);
-      sesSendemail(emailAddr, htmlEmail, (returnmsg) => {
-        // eslint-disable-next-line no-console
-        console.log(returnmsg);
-        console.log(JSON.stringify(recipient));
-        logFile.write(`${returnmsg}\n`);
-      });
+      // sesSendemail(emailAddr, htmlEmail, (returnmsg) => {
+      //   // eslint-disable-next-line no-console
+      //   console.log(returnmsg);
+      //   console.log(JSON.stringify(recipient));
+      //   logFile.write(`${returnmsg}\n`);
+      // });
+      logFile.write(JSON.stringify(recipient));
+      
     });
     return Promise.resolve();
   } catch (e) {
