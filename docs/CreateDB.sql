@@ -42,7 +42,7 @@ INSERT INTO note.topics(name,permit_num,location_x,location_y)VALUES('West Estat
 INSERT INTO note.topic_tags(topic_id,tag_id)VALUES(1,1),(2,1),(1,3);
 
 INSERT INTO note.user_preferences(location_x,location_y)VALUES(-82.5510697,35.5955683);
-INSERT INTO note.send_types(user_id,type,email,phone)VALUES(1,'EMAIL','jtwilson@ashevillenc.gov',null);
+INSERT INTO note.send_types(user_id,type,email,phone)VALUES(1,'EMAIL','user@ashevillenc.gov',null);
 INSERT INTO note.subscriptions(user_id,tag_id,radius_miles,whole_city)VALUES(1,1,0.5,false),(1,2,null,true);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(1, 'Paint door black',false);
 INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury Condos replacing Pub',false);

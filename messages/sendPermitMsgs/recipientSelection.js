@@ -1,8 +1,8 @@
 // Returns objects shaped like this:
-// { 'jtwilson@ashevillenc.gov':
+// { 'user@ashevillenc.gov':
 //   [
 //     { type: 'EMAIL',
-//       email: 'jtwilson@ashevillenc.gov',
+//       email: 'user@ashevillenc.gov',
 //       phone: null,
 //       name: '30 Watauga Street Subdivision',
 //       permit_num: '19-03813PZ' },

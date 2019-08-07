@@ -23,6 +23,6 @@ function createUnsubUrl(email) { // build a url to unsubscribe this email
 // This allows module to be called directly from command line for testing
 if (require.main === module) {
   // eslint-disable-next-line no-console
-  console.log(createUnsubUrl('jtwilson@ashevillenc.gov'));
+  console.log(createUnsubUrl('user@ashevillenc.gov'));
 }
 module.exports = { getHash, createUnsubUrl };

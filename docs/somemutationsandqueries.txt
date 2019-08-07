@@ -17,7 +17,7 @@ mutation createPeep($user_preference: UserPreferenceInput!) {
     "send_types": [
       {
         "type": "EMAIL",
-        "email": "jtwilson@ashevillenc.gov"
+        "email": "user@ashevillenc.gov"
       }
     ],
     "subscriptions": [
@@ -33,7 +33,7 @@ mutation createPeep($user_preference: UserPreferenceInput!) {
 }
 
 query GetUserPreference {
-  user_preference(email: "jtwilson@ashevillenc.gov") {
+  user_preference(email: "user@ashevillenc.gov") {
 id
     location_x
     location_y
@@ -84,7 +84,7 @@ id
     "send_types": [
       {
         "type": "EMAIL",
-        "email": "jtwilson@ashevillenc.gov"
+        "email": "user@ashevillenc.gov"
       }
     ],
     "subscriptions": [

@@ -1,13 +1,16 @@
 const pug = require('pug');
 const path = require('path');
-const fs = require('fs');
+const Logger = require('coa-node-logging');
 const sesSendemail = require('./sesSendemail');
 const cryptofuncs = require('../../api/cryptofuncs');
+
+const logFile = './logfile.log';
+const name = 'email-logger';
+const logger = new Logger(name, logFile);
 
 const compiledFunction = pug.compileFile(path.join(__dirname, '/email.pug'));
 
 async function sendEmails(recipients) {
-  const logFile = fs.createWriteStream('./logfile.log');
   try {
     // send emails
     Object.keys(recipients).forEach((emailAddr) => {
@@ -16,11 +19,8 @@ async function sendEmails(recipients) {
       recipient.unsub_url = cryptofuncs.createUnsubUrl(emailAddr);
       const htmlEmail = compiledFunction(recipient);
       sesSendemail(emailAddr, htmlEmail, (returnmsg) => {
-        // eslint-disable-next-line no-console
-        console.log(returnmsg);
-        logFile.write(`${returnmsg}\n`);
+        logger.info(`${returnmsg}\n`);
       });
-
     });
     return Promise.resolve();
   } catch (e) {

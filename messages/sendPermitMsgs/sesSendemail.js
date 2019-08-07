@@ -4,8 +4,6 @@ require('dotenv').config({ path: path.join(__dirname, '/./../../.env') });
 
 AWS.config.update({ region: 'us-east-1' });
 
-
-
 function sesSendemail(emailAddr, htmlEmail, callback) {
   const params = {
     Destination: { /* required */
