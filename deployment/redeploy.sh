@@ -9,3 +9,5 @@ sudo systemctl restart notifications2
 
 systemctl restart devnotifications1
 systemctl restart devnotifications2
+systemctl restart notifications1
+systemctl restart notifications2

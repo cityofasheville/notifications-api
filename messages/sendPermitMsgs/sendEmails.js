@@ -20,6 +20,8 @@ async function sendEmails(recipients) {
       const htmlEmail = compiledFunction(recipient);
       sesSendemail(emailAddr, htmlEmail, (returnmsg) => {
         logger.info(returnmsg);
+        // eslint-disable-next-line no-console
+        console.log(returnmsg);
       });
     });
     return Promise.resolve();

@@ -4,6 +4,7 @@
 const { URL } = require('url');
 const getDbConnection = require('../common/db');
 const cryptofuncs = require('./cryptofuncs');
+const sendConfirmationEmail = require('./confirmationEmail/sendConfirmationEmail');
 
 const pool = getDbConnection('note'); // Initialize the connection.
 
@@ -302,6 +303,7 @@ async function createUserPreference(obj, args, context) {
         userLocationY = upRows[0].location_y;
       }
     } else { // new
+      sendConfirmationEmail(emailsendtype.email);
       const { rows: newUpRows } = await client.query(`  
       insert into note.user_preferences(location_x, location_y)VALUES($1, $2) returning id, location_x, location_y;
       `, [args.user_preference.location_x, args.user_preference.location_y]);
