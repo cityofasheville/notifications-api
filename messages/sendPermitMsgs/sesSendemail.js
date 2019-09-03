@@ -37,7 +37,7 @@ function sesSendemail(emailAddr, htmlEmail, callback) {
   // Handle promise's fulfilled/rejected states
   sendPromise.then(
     (data) => {
-      callback(`Email sent: ${emailAddr} ${data.MessageId}`);
+      callback(`Email sent: ${emailAddr} ${new Date().toISOString()} ${data.MessageId}`);
     },
   ).catch((err) => {
     callback(`Error sending email: ${emailAddr} Err: ${err}`);

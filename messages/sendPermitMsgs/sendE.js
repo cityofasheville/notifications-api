@@ -1,7 +1,7 @@
 const pug = require('pug');
 const path = require('path');
 const Logger = require('coa-node-logging');
-const sesSendemail = require('./sesSendemail');
+const sesS = require('./sesS');
 const cryptofuncs = require('../../api/cryptofuncs');
 
 const logFile = './logfile.log';
@@ -20,14 +20,16 @@ async function sendEmails(recipients) {
   try {
     // eslint-disable-next-line no-restricted-syntax
     for await (const emailAddr of Object.keys(recipients)) {
+      // I used this which eslint didnt complain about until I added the sleep
+      // Object.keys(recipients).forEach((emailAddr) => {
       // eslint-disable-next-line no-await-in-loop
-      await sleep(300);
+      await sleep(1000);
       const recipient = {};
       recipient.listOfTopics = recipients[emailAddr];
       recipient.unsub_url = cryptofuncs.createUnsubUrl(emailAddr);
       const htmlEmail = compiledFunction(recipient);
       // eslint-disable-next-line no-await-in-loop
-      await sesSendemail(emailAddr, htmlEmail, (returnmsg) => {
+      await sesS(emailAddr, htmlEmail, (returnmsg) => {
         logger.info(returnmsg);
         // eslint-disable-next-line no-console
         console.log(returnmsg);
