@@ -17,7 +17,7 @@ async function recipientSelection() {
     const noteClient = await notePool.connect();
     try {
       const tags = await noteClient.query(`
-      select distinct send_types.type, send_types.email, send_types.phone, tags.name || ': ' || topics.name as name, topics.permit_num
+      select distinct send_types.type, send_types.email, send_types.phone, topics.name, topics.permit_num
       from note.user_preferences
       INNER JOIN note.send_types
         ON user_preferences.id = send_types.user_id
