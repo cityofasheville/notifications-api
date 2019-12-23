@@ -34,10 +34,10 @@ jobs:
           tag: '${CIRCLE_SHA1}'
       - aws-ecs/deploy-service-update:
           aws-region: AWS_DEFAULT_REGION
-          family: 'prodreviewsapi'
-          service-name: 'prod-reviewsapi'
-          cluster-name: 'dev_reviewsapi_ecs_cluster'
-          container-image-name-updates: 'container=reviewsapi,tag=${CIRCLE_SHA1}'
+          family: 'notifyapi'
+          service-name: 'notifyapi'
+          cluster-name: 'otifyapi_ecs_cluster'
+          container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
           verify-revision-is-deployed: true
           max-poll-attempts: 30
           poll-interval: 60
