@@ -35,7 +35,7 @@ jobs:
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
       - aws-cli/install
-      - aws-cli/setup:
+      - aws-cli/setup
       - aws-ecs/update-service:
           account-url: ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
