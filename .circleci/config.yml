@@ -72,7 +72,6 @@ jobs:
           tag: '${CIRCLE_SHA1}'
       - aws-ecs/update-service:
           family: 'notifyapi'
-          region: AWS_DEFAULT_REGION
           cluster-name: 'notifyapi_ecs_cluster'
           service-name: 'notifyapi'
           container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
