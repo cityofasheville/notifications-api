@@ -56,12 +56,6 @@ jobs:
   deploy-development:
     <<: *defaults
     steps:
-      - aws-cli/install
-      - aws-cli/setup:
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-region:  AWS_REGION
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          profile-name: default
       - aws-ecr/build-and-push-image:
           account-url: ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
@@ -88,7 +82,7 @@ jobs:
       - aws-cli/install
       - aws-cli/setup:
           aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEYß
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_REGION
       - aws-ecs/update-service:
           family: 'notifyapi'
