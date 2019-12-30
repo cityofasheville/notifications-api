@@ -1,8 +1,7 @@
 version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@0.1.19
-  aws-ecr: circleci/aws-ecr@6.6.0
-  aws-ecs: circleci/aws-ecs@1.0.4
+  aws-ecr: circleci/aws-ecr@6.6.0\
 
 
 defaults: &defaults
@@ -36,10 +35,6 @@ jobs:
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
       - aws-ecs/update-service:
-          account-url: ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
           family: 'notifyapi'
           cluster-name: 'notifyapi_ecs_cluster'
           service-name: 'notifyapi'
@@ -51,10 +46,7 @@ jobs:
           fail-on-verification-timeout: false
   deploy-development:
     <<: *defaults
-    executor: aws-cli/default
     steps:
-      - aws-cli/setup:
-          profile-name: default
       - aws-ecr/build-and-push-image:
           account-url: ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
