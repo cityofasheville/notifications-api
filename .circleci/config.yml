@@ -71,7 +71,7 @@ jobs:
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
       - aws-cli/setup:
-          - profile-name: 'terrauser'
+          profile-name: 'terrauser'
       - aws-ecs/update-service:
           family: 'notifyapi'
           cluster-name: 'notifyapi_ecs_cluster'
