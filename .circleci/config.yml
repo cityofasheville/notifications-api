@@ -35,7 +35,7 @@ jobs:
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
       - aws-cli/install
-      - aws-cli/configure:
+      - aws-cli/setup:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEYß
           aws-region: AWS_REGION
@@ -86,7 +86,7 @@ jobs:
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
       - aws-cli/install
-      - aws-cli/configure:
+      - aws-cli/setup:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEYß
           aws-region: AWS_REGION
