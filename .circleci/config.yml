@@ -16,7 +16,7 @@ jobs:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           region: AWS_DEFAULT_REGION
           repo: 'coa-notificationsapi'
-          tag: '${CIRCLE_SHA1}'
+          tag: ${CIRCLE_SHA1}
           extra-build-args: '--build-arg sessionName=${SESSION_NAME}\
              --build-arg sessionSecret=${SESSION_SECRET}\
              --build-arg maxSessionDays=${MAX_SESSION_DAYS}\
@@ -56,7 +56,7 @@ jobs:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           region: AWS_DEFAULT_REGION
           repo: 'coa-notificationsapi'
-          tag: '${CIRCLE_SHA1}'
+          tag: ${CIRCLE_SHA1}
           extra-build-args: '--build-arg sessionName=${SESSION_NAME}\
              --build-arg sessionSecret=${SESSION_SECRET}\
              --build-arg maxSessionDays=${MAX_SESSION_DAYS}\
