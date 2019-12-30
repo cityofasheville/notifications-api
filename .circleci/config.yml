@@ -7,8 +7,6 @@ orbs:
 defaults: &defaults
   docker:
     - image: circleci/python:3.6
-  executor:
-    - aws-ecr/default
 jobs:
   deploy-production:
     <<: *defaults
@@ -48,6 +46,7 @@ jobs:
           fail-on-verification-timeout: false
   deploy-development:
     <<: *defaults
+    executor: aws-ecr/default
     steps:
       - aws-ecr/build-and-push-image:
           aws-access-key-id: AWS_ACCESS_KEY_ID
