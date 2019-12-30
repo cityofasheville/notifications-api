@@ -8,7 +8,6 @@ jobs:
     docker:
       - image: circleci/python:3.7.1
     steps:
-      - checkout
       - aws-ecr/build-and-push-image:
           account-url: ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
@@ -36,30 +35,29 @@ jobs:
           aws-region: AWS_DEFAULT_REGION
           family: 'notifyapi'
           service-name: 'notifyapi'
-          cluster-name: 'otifyapi_ecs_cluster'
+          cluster-name: 'notifyapi_ecs_cluster'
           container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
           verify-revision-is-deployed: true
           max-poll-attempts: 30
           poll-interval: 60
+          requires: aws-ecr/build-and-push-image
   deploy-production:
     <<: *deploy
   deploy-development:
     <<: *deploy
 
 workflows:
-  build-image-and-push:
+  build-deploy:
     jobs:
       - deploy-development:
           filters:
             branches:
-              only:
-                - development
+              only: development
           context: notifications-development
 
       - deploy-production:
           filters:
             branches:
-              only:
-                - master
+              only:  master
           context: notifications-production
           type: approval
