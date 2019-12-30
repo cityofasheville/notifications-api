@@ -55,10 +55,6 @@ jobs:
     executor: aws-cli/default
     steps:
       - aws-cli/install
-      - aws-cli/setup:
-          aws-access-key-id: DEV_ACCOUNT_ID
-          aws-secret-access-key: DEV_SECRET_KEY
-          aws-region: AWS_REGION
       - aws-ecr/build-and-push-image:
           account-url: ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
