@@ -2,7 +2,6 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@6.6.0
   aws-ecs: circleci/aws-ecs@1.0.4
-  aws-cli: opensimsim-dev/aws-cli@1.0.0
 
 defaults: &defaults
   docker:
@@ -35,16 +34,6 @@ jobs:
                      --build-arg note_password=${NOTE_PASSWORD}/
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
-      - aws-ecs/update-service:
-          family: 'notifyapi'
-          cluster-name: 'notifyapi_ecs_cluster'
-          service-name: 'notifyapi'
-          container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
-          force-new-deployment: true
-          verify-revision-is-deployed: true
-          max-poll-attempts: 30
-          poll-interval: 60
-          fail-on-verification-timeout: false
 
 
 workflows:
@@ -56,9 +45,3 @@ workflows:
               only: development
           context: notifications-development
 
-      - deploy-production:
-          filters:
-            branches:
-              only:  master
-          context: notifications-production
-          type: approval
