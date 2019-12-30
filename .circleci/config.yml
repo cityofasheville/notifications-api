@@ -34,8 +34,6 @@ jobs:
                      --build-arg note_password=${NOTE_PASSWORD}/
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
-      - aws-cli/install
-      - aws-cli/setup
       - aws-ecs/update-service:
           account-url: ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
@@ -52,7 +50,10 @@ jobs:
           fail-on-verification-timeout: false
   deploy-development:
     <<: *defaults
+    executor: aws-cli/default
     steps:
+      - aws-cli/setup:
+          profile-name: default
       - aws-ecr/build-and-push-image:
           account-url: ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
@@ -76,8 +77,6 @@ jobs:
                      --build-arg note_password=${NOTE_PASSWORD}/
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
-      - aws-cli/install
-      - aws-cli/setup
       - aws-ecs/update-service:
           family: 'notifyapi'
           cluster-name: 'notifyapi_ecs_cluster'
