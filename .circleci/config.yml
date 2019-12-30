@@ -70,15 +70,15 @@ jobs:
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
       - aws-ecs/update-service:
-        family: 'notifyapi'
-        cluster-name: 'notifyapi_ecs_cluster'
-        service-name: 'notifyapi'
-        container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
-        force-new-deployment: true
-        verify-revision-is-deployed: true
-        max-poll-attempts: 30
-        poll-interval: 60
-        fail-on-verification-timeout: false
+          family: 'notifyapi'
+          cluster-name: 'notifyapi_ecs_cluster'
+          service-name: 'notifyapi'
+          container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
+          force-new-deployment: true
+          verify-revision-is-deployed: true
+          max-poll-attempts: 30
+          poll-interval: 60
+          fail-on-verification-timeout: false
 
 
 workflows:
