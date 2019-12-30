@@ -6,7 +6,7 @@ orbs:
 
 defaults: &defaults
   docker:
-    - image: cityofasheville/citerraform:0.0.1
+    - image: circleci/python:3.6
 jobs:
   deploy-production:
     <<: *defaults
@@ -70,12 +70,6 @@ jobs:
                      --build-arg note_password=${NOTE_PASSWORD}/
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
-      - run:
-          name: set up  aws access
-          command: 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}\
-                    aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY_ID}\
-                    aws configure set region us-east-1'
-      - checkout
       - aws-cli/setup
       - aws-ecs/update-service:
           family: 'notifyapi'
