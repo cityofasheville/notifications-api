@@ -11,10 +11,10 @@ jobs:
     <<: *defaults
     steps:
       - aws-ecr/build-and-push-image:
-          account-url: ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
+          account-url: ${ECR_ACCOUNT_URL}
+          aws-access-key-id: ${AWS_ACCESS_KEY_ID}
+          aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+          region: ${AWS_DEFAULT_REGION}
           repo: 'coa-notificationsapi'
           extra-build-args: '--build-arg sessionName=${SESSION_NAME}/
                      --build-arg sessionSecret=${SESSION_SECRET}/
@@ -33,24 +33,24 @@ jobs:
                      --build-arg note_password=${NOTE_PASSWORD}/
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
-            - aws-ecs/deploy-service-update:
-                aws-region: AWS_DEFAULT_REGION
-                family: 'notifyapi'
-                service-name: 'notifyapi'
-                cluster-name: 'notifyapi_ecs_cluster'
-                container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
-                verify-revision-is-deployed: true
-                max-poll-attempts: 30
-                poll-interval: 60
-                requires: aws-ecr/build-and-push-image
+      - aws-ecs/deploy-service-update:
+          aws-region: ${AWS_DEFAULT_REGION}
+          family: 'notifyapi'
+          service-name: 'notifyapi'
+          cluster-name: 'notifyapi_ecs_cluster'
+          container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
+          verify-revision-is-deployed: true
+          max-poll-attempts: 30
+          poll-interval: 60
+          requires: aws-ecr/build-and-push-image
   deploy-development:
     <<: *defaults
     steps:
       - aws-ecr/build-and-push-image:
-          account-url: ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
+          account-url: ${ECR_ACCOUNT_URL}
+          aws-access-key-id: ${AWS_ACCESS_KEY_ID}
+          aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+          region: ${AWS_DEFAULT_REGION}
           repo: 'coa-notificationsapi'
           extra-build-args: '--build-arg sessionName=${SESSION_NAME}/
                      --build-arg sessionSecret=${SESSION_SECRET}/
@@ -69,16 +69,16 @@ jobs:
                      --build-arg note_password=${NOTE_PASSWORD}/
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
-            - aws-ecs/deploy-service-update:
-                aws-region: AWS_DEFAULT_REGION
-                family: 'notifyapi'
-                service-name: 'notifyapi'
-                cluster-name: 'notifyapi_ecs_cluster'
-                container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
-                verify-revision-is-deployed: true
-                max-poll-attempts: 30
-                poll-interval: 60
-                requires: aws-ecr/build-and-push-image
+      - aws-ecs/deploy-service-update:
+          aws-region: ${AWS_DEFAULT_REGION}
+          family: 'notifyapi'
+          service-name: 'notifyapi'
+          cluster-name: 'notifyapi_ecs_cluster'
+          container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
+          verify-revision-is-deployed: true
+          max-poll-attempts: 30
+          poll-interval: 60
+          requires: aws-ecr/build-and-push-image
 
 workflows:
   build-deploy:
