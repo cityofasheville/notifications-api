@@ -7,6 +7,8 @@ orbs:
 defaults: &defaults
   docker:
     - image: circleci/python:3.6
+  executor:
+    - aws-ecr/default
 jobs:
   deploy-production:
     <<: *defaults
@@ -48,11 +50,11 @@ jobs:
     <<: *defaults
     steps:
       - aws-ecr/build-and-push-image:
-          aws-access-key-id: $AWS_ACCESS_KEY_ID
-          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
-          region: $AWS_DEFAULT_REGION
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
           profile-name: 'terrauser'
-          account-url: $ECR_ACCOUNT_URL
+          account-url: ECR_ACCOUNT_URL
           repo: 'coa-notificationsapi'
           extra-build-args: '--build-arg sessionName=${SESSION_NAME}/
                      --build-arg sessionSecret=${SESSION_SECRET}/
