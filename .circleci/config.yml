@@ -2,21 +2,14 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@6.6.0
   aws-ecs: circleci/aws-ecs@1.0.4
-  aws-cli: circleci/aws-cli@0.1.19
 
 defaults: &defaults
   docker:
-    - image: circleci/python:2.7
+    - image: circleci/python:3.6
 jobs:
   deploy-production:
     <<: *defaults
-    executor: aws-cli/default
     steps:
-      - aws-cli/install
-      - aws-cli/setup:
-          aws-access-key-id: PROD_ACCOUNT_ID
-          aws-secret-access-key: PROD_SECRET_KEY
-          aws-region: AWS_REGION
       - aws-ecr/build-and-push-image:
           account-url: ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
@@ -52,9 +45,7 @@ jobs:
           fail-on-verification-timeout: false
   deploy-development:
     <<: *defaults
-    executor: aws-cli/default
     steps:
-      - aws-cli/install
       - aws-ecr/build-and-push-image:
           account-url: ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
@@ -78,6 +69,12 @@ jobs:
                      --build-arg note_password=${NOTE_PASSWORD}/
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
+      - run:
+          name: set up  aws access
+          command: 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}\
+                    aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY_ID}\
+                    aws configure set region us-east-1'
+
       - aws-ecs/update-service:
           family: 'notifyapi'
           cluster-name: 'notifyapi_ecs_cluster'
