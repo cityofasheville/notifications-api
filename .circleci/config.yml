@@ -7,6 +7,7 @@ orbs:
 defaults: &defaults
   docker:
     - image: circleci/python:3.7.1
+  executor: aws-cli/default
 jobs:
   deploy-production:
     <<: *defaults
