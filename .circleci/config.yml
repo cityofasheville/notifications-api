@@ -33,16 +33,16 @@ jobs:
                      --build-arg note_password=${NOTE_PASSWORD}/
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
-      - aws-ecs/deploy-service-update:
-          aws-region: AWS_DEFAULT_REGION
+      - aws-ecs/update-service:
           family: 'notifyapi'
-          service-name: 'notifyapi'
           cluster-name: 'notifyapi_ecs_cluster'
+          service-name: 'notifyapi'
           container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
+          force-new-deployment: true
           verify-revision-is-deployed: true
           max-poll-attempts: 30
           poll-interval: 60
-          requires: aws-ecr/build-and-push-image
+          fail-on-verification-timeout: false
   deploy-development:
     <<: *defaults
     steps:
@@ -69,16 +69,17 @@ jobs:
                      --build-arg note_password=${NOTE_PASSWORD}/
                      --build-arg note_database=${NOTE_DATABASE}'
           tag: '${CIRCLE_SHA1}'
-      - aws-ecs/deploy-service-update:
-          aws-region: AWS_DEFAULT_REGION
-          family: 'notifyapi'
-          service-name: 'notifyapi'
-          cluster-name: 'notifyapi_ecs_cluster'
-          container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
-          verify-revision-is-deployed: true
-          max-poll-attempts: 30
-          poll-interval: 60
-          requires: aws-ecr/build-and-push-image
+      - aws-ecs/update-service:
+        family: 'notifyapi'
+        cluster-name: 'notifyapi_ecs_cluster'
+        service-name: 'notifyapi'
+        container-image-name-updates: 'container=notifyapi,tag=${CIRCLE_SHA1}'
+        force-new-deployment: true
+        verify-revision-is-deployed: true
+        max-poll-attempts: 30
+        poll-interval: 60
+        fail-on-verification-timeout: false
+
 
 workflows:
   build-deploy:
@@ -87,7 +88,7 @@ workflows:
           filters:
             branches:
               only: development
-          context: otifications-development
+          context: notifications-development
 
       - deploy-production:
           filters:
