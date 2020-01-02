@@ -47,6 +47,7 @@ jobs:
   deploy-development:
     <<: *defaults
     steps:
+      - setup_remote_docker
       - aws-ecr/build-and-push-image:
           account-url: ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
