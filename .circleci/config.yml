@@ -33,7 +33,7 @@ jobs:
              --build-arg note_user=${NOTE_USER}/
              --build-arg note_password=${NOTE_PASSWORD}/
              --build-arg note_database=${NOTE_DATABASE}/
-             --build_arg emailhashkey=${EMAIL_HASHKEY}'
+             --build-arg emailhashkey=${EMAIL_HASHKEY}'
       - aws-ecs/update-service:
           family: 'notifyapi'
           cluster-name: 'notifyapi_ecs_cluster'
@@ -69,7 +69,7 @@ jobs:
                    --build-arg note_user=${NOTE_USER}/
                    --build-arg note_password=${NOTE_PASSWORD}/
                    --build-arg note_database=${NOTE_DATABASE}/
-                   --build_arg emailhashkey=${EMAIL_HASHKEY}'
+                   --build-arg emailhashkey=${EMAIL_HASHKEY}'
       - aws-ecs/update-service:
           family: 'notifyapi'
           cluster-name: 'notifyapi_ecs_cluster'
