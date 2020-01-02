@@ -34,7 +34,6 @@ jobs:
              --build-arg note_password=${NOTE_PASSWORD}/
              --build-arg note_database=${NOTE_DATABASE}/
              --build_arg emailhashkey=${EMAIL_HASHKEY}'
-          tag: CIRCLE_SHA1
       - aws-ecs/update-service:
           family: 'notifyapi'
           cluster-name: 'notifyapi_ecs_cluster'
@@ -55,7 +54,6 @@ jobs:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           region: AWS_DEFAULT_REGION
           repo: 'coa-notificationsapi'
-          tag: CIRCLE_SHA1
       - aws-ecs/update-service:
           family: 'notifyapi'
           cluster-name: 'notifyapi_ecs_cluster'
