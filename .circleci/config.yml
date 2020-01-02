@@ -46,6 +46,7 @@ jobs:
           poll-interval: 60
           fail-on-verification-timeout: false
   deploy-development:
+    executor: ecr/default
     <<: *defaults
     steps:
       - aws-ecr/build-and-push-image:
