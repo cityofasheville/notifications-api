@@ -61,22 +61,22 @@ jobs:
                 region: AWS_DEFAULT_REGION
                 repo: 'coa-notificationsapi'
                 extra-build-args: '--build-arg sessionName=${SESSION_NAME}/
-                       --build-arg sessionSecret=${SESSION_SECRET}/
-                       --build-arg maxSessionDays=${MAX_SESSION_DAYS}/
-                       --build-arg cache_method=${CACHE_METHOD}/
-                       --build-arg region=${AWS_DEFAULT_REGION}/
-                       --build-arg userpoolId=${USER_POOL_ID}/
-                       --build-arg appClientId=${APP_CLIENT_ID}/
-                       --build-arg cognitoOauthUrl=${COGNITO_OAUTH_URL}/
-                       --build-arg mds_host=${MDS_HOST}/
-                       --build-arg mds_user=${MDS_USER}/
-                       --build-arg mds_password=${MDS_PASSWORD}/
-                       --build-arg mds_database=${MDS_DATABASE}/
-                       --build-arg note_host=${NOTE_HOST}/
-                       --build-arg note_user=${NOTE_USER}/
-                       --build-arg note_password=${NOTE_PASSWORD}/
-                       --build-arg note_database=${NOTE_DATABASE}/
-                       --build_arg emailhashkey=${EMAIL_HASHKEY}'
+                   --build-arg sessionSecret=${SESSION_SECRET}/
+                   --build-arg maxSessionDays=${MAX_SESSION_DAYS}/
+                   --build-arg cache_method=${CACHE_METHOD}/
+                   --build-arg region=${AWS_DEFAULT_REGION}/
+                   --build-arg userpoolId=${USER_POOL_ID}/
+                   --build-arg appClientId=${APP_CLIENT_ID}/
+                   --build-arg cognitoOauthUrl=${COGNITO_OAUTH_URL}/
+                   --build-arg mds_host=${MDS_HOST}/
+                   --build-arg mds_user=${MDS_USER}/
+                   --build-arg mds_password=${MDS_PASSWORD}/
+                   --build-arg mds_database=${MDS_DATABASE}/
+                   --build-arg note_host=${NOTE_HOST}/
+                   --build-arg note_user=${NOTE_USER}/
+                   --build-arg note_password=${NOTE_PASSWORD}/
+                   --build-arg note_database=${NOTE_DATABASE}/
+                   --build_arg emailhashkey=${EMAIL_HASHKEY}'
       - aws-ecs/update-service:
           family: 'notifyapi'
           cluster-name: 'notifyapi_ecs_cluster'
