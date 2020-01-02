@@ -23,10 +23,10 @@ ARG note_host
 ARG note_user
 ARG note_password
 ARG note_database
-ARG AWS_PROFILE=notifications-email
-ARG EMAIL_SENDER=asheville_notifications@ashevillenc.gov
-ARG emailhashkey='anothersupersecrethashkey'
-ARG unsubURL='https://ashevillenc.gov/unsubscribe/'
+ARG AWS_PROFILE
+ARG EMAIL_SENDER
+ARG emailhashkey
+ARG unsubURL
 
 
 
