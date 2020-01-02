@@ -60,7 +60,7 @@ ENV note_database=$note_database
 ## SNS processing info
 ####################################
 ENV AWS_PROFILE='notifications-email'
-ENV EMAIL_SENDER=$AWS_SENDER
+ENV EMAIL_SENDER=$EMAIL_SENDER
 ENV emailhashkey=$emailhashkey
 ENV unsubURL=$unsubURL
 
