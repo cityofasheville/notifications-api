@@ -32,7 +32,6 @@ jobs:
              --build-arg note_user=${NOTE_USER}\
              --build-arg note_password=${NOTE_PASSWORD}\
              --build-arg note_database=${NOTE_DATABASE}\
-             --build-arg aws_profile=${AWS_EMAIL_PROFILE}\
              --build-arg EMAIL_SENDER=${EMAIL_SENDER}\
              --build_arg emailhashkey=${EMAIL_HASHKEY}\
              --build-arg unsubURL=${UNSUB_URL}'
