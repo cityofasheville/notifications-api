@@ -23,7 +23,7 @@ ARG note_host
 ARG note_user
 ARG note_password
 ARG note_database
-ARG AWS_PROFILE
+ARG aws_profile
 ARG EMAIL_SENDER
 ARG emailhashkey
 ARG unsubURL
@@ -59,7 +59,7 @@ ENV note_database=$note_database
 ####################################
 ## SNS processing info
 ####################################
-ENV AWS_PROFILE=$AWS_PROFILE
+ENV AWS_PROFILE=$aws_profile
 ENV EMAIL_SENDER=$AWS_SENDER
 ENV emailhashkey=$emailhashkey
 ENV unsubURL=$unsubURL
