@@ -46,7 +46,6 @@ jobs:
           poll-interval: 60
           fail-on-verification-timeout: false
   deploy-development:
-    executor: default
     <<: *defaults
     steps:
       - aws-ecr/build-and-push-image:
@@ -59,7 +58,11 @@ jobs:
                        --build-arg sessionSecret=${SESSION_SECRET}/
                        --build-arg maxSessionDays=${MAX_SESSION_DAYS}/
                        --build-arg cache_method=${CACHE_METHOD}/
-                       --build-arg region=${AWS_DEFAULT_REGION}/'
+                       --build-arg region=${AWS_DEFAULT_REGION}/
+                       --build-arg mds_host=${MDS_HOST}/
+                       --build-arg mds_user=${MDS_USER}/
+                       --build-arg mds_password=${MDS_PASSWORD}/
+                       --build-arg mds_database=${MDS_DATABASE}'
 
           tag: CIRCLE_SHA1
       - aws-ecs/update-service:
