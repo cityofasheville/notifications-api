@@ -60,7 +60,7 @@ jobs:
                        --build-arg cache_method=${CACHE_METHOD}/
                        --build-arg region=${AWS_DEFAULT_REGION}/'
 
-            tag: CIRCLE_SHA1
+          tag: CIRCLE_SHA1
       - aws-ecs/update-service:
           family: 'notifyapi'
           cluster-name: 'notifyapi_ecs_cluster'
