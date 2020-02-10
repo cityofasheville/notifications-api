@@ -1,7 +1,7 @@
 # Notifications API
 Send transactional emails
 
-----
+````
 git clone https://github.com/cityofasheville/notifications-api.git
 
 
