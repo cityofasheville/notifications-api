@@ -15,41 +15,27 @@
     "apollo-server": "^2.3.1",
     "apollo-server-express": "^2.3.1",
     "aws-sdk": "^2.428.0",
-    "axios": "^0.19.0",
-    "coa-node-logging": "^2.0.4",
+    "axios": "^0.19.2",
+    "coa-node-logging": "^3.1.0",
     "coa-web-cache": "^1.2.2",
-    "coa-web-login": "^2.2.1",
+    "coa-web-login": "^2.2.4",
     "connect-pg-simple": "^6.0.1",
     "connect-redis": "^3.4.0",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "express-graphql": "^0.7.1",
     "express-session": "^1.15.6",
-    "graphql": "^0.13.2",
-    "lodash": "^4.17.14",
+    "graphql": "^14.2.1",
+    "lodash": "^4.17.14",git s
     "memorystore": "^1.6.0",
     "mssql": "^4.3.0",
-    "pg": "^7.8.0",
+    "pg": "^8.0.3",
     "pug": "^2.0.3",
     "url": "^0.11.0"
   },
   "peerDependencies": {},
   "devDependencies": {
-    "eslint": "5.3.0",
-    "eslint-config-airbnb": "17.1.0",
-    "eslint-plugin-import": "2.14.0",
-    "eslint-plugin-jsx-a11y": "6.1.1",
-    "eslint-plugin-react": "7.11.0",
-    "jest": "^24.8.0",
-    "jest-cli": "^24.8.0",
     "nodemon": "^1.18.9"
-  },
-  "eslintConfig": {
-    "extends": "airbnb",
-    "rules": {
-      "linebreak-style": 0
-    }
   }
 }
