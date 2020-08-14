@@ -28,7 +28,7 @@
     "express-graphql": "^0.7.1",
     "express-session": "^1.15.6",
     "graphql": "^0.13.2",
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.20",
     "memorystore": "^1.6.0",
     "mssql": "^4.3.0",
     "pg": "^7.8.0",
