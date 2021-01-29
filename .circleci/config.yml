@@ -20,4 +20,4 @@ workflows:
           filters:
             branches:
               only: development
-          context: dev-notifications
+          context: dev-notifications-api
