@@ -10,7 +10,7 @@ jobs:
           command: npm install
       - deploy:
           name: push to ec2
-          command: ssh -o "StrictHostKeyChecking no" circleci@$SERVER_HOSTNAME "cd /opt/coa-converse-api; git pull; npm ci; cd deployment; sh redeploy.sh;"
+          command: ssh -o "StrictHostKeyChecking no" circleci@$SERVER_HOSTNAME "cd /opt/notifications; git pull; npm ci; cd deployment; sh redeploy.sh;"
 
 workflows:
   version: 2
@@ -20,4 +20,4 @@ workflows:
           filters:
             branches:
               only: development
-          context: dev-converse-api
+          context: dev-notifications
