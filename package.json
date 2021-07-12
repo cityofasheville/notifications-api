@@ -36,6 +36,6 @@
   },
   "peerDependencies": {},
   "devDependencies": {
-    "nodemon": "^1.18.9"
+    "nodemon": "^2.0.12"
   }
 }
