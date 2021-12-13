@@ -58,7 +58,7 @@ app.use(session({
 
 // Set up CORS
 // const origin = 'https://dev-notifications-frontend.ashevillenc.gov/';
-// const origin = 'http://localhost:3000';
+// const origin = 'http://localhost:4000';
 const origin = true;
 const corsOptions = {
   origin,
