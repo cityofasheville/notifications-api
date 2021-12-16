@@ -19,5 +19,7 @@ impit.sh
 .vscode/
 
 *.log
+logfile.*
+*audit.json
 
 localdockerfile
