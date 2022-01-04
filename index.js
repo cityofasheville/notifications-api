@@ -103,7 +103,8 @@ const resolvers = require('./resolvers');
 
 const server = new ApolloServer({
   typeDefs,
-  // mocks: true,
+  introspection: true,
+  playground: true,
   resolvers,
   uploads: false,
   context: ({ req }) => ({
