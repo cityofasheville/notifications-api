@@ -58,7 +58,7 @@ UNION
       a.permit_subtype::text = ANY (ARRAY['Level I'::character varying::text, 'Level II'::character varying::text, 'Level III'::character varying::text, 'Conditional Zoning'::character varying::text, 'Conditional Use'::character varying::text]))) 
       AND permit_custom_fields.name::text ~~* '%Steep Slope%'::text AND permit_custom_fields.value::text = 'Yes'::text
 UNION
- SELECT 'Sound Exceedance'::text AS tag,
+ SELECT 'SoundExceedance'::text AS tag,
     a.permit_num,
     a.applied_date,
         CASE
