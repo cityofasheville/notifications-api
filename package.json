@@ -15,7 +15,7 @@
     "apollo-server": "^2.19.1",
     "apollo-server-express": "^2.19.1",
     "aws-sdk": "^2.428.0",
-    "axios": "^0.21.1",
+    "axios": "^0.27.2",
     "coa-node-logging": "^3.1.0",
     "coa-web-cache": "^1.2.2",
     "coa-web-login": "^2.2.7",
