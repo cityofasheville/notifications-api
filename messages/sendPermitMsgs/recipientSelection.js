@@ -31,7 +31,7 @@ async function recipientSelection() {
         INNER JOIN note.topics
           ON topic_tags.topic_id = topics.id
         where 
-        send_types.email= 'jontwilson@gmail.com' and 
+        send_types.email= 'jontwilson@gmail.com' and ------------------------------------------<<<<<<<<<<<<<<<<<<=================================
         ( 
             (subscriptions.whole_city = true) 
             or 
