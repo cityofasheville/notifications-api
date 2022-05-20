@@ -1,0 +1,13 @@
+.red {
+    color: red;
+}
+.box {
+    border: 1px solid  rgb(192, 82, 82);
+    padding: 20px;
+    margin: 10%;
+}
+.tablecenter {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }
