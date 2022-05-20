@@ -4,25 +4,52 @@ html
     meta(name="viewport", content="width=device-width")
     meta(http-equiv="X-UA-Compatible", content="IE=edge")
     meta(name="x-apple-disable-message-reformatting")
-    link(rel="stylesheet", href="style.css", data-inline)
+
     title Development Notification
+    style.
+      .red {
+        color: red;
+      }
+      .box {
+        border: 1px solid  rgb(192, 82, 82);
+        padding: 20px;
+        margin: 10%;
+      }
+     .tablecenter {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: left;
+      }
   body
-    h1 New land development proposed in Asheville
-    p The City of Asheville began processing the following land development applications yesterday.  Click on a project name to view details.
-    br
-    ul
-      each val in listOfTopics
+    div(class='box')
+      h1 New land development proposed in Asheville
+      p The City of Asheville began processing the following land development applications yesterday.  Click on a project name to view details.
+      br
+
+      table(class='tablecenter')
+        each val in listOfTopics
+          tr
+            td 
+              a(href='https://simplicity.ashevillenc.gov/permits/'+val.permit_num) #{val.name} 
+            td #{val.notification_type}     
+      br
+      br
+      br
+      p You are receiving this email because you signed up for notifications.  No longer interested?
+      br
+      ul
         li
-            a(href='https://simplicity.ashevillenc.gov/permits/'+val.permit_num) #{val.name}
-    br
-    br
-    br
-    p You are receiving this email because you signed up for notifications.  No longer interested?
-    br
-    ul
-      li
-        a(href=unsub_url) Unsubscribe
-      li
-        a(href='https://notifications.ashevillenc.gov') Change your preferences
-      li
-        a(href='https://simplicity.ashevillenc.gov/development/major') Learn more about large-scale development in Asheville
+          a(href=unsub_url) Unsubscribe
+        li
+          a(href='https://notifications.ashevillenc.gov') Change your preferences
+        li
+          a(href='https://simplicity.ashevillenc.gov/development/major') Learn more about large-scale development in Asheville
+      br
+      br
+    h2(class='box')
+      span(class='red') NEW! 
+      span There is a new notification type that you can sign up for: 
+      span(class='red') Sound Exceedance
+      ul
+        li
+          a(href='https://notifications.ashevillenc.gov') Log in to sign up 
