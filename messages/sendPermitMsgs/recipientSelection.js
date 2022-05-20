@@ -31,7 +31,6 @@ async function recipientSelection() {
         INNER JOIN note.topics
           ON topic_tags.topic_id = topics.id
         where 
-        send_types.email= 'jontwilson@gmail.com' and ------------------------------------------<<<<<<<<<<<<<<<<<<=================================
         ( 
             (subscriptions.whole_city = true) 
             or 
@@ -51,7 +50,7 @@ async function recipientSelection() {
       Promise.all(
         tagRows.map(async (row) => {
           const shortRow = {
-            type: row.type, phone: row.phone, name: row.name, permit_num: row.permit_num,
+            type: row.type, phone: row.phone, name: row.name, permit_num: row.permit_num, notification_type: row.notification_type,
           };
           const list = recipients[row.email];
           if (list) {
