@@ -13,7 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "apollo-server": "^2.19.1",
-    "apollo-server-express": "^2.19.1",
+    "apollo-server-express": "^3.10.2",
     "aws-sdk": "^2.428.0",
     "axios": "^0.21.1",
     "coa-node-logging": "^3.1.0",
