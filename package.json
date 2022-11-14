@@ -19,7 +19,7 @@
     "coa-node-logging": "^3.1.0",
     "coa-web-cache": "^1.2.2",
     "coa-web-login": "^2.2.7",
-    "connect-pg-simple": "^6.0.1",
+    "connect-pg-simple": "^8.0.0",
     "connect-redis": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
