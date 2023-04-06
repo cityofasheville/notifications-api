@@ -1,3 +1,4 @@
+``` json
 mutation createPeep($user_preference: UserPreferenceInput!) {
   createUserPreference(user_preference: $user_preference) {
     id
@@ -98,3 +99,4 @@ id
     ]
   }
 }
+```
