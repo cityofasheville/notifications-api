@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const AWS = require('aws-sdk');
+const { SES } = require("@aws-sdk/client-ses");
 const pug = require('pug');
 const path = require('path');
 const Logger = require('coa-node-logging');
@@ -46,7 +46,7 @@ function sendConfirmationEmail(emailAddr) {
   };
 
   // Create the promise and SES service object
-  const sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+  const sendPromise = new SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
 
   // Handle promise's fulfilled/rejected states
   sendPromise.then(
