@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const { SES } = require("@aws-sdk/client-ses");
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '/./../../.env') });
 
@@ -32,7 +32,7 @@ function sesSendemail(emailAddr, htmlEmail, callback) {
   };
 
   // Create the promise and SES service object
-  const sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+  const sendPromise = new SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
 
   // Handle promise's fulfilled/rejected states
   sendPromise.then(

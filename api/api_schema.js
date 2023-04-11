@@ -59,23 +59,13 @@ type DeleteReturn {
 }
 
 extend type Query {
-  message(id: ID!): Message
-  category(id: ID!): Category
   user_preference(email: String!): UserPreference
-  tag(id: ID!): Tag
-  tags: [Tag]
-  topics: [Topic]
   categories: [Category]
 }
 
 extend type Mutation {
-  createTopic(name: String!): Topic
-  deleteTopic(id: ID!): Topic
-  createTag(tag: TagInput!): Tag
-  deleteTag(id: ID!): Tag
   createUserPreference(user_preference: UserPreferenceInput!): UserPreference
   updateUserPreference(user_preference: UserPreferenceInput!): UserPreference
-  deleteUserPreference(email: String!): DeleteReturn
   deleteUserPreferenceSecure(url: String!): DeleteReturn
 }
 

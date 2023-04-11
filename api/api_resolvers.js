@@ -8,51 +8,6 @@ const sendConfirmationEmail = require('./confirmationEmail/sendConfirmationEmail
 
 const pool = getDbConnection('note'); // Initialize the connection.
 
-async function getMessage(parent, args, context) { // gets a message, its topic, and lists tags
-  const client = await pool.connect();
-  try {
-    const { rows } = await client.query(`
-    select row_to_json(msg) results
-    from (
-      select messages.message, messages.sent, messages.datesent, 
-      (
-        select row_to_json(tp) results
-        from (
-          select topics.name, 
-          (
-            select array_to_json(array_agg(row_to_json(t))) 
-            from (
-              select tags.id, tags.category_id, tags.name
-              from note.topic_tags
-              inner join note.tags
-              ON tags.id = topic_tags.tag_id
-              WHERE topics.id = topic_id
-            ) as t
-          ) as tags
-          from note.topics
-          where topics.id = messages.topic_id
-        ) tp
-      ) as topic
-        from note.messages
-      where messages.id = $1
-    ) as msg`, [args.id]);
-    const ret = rows[0].results;
-    return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
-async function getCategory(parent, args, context) {
-  const client = await pool.connect();
-  try {
-    const result = await client.query('select id, name from note.categories where id = $1', [args.id]);
-    return Promise.resolve(result.rows[0]);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
 // gets a user_preference, their subscriptions, and their send types, given an email.
 async function getUserPreference(parent, args, context) {
   const client = await pool.connect();
@@ -100,36 +55,6 @@ async function getUserPreference(parent, args, context) {
   }
 }
 
-async function getTag(parent, args, context) {
-  const client = await pool.connect();
-  try {
-    const result = await client.query('select id, name, category_id from note.tags where id = $1', [args.id]);
-    return Promise.resolve(result.rows[0]);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
-async function getTags(parent, args, context) {
-  const client = await pool.connect();
-  try {
-    const result = await client.query('select id, name, category_id from note.tags');
-    return Promise.resolve(result.rows);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
-async function getTopics(parent, args, context) {
-  const client = await pool.connect();
-  try {
-    const result = await client.query('select id, name from note.topics');
-    return Promise.resolve(result.rows);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
 async function getCategories(parent, args, context) {
   const client = await pool.connect();
   try {
@@ -145,129 +70,6 @@ async function getTagsForCategory(category, args, context) {
   try {
     const result = await client.query('select id, name, category_id from note.tags where category_id = $1', [category.id]);
     return Promise.resolve(result.rows);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
-async function getCategoryFromTag(tag, args, context) {
-  const client = await pool.connect();
-  try {
-    const result = await client.query('select id, name from note.categories where id = $1',
-      [tag.category_id]);
-    return Promise.resolve(result.rows[0]);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
-async function getSubscriptionsFromTag(tag, args, context) {
-  const client = await pool.connect();
-  try {
-    const { rows } = await client.query(`
-    select array_to_json(array_agg(row_to_json(p))) results
-    from (
-      SELECT user_preferences.id, user_preferences.location_x, user_preferences.location_y,
-      (
-        select array_to_json(array_agg(row_to_json(s))) 
-        from (
-          select send_types.id, send_types.type, send_types.email, 
-            send_types.phone
-          from note.send_types
-          WHERE user_preferences.id = send_types.user_id
-        ) as s
-      ) as send_types
-      FROM note.tags
-      INNER JOIN note.subscriptions
-        ON subscriptions.tag_id = tags.id
-      INNER JOIN note.user_preferences
-        ON user_preferences.id = subscriptions.user_id  
-      WHERE tags.id = $1
-    ) as p`, [tag.id]);
-    const ret = rows[0].results;
-    return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
-async function getTopicsFromTag(tag, args, context) {
-  const client = await pool.connect();
-  try {
-    const { rows } = await client.query(`  
-    select array_to_json(array_agg(row_to_json(tp))) results
-      from (
-        select topics.id, topics.name,
-        (
-          select array_to_json(array_agg(row_to_json(m))) 
-          from (
-            select message, sent, datesent 
-            from note.messages
-            WHERE topics.id = topic_id
-          ) as m
-        ) as messages
-        from note.topics
-        INNER JOIN note.topic_tags
-        ON topics.id = topic_tags.topic_id
-        INNER JOIN note.tags
-        ON tags.id = topic_tags.tag_id
-        where tags.id = $1  
-    ) as tp 
-    `, [tag.id]);
-    const ret = rows[0].results;
-    return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
-async function createTopic(obj, args, context) {
-  const client = await pool.connect();
-  try {
-    const { rows } = await client.query(`  
-    insert into note.topics(name)VALUES($1) returning id, name;
-    `, [args.name]);
-    const ret = rows[0];
-    return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
-async function deleteTopic(obj, args, context) {
-  const client = await pool.connect();
-  try {
-    const { rows } = await client.query(`  
-    delete from note.topics where id = $1 returning id, name;
-    `, [args.id]);
-    const ret = rows[0];
-    return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
-async function createTag(obj, args, context) {
-  const client = await pool.connect();
-  try {
-    const { rows } = await client.query(`  
-    insert into note.tags(name, category_id)VALUES($1, $2) returning id, name, category_id;
-    `, [args.tag.name, args.tag.category]);
-    const ret = rows[0];
-    return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
-async function deleteTag(obj, args, context) {
-  const client = await pool.connect();
-  try {
-    const { rows } = await client.query(`  
-    delete from note.tags where id = $1 returning id, name, category_id;
-    `, [args.id]);
-    const ret = rows[0];
-    return Promise.resolve(ret);
   } catch (e) { return Promise.reject(e); } finally {
     client.release();
   }
@@ -435,37 +237,6 @@ async function updateUserPreference(obj, args, context) {
   }
 }
 
-async function deleteUserPreference(obj, args, context) {
-  const ret = {
-    error: null,
-    deletedEmail: args.email,
-  };
-  const client = await pool.connect();
-  try {
-    const result = await client.query(`  
-      select send_types.user_id from note.send_types where email = $1;
-    `, [args.email]);
-    if (result.rowCount > 0) {
-      const userId = result.rows[0].user_id;
-      await client.query(`  
-        delete from note.subscriptions where user_id = $1;
-      `, [userId]);
-      await client.query(`  
-        delete from note.send_types where user_id = $1;
-      `, [userId]);
-      const { rows } = await client.query(`  
-        delete from note.user_preferences where id = $1 returning id;
-      `, [userId]);
-      // if(!rows[0].id){
-      //   ret.error = 'NOTINDB';
-      // }
-    }
-    return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
 async function deleteUserPreferenceSecure(obj, args, context) {
   const ret = {};
   ret.error = null;
@@ -510,30 +281,15 @@ async function deleteUserPreferenceSecure(obj, args, context) {
 
 const resolvers = {
   Query: {
-    message: getMessage,
-    category: getCategory,
     user_preference: getUserPreference,
-    tag: getTag,
-    tags: getTags,
-    topics: getTopics,
     categories: getCategories,
   },
   Category: {
     tags: getTagsForCategory,
   },
-  Tag: {
-    category: getCategoryFromTag,
-    subscriptions: getSubscriptionsFromTag,
-    topics: getTopicsFromTag,
-  },
   Mutation: {
-    createTopic,
-    deleteTopic,
-    createTag,
-    deleteTag,
     createUserPreference,
     updateUserPreference,
-    deleteUserPreference,
     deleteUserPreferenceSecure,
   },
 };

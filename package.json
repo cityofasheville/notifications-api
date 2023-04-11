@@ -13,9 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.309.0",
     "apollo-server": "^2.19.1",
     "apollo-server-express": "^2.19.1",
-    "aws-sdk": "^2.428.0",
     "axios": "^0.21.1",
     "coa-node-logging": "^3.1.0",
     "coa-web-cache": "^1.2.5",
