@@ -27,11 +27,7 @@ async function sendEmails(recipients) {
       recipient.unsub_url = cryptofuncs.createUnsubUrl(emailAddr);
       const htmlEmail = compiledFunction(recipient);
       // eslint-disable-next-line no-await-in-loop
-      await sesSendemail(emailAddr, htmlEmail, (returnmsg) => {
-        logger.info(returnmsg);
-        // eslint-disable-next-line no-console
-        console.log(returnmsg);
-      });
+      await sesSendemail(emailAddr, htmlEmail);
     }
     return Promise.resolve();
   } catch (e) {
