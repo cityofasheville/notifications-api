@@ -102,7 +102,7 @@ const getDbConnection = require('./common/db');
   });
 
   // Add in any middleware defined by the API
-  // require('./api').middlewares.forEach((m) => { app.use(m); });
+  require('./api').middlewares.forEach((m) => { app.use(m); });
 
   const httpServer = http.createServer(app);
   const server = new ApolloServer({
