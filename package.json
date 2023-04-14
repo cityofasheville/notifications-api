@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon ./index.js",
     "debug": "DEBUG=express:* nodemon ./index.js",
-    "systemd": "/home/apiadmin/.nvm/versions/node/v16.15.1/bin/node index.js",
+    "systemd": "/home/apiadmin/.nvm/versions/node/v16.20.0/bin/node index.js",
     "send_msgs": "node ./messages/sendMessages.js",
     "test": "jest"
   },

@@ -130,11 +130,5 @@ const GRAPHQL_PORT = process.env.PORT || 4000;
   );
 
   await new Promise((resolve) => httpServer.listen({ port: GRAPHQL_PORT }, resolve));
-  console.log(`🚀 Server ready at http://localhost:${GRAPHQL_PORT}${server.graphqlPath}`);
+  console.log(`🚀 Server ready at http://localhost:${GRAPHQL_PORT}/graphql`);
 })();
-
-
-app.listen({ port: GRAPHQL_PORT }, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Server ready at http://localhost:${GRAPHQL_PORT}${server.graphqlPath}`);
-});
