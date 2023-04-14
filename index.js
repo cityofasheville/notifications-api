@@ -19,6 +19,8 @@ require('dotenv').config();
 const apiConfig = require('./api/config');
 const getDbConnection = require('./common/db');
 
+const GRAPHQL_PORT = process.env.PORT || 4000;
+
 (async()=>{
   const app = express();
 
@@ -127,6 +129,12 @@ const getDbConnection = require('./common/db');
     }),
   );
 
-  await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
-  console.log(`🚀 Server ready at http://localhost:4000/graphql`);
+  await new Promise((resolve) => httpServer.listen({ port: GRAPHQL_PORT }, resolve));
+  console.log(`🚀 Server ready at http://localhost:${GRAPHQL_PORT}${server.graphqlPath}`);
 })();
+
+
+app.listen({ port: GRAPHQL_PORT }, () => {
+  // eslint-disable-next-line no-console
+  console.log(`Server ready at http://localhost:${GRAPHQL_PORT}${server.graphqlPath}`);
+});
