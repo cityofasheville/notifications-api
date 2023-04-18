@@ -57,10 +57,12 @@ const GRAPHQL_PORT = process.env.PORT || 4000;
 
   // Set up CORS
   const allowedOrigins = [
-    'https://dev-notifications-frontend.ashevillenc.gov/',
-    'https://notifications.ashevillenc.gov/',
-    'http://localhost:3000', // local test server
-    'http://localhost:4000', // sandbox
+    'https://dev-notifications-frontend.ashevillenc.gov/', // dev frontend
+    'https://notifications.ashevillenc.gov/',              // prod frontend
+    'http://localhost:3000',                               // local frontend
+    'https://dev-notify.ashevillenc.gov/',                 // dev sandbox
+    'https://notify-api.ashevillenc.gov/',                 // prod sandbox
+    'http://localhost:4000',                               // local sandbox
   ];
 
   const corsOptions = {
