@@ -23,3 +23,4 @@ logfile.*
 *audit.json
 
 localdockerfile
+*NOGITHUB*
