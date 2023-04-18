@@ -71,7 +71,7 @@ const GRAPHQL_PORT = process.env.PORT || 4000;
       if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
         callback(null, true)
       } else {
-        callback(new Error('Not allowed by CORS'))
+        callback(new Error(`Origin ${origin} not allowed by CORS`))
       }
     },
     credentials: true,
