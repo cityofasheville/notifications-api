@@ -112,8 +112,8 @@ const GRAPHQL_PORT = process.env.PORT || 4000;
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    introspection: true,
-    playground: true,
+    introspection: false,
+    playground: false,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
   await server.start();
