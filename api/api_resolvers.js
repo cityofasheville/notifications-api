@@ -8,6 +8,12 @@ const sendConfirmationEmail = require('./confirmationEmail/sendConfirmationEmail
 
 const pool = getDbConnection('note'); // Initialize the connection.
 
+// Simple function that should not cause false negatives without trying to test every possible future email format.
+function validateEmail(email) {
+  var re = /\S+@\S+\.\S+/;
+  return re.test(email);
+}
+
 // gets a user_preference, their subscriptions, and their send types, given an email.
 async function getUserPreference(parent, args, context) {
   const client = await pool.connect();
@@ -83,6 +89,9 @@ async function createUserPreference(obj, args, context) {
   try {
     // see if they already exist
     const emailsendtype = args.user_preference.send_types.find(sendtype => sendtype.type === 'EMAIL');
+    if (!validateEmail(emailsendtype.email) ) {
+      return ({"id": "invalid","send_types": [{"email": "Not created: Invalid email"}]});
+    }
     const { rows } = await client.query(`  
     select send_types.user_id from note.send_types where email = $1;
     `, [emailsendtype.email]);
@@ -161,80 +170,14 @@ async function createUserPreference(obj, args, context) {
     }
     const ret = Object.assign({}, args.user_preference,
       { id: userId, location_x: userLocationX, location_y: userLocationY });
-    return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); } finally {
+    return (ret);
+  } catch (e) { console.log(e); throw (e); } finally {
     client.release();
   }
 }
 
 async function updateUserPreference(obj, args, context) {
-  const client = await pool.connect();
-  try {
-    const emailsendtype = args.user_preference.send_types.find(sendtype => sendtype.type === 'EMAIL');
-
-    // Get the user_id
-    const { rows } = await client.query(`  
-    select send_types.user_id from note.send_types where email = $1;
-    `, [emailsendtype.email]);
-    const userId = rows[0].user_id;
-
-    // update user
-    await client.query(`
-    update note.user_preferences set location_x = $2, location_y = $3 where id = $1;
-    `, [userId, args.user_preference.location_x, args.user_preference.location_y]);
-
-    // update or insert send_types (TODO: is delete needed?)
-    args.user_preference.send_types.map(async (sendType) => {
-      await client.query(` 
-      insert into note.send_types(
-        user_id, type, email, phone)
-      VALUES($1, $2, $3, $4)
-      on conflict (user_id, type) do
-      update set email = $3, phone = $4
-      where send_types.user_id = $1 and send_types.type = $2;
-      `, [userId, sendType.type, sendType.email, sendType.phone]);
-    });
-
-    // delete subscriptions not in array
-    const keepTags = args.user_preference.subscriptions.map(scrip => parseInt(scrip.tag.id, 10));
-    const res = await client.query(`
-    select * from note.subscriptions
-    where subscriptions.user_id = $1;
-    `, [userId]);
-    res.rows.map(async (row) => {
-      if (keepTags.indexOf(row.tag_id) === -1) {
-        await client.query(`
-        delete from note.subscriptions
-        where subscriptions.user_id = $1
-        and subscriptions.tag_id = $2;
-        `, [userId, row.tag_id]);
-      }
-    });
-
-    // insert or update subscriptions
-    args.user_preference.subscriptions.map(async (subscription) => {
-      await client.query(`
-      insert into note.subscriptions(
-        user_id, tag_id, radius_miles, whole_city)
-      VALUES($1, $2, $3, $4)
-      on conflict (user_id, tag_id) do
-      update set radius_miles = $3, whole_city = $4
-      where subscriptions.user_id = $1 and subscriptions.tag_id = $2
-      `, [userId, subscription.tag.id, subscription.radius_miles, subscription.whole_city]);
-    });
-
-    const ret = Object.assign({},
-      {
-        id: userId,
-        location_x: args.user_preference.location_x,
-        location_y: args.user_preference.location_y,
-        subscriptions: args.user_preference.subscriptions,
-        send_types: args.user_preference.send_types,
-      });
-    return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
+  return createUserPreference(obj, args, context);
 }
 
 async function deleteUserPreferenceSecure(obj, args, context) {
@@ -273,8 +216,8 @@ async function deleteUserPreferenceSecure(obj, args, context) {
     } else {
       ret.error = 'EXPIRED';
     }
-    return Promise.resolve(ret);
-  } catch (e) { return Promise.reject(e); } finally {
+    return (ret);
+  } catch (e) { console.log(e); throw (e); } finally {
     client.release();
   }
 }

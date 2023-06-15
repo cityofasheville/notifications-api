@@ -21,6 +21,16 @@ const getDbConnection = require('./common/db');
 
 const GRAPHQL_PORT = process.env.PORT || 4000;
 
+// PLAYGROUND
+let debug = false;
+
+let introspection = false;
+let playground = false;
+if(debug) {
+  introspection = true;
+  playground = true;
+}
+
 (async()=>{
   const app = express();
 
@@ -112,8 +122,8 @@ const GRAPHQL_PORT = process.env.PORT || 4000;
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    introspection: false,
-    playground: false,
+    introspection,
+    playground,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
   await server.start();

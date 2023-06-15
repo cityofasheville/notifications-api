@@ -1,12 +1,7 @@
 const pug = require('pug');
 const path = require('path');
-const Logger = require('coa-node-logging');
 const sesSendemail = require('./sesSendemail');
 const cryptofuncs = require('../../api/cryptofuncs');
-
-const logFile = './logfile.log';
-const name = 'email-logger';
-const logger = new Logger(name, logFile);
 
 const compiledFunction = pug.compileFile(path.join(__dirname, '/email.pug'));
 
