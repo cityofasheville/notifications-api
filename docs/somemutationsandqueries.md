@@ -1,20 +1,19 @@
 ``` json
-mutation createPeep($user_preference: UserPreferenceInput!) {
-  createUserPreference(user_preference: $user_preference) {
+mutation CreateUserPreference($userPreference: UserPreferenceInput!) {
+  createUserPreference(user_preference: $userPreference) {
     id
     location_x
     location_y
     send_types {
       email
-      type
     }
   }
 }
 
 {
   "user_preference": {
-    "location_x": "-82.543",
-    "location_y": "35.345",
+    "location_x": -82.543,
+    "location_y": 35.345,
     "send_types": [
       {
         "type": "EMAIL",
@@ -35,7 +34,7 @@ mutation createPeep($user_preference: UserPreferenceInput!) {
 
 query GetUserPreference {
   user_preference(email: "user@ashevillenc.gov") {
-id
+    id
     location_x
     location_y
     send_types {
