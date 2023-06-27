@@ -35,7 +35,8 @@ async function recipientSelection() {
             (subscriptions.whole_city = true) 
             or 
             (
-            (ST_DistanceSphere(ST_MakePoint(user_preferences.location_x, user_preferences.location_y),ST_MakePoint(topics.location_x, topics.location_y)) / 1609.34) 
+            (note.ST_DistanceSphere(note.ST_MakePoint(user_preferences.location_x, user_preferences.location_y),
+            note.ST_MakePoint(topics.location_x, topics.location_y)) / 1609.34) 
             < subscriptions.radius_miles
             )
         )
