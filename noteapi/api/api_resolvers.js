@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
 
-const { URL } = require('url');
-const getDbConnection = require('../common/db');
-const cryptofuncs = require('./cryptofuncs');
-const sendConfirmationEmail = require('./confirmationEmail/sendConfirmationEmail');
+import { URL } from 'url';
+import getDbConnection from '../db/db.js';
+import cryptofuncs from './cryptofuncs.js';
+import sendConfirmationEmail from './confirmationEmail/sendConfirmationEmail.js';
 
 const pool = getDbConnection('note'); // Initialize the connection.
 
@@ -237,4 +237,4 @@ const resolvers = {
   },
 };
 
-module.exports = resolvers;
+export default resolvers;

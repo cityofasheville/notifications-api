@@ -1,3 +1,4 @@
+-- Not used
     select true as minor, false as major, permit_num, 
     case when coalesce(applicant_name,'')='' Then address else applicant_name end as name, x, y
     -- ,applied_date,permit_group, permit_type, permit_subtype

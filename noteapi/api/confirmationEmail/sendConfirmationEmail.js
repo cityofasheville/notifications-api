@@ -1,19 +1,16 @@
 /* eslint-disable no-console */
-const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 const client = new SESClient({ region: 'us-east-1' });
 
-const pug = require('pug');
-const path = require('path');
-const Logger = require('coa-node-logging');
-const cryptofuncs = require('../../api/cryptofuncs');
+import { compileFile } from 'pug';
+import { join } from 'path';
+import cryptofuncs from '../../api/cryptofuncs.js';
+const __dirname = import.meta.dirname;
+import "dotenv/config.js";
 
-require('dotenv').config({ path: path.join(__dirname, '/./../../.env') });
-
-const logFile = './logfile.log';
-const name = 'signup-confirmation-email';
-const logger = new Logger(name, logFile);
-
-const compiledFunction = pug.compileFile(path.join(__dirname, '/email.pug'));
+const pugfile = join(__dirname, '/email.pug');
+// console.log(pugfile);
+const compiledFunction = compileFile(pugfile);
 
 async function sendConfirmationEmail(emailAddr) {
   try {
@@ -49,12 +46,10 @@ async function sendConfirmationEmail(emailAddr) {
     const command = new SendEmailCommand(params);
     const response = await client.send(command);
 
-    logger.info(`Email sent: ${emailAddr} ${response.MessageId}`);
     console.log(`Email sent: ${emailAddr} ${response.MessageId}`);
   } catch (err) {
-    logger.error(`Error sending email: ${emailAddr} Err: ${err}`);
     console.log(`Error sending email: ${emailAddr} Err: ${err}`);
   }
 }
-module.exports = sendConfirmationEmail;
+export default sendConfirmationEmail;
 

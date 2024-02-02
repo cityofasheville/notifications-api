@@ -1,9 +1,10 @@
-const crypto = require('crypto');
-require('dotenv').config();
+import { createHmac } from 'crypto';
+
+import "dotenv/config.js";
 
 function getHash(encodedEmail, expires) {
   const cryptokey = process.env.email_hash_key;
-  const hash = crypto.createHmac('sha1', cryptokey).update(`${encodedEmail}${expires}`).digest('hex');
+  const hash = createHmac('sha1', cryptokey).update(`${encodedEmail}${expires}`).digest('hex');
   return hash;
 }
 
@@ -20,9 +21,4 @@ function createUnsubUrl(email) { // build a url to unsubscribe this email
   return fullUrl;
 }
 
-// This allows module to be called directly from command line for testing
-if (require.main === module) {
-  // eslint-disable-next-line no-console
-  console.log(createUnsubUrl('user@ashevillenc.gov'));
-}
-module.exports = { getHash, createUnsubUrl };
+export default { getHash, createUnsubUrl };

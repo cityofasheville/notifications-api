@@ -1,14 +1,11 @@
-const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses"); // CommonJS import
+const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 const client = new SESClient({ region: 'us-east-1' });
 
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '/./../../.env') });
 
-const Logger = require('coa-node-logging');
 
 const logFile = './logfile.log';
-const name = 'email-logger';
-const logger = new Logger(name, logFile);
 
 async function sesSendemail(emailAddr, htmlEmail) {
   try {
@@ -41,10 +38,8 @@ async function sesSendemail(emailAddr, htmlEmail) {
     const command = new SendEmailCommand(params);
     const response = await client.send(command);
 
-    logger.info(`Email sent: ${emailAddr} ${response.MessageId}`);
     console.log(`Email sent: ${emailAddr} ${new Date().toISOString()} ${response.MessageId}`);
   } catch (err) {
-    logger.error(`Error sending email: ${emailAddr} Err: ${err}`);
     console.log(`Error sending email: ${emailAddr} Err: ${err}`);
   }
 }

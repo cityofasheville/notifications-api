@@ -108,4 +108,4 @@ enum ErrorMsg {
   EXPIRED
 }
 `;
-module.exports = schema;
+export default schema;
