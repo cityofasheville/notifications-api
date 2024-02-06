@@ -9,8 +9,6 @@ import express from 'express';
 import session from 'express-session';
 import { createServer } from 'http';
 import cors from 'cors';
-import json from 'body-parser';
-// const { json } = parserpkg;
 import cache_client from './cache_client.js';
 // const { get, set } = cache;
 import loginpkg from 'coa-web-login';
@@ -130,7 +128,7 @@ if (debug) {
   app.use(
     '/graphql',
     cors(corsOptions),
-    json(),
+    express.json(),
     expressMiddleware(server, {
       context: async ({ req }) => ({
         token: req.headers.token,
