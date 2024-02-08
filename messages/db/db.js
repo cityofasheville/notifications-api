@@ -1,10 +1,10 @@
-const pg = require('pg');
-const dbConfigurations = require('./db_configs');
+import { defaults, Pool } from 'pg';
+import dbConfigurations from './db_configs';
 
 const dbConnections = {};
 
-pg.defaults.poolSize = 1;
-const PgPool = pg.Pool;
+defaults.poolSize = 1;
+const PgPool = Pool;
 
 const dbPool = (name) => {
   if (dbConfigurations[name] === undefined) {
@@ -24,4 +24,4 @@ const getDbConnection = (name) => {
   return dbConnections[name];
 };
 
-module.exports = getDbConnection;
+export default getDbConnection;

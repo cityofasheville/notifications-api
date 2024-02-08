@@ -1,46 +1,70 @@
-
-SELECT 'Minor' AS tag,
+create view internal.notification_permits as
+  select permit_num, applied_date, "name", x, y, jsonb_agg(tag) tags
+      FROM (SELECT 'Minor'::text AS tag,
     a.permit_num,
     a.applied_date,
         CASE
-            WHEN COALESCE(a.applicant_name, '') = '' THEN ''
+            WHEN COALESCE(a.applicant_name, ''::character varying)::text = ''::text THEN b.address_full
             ELSE a.applicant_name
-        END AS name
-   FROM amd.permits a
-
-  WHERE a.permit_group = 'Planning' AND a.permit_type = 'Development' AND a.permit_subtype = 'Level I'
+        END AS name,
+    b.longitude_wgs AS x,
+    b.latitude_wgs AS y
+   FROM internal.permits a
+     LEFT JOIN internal.coa_bc_address_master b ON a.civic_address_id::text = b.civicaddress_id::character varying(50)::text
+  WHERE a.permit_group::text = 'Planning'::text AND a.permit_type::text = 'Development'::text AND a.permit_subtype::text = 'Level I'::text
 UNION
- SELECT 'Major' AS tag,
+ SELECT 'Major'::text AS tag,
     a.permit_num,
     a.applied_date,
         CASE
-            WHEN COALESCE(a.applicant_name, '') = '' THEN ''
+            WHEN COALESCE(a.applicant_name, ''::character varying)::text = ''::text THEN b.address_full
             ELSE a.applicant_name
-        END AS name
-   FROM amd.permits a
-
-  WHERE a.permit_group = 'Planning' AND (a.permit_type = 'Subdivision' AND a.permit_subtype = 'Major' OR a.permit_type = 'Development' AND (a.permit_subtype IN ('Level II', 'Level III', 'Conditional Zoning', 'Conditional Use')))
-  UNION
- SELECT 'Affordable' AS tag,
-    a.permit_num,
-    a.applied_date,
-        CASE
-            WHEN COALESCE(a.applicant_name, '') = '' THEN ''
-            ELSE a.applicant_name
-        END AS name
-   FROM amd.permits a
-     JOIN amd.permit_custom_fields permit_custom_fields ON a.permit_num = permit_custom_fields.permit_num
-  WHERE permit_custom_fields.name like '%Affordable%' AND permit_custom_fields.value = 'Yes'
+        END AS name,
+    b.longitude_wgs AS x,
+    b.latitude_wgs AS y
+   FROM internal.permits a
+     LEFT JOIN internal.coa_bc_address_master b ON a.civic_address_id::text = b.civicaddress_id::character varying(50)::text
+  WHERE a.permit_group::text = 'Planning'::text AND (a.permit_type::text = 'Subdivision'::text AND a.permit_subtype::text = 'Major'::text OR a.permit_type::text = 'Development'::text AND (a.permit_subtype::text = ANY (ARRAY['Level II'::character varying::text, 'Level III'::character varying::text, 'Conditional Zoning'::character varying::text, 'Conditional Use'::character varying::text])))
 UNION
- SELECT 'Slope' AS tag,
+ SELECT 'Affordable'::text AS tag,
     a.permit_num,
     a.applied_date,
         CASE
-            WHEN COALESCE(a.applicant_name, '') = '' THEN ''
+            WHEN COALESCE(a.applicant_name, ''::character varying)::text = ''::text THEN b.address_full
             ELSE a.applicant_name
-        END AS name
-   FROM amd.permits a
-     JOIN amd.permit_custom_fields permit_custom_fields ON a.permit_num = permit_custom_fields.permit_num
-  WHERE permit_custom_fields.name like '%Steep Slope%' AND permit_custom_fields.value = 'Yes'
-
-  order by applied_date desc
+        END AS name,
+    b.longitude_wgs AS x,
+    b.latitude_wgs AS y
+   FROM internal.permits a
+     LEFT JOIN internal.coa_bc_address_master b ON a.civic_address_id::text = b.civicaddress_id::character varying(50)::text
+     JOIN internal.permit_custom_fields ON a.permit_num::text = permit_custom_fields.permit_num::text
+  WHERE a.permit_group::text = 'Planning'::text AND (a.permit_type::text = 'Subdivision'::text AND a.permit_subtype::text = 'Major'::text OR a.permit_type::text = 'Development'::text AND (a.permit_subtype::text = ANY (ARRAY['Level I'::character varying::text, 'Level II'::character varying::text, 'Level III'::character varying::text, 'Conditional Zoning'::character varying::text, 'Conditional Use'::character varying::text]))) AND permit_custom_fields.name::text ~~* '%Affordable%'::text AND permit_custom_fields.value::text = 'Yes'::text
+UNION
+ SELECT 'Slope'::text AS tag,
+    a.permit_num,
+    a.applied_date,
+        CASE
+            WHEN COALESCE(a.applicant_name, ''::character varying)::text = ''::text THEN b.address_full
+            ELSE a.applicant_name
+        END AS name,
+    b.longitude_wgs AS x,
+    b.latitude_wgs AS y
+   FROM internal.permits a
+     LEFT JOIN internal.coa_bc_address_master b ON a.civic_address_id::text = b.civicaddress_id::character varying(50)::text
+     JOIN internal.permit_custom_fields ON a.permit_num::text = permit_custom_fields.permit_num::text
+  WHERE a.permit_group::text = 'Planning'::text AND (a.permit_type::text = 'Subdivision'::text AND a.permit_subtype::text = 'Major'::text OR a.permit_type::text = 'Development'::text AND (a.permit_subtype::text = ANY (ARRAY['Level I'::character varying::text, 'Level II'::character varying::text, 'Level III'::character varying::text, 'Conditional Zoning'::character varying::text, 'Conditional Use'::character varying::text]))) AND permit_custom_fields.name::text ~~* '%Steep Slope%'::text AND permit_custom_fields.value::text = 'Yes'::text
+UNION
+ SELECT 'SoundExceedance'::text AS tag,
+    a.permit_num,
+    a.applied_date,
+        CASE
+            WHEN COALESCE(a.applicant_name, ''::character varying)::text = ''::text THEN b.address_full
+            ELSE a.applicant_name
+        END AS name,
+    b.longitude_wgs AS x,
+    b.latitude_wgs AS y
+   FROM internal.permits a
+     LEFT JOIN internal.coa_bc_address_master b ON a.civic_address_id::text = b.civicaddress_id::character varying(50)::text
+  WHERE a.permit_group::text = 'Permits'::text AND a.permit_type::text = 'Commercial'::text AND a.permit_subtype::text = 'Existing Building'::text AND a.permit_category::text = 'Sound Exceedance'::text
+) notification_emails
+GROUP BY "name", permit_num, applied_date, x, y;

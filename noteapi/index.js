@@ -46,7 +46,7 @@ if (debug) {
     });
   } else if (sessionCacheMethod === 'pg') {
     sessionCache = new PgSession({
-      pool: getDbConnection('mds'),
+      pool: getDbConnection('note'),
       schemaName: 'aux',
       ttl: prunePeriod,
     });
@@ -102,7 +102,7 @@ if (debug) {
     }
 
     checkLogin(sessionId, cachedContext, cache_client)
-      .then(() => getUserInfo(sessionId, cachedContext, apiConfig, cache_client, getDbConnection('mds')))
+      .then(() => getUserInfo(sessionId, cachedContext, apiConfig, cache_client, getDbConnection('note')))
       .then((uinfo) => {
         req.session.employee_id = uinfo.id;
         return next();

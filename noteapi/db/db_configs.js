@@ -11,15 +11,6 @@ const defaultConfigs = {
     port: 5432,
     ssl: false,
   },
-  mds: {
-    db_type: 'pg',
-    host: process.env.mds_host,
-    user: process.env.mds_user,
-    password: process.env.mds_password,
-    database: process.env.mds_database,
-    port: 5432,
-    ssl: false,
-  },
 };
 
 
