@@ -1,5 +1,6 @@
-import { defaults, Pool } from 'pg';
-import dbConfigurations from './db_configs';
+import pgpkg from 'pg';
+const { defaults, Pool } = pgpkg;
+import dbConfigurations from './db_configs.js';
 
 const dbConnections = {};
 

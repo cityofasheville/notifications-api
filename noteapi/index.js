@@ -20,7 +20,7 @@ const PgSession = connectpgsimple(session);
 
 import "dotenv/config.js";
 import { apiConfig } from './api/config.js';
-import getDbConnection from './db/db.js';
+import getDbConnection from './util/db.js';
 
 const GRAPHQL_PORT = process.env.PORT || 4000;
 

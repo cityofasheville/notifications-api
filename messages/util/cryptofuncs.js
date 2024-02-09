@@ -21,4 +21,4 @@ function createUnsubUrl(email) { // build a url to unsubscribe this email
   return fullUrl;
 }
 
-export default { getHash, createUnsubUrl };
+export { getHash, createUnsubUrl };

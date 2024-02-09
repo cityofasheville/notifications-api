@@ -2,8 +2,8 @@
 /* eslint-disable no-console */
 
 import { URL } from 'url';
-import getDbConnection from '../db/db.js';
-import cryptofuncs from './cryptofuncs.js';
+import getDbConnection from '../util/db.js';
+import { getHash } from '../util/cryptofuncs.js';
 import sendConfirmationEmail from './confirmationEmail/sendConfirmationEmail.js';
 
 const pool = getDbConnection('note'); // Initialize the connection.
@@ -191,7 +191,7 @@ async function deleteUserPreferenceSecure(obj, args, context) {
     const encodedEmail = encodeURIComponent(decodedEmail);
     const urlHash = urlObj.searchParams.get('h');
     const urlExpireEpoch = urlObj.searchParams.get('x');
-    const hashShouldBe = cryptofuncs.getHash(encodedEmail, urlExpireEpoch);
+    const hashShouldBe = getHash(encodedEmail, urlExpireEpoch);
     if (urlExpireEpoch > Date.now()) { // not expired
       if (hashShouldBe === urlHash) { // hash matches
         const result = await client.query(`  

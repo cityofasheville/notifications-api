@@ -50,12 +50,24 @@ INSERT INTO note.messages(topic_id, message, sent)VALUES(2, 'West Estates Luxury
 -------------------------------------
 -- CREATE DB 
 
+-- DROP TABLE note.notification_permits CASCADE;
+
+CREATE TABLE note.notification_permits (
+	permit_num varchar(30) NULL,
+	applied_date timestamp NULL,
+	"name" varchar NULL,
+	x numeric(38, 8) NULL,
+	y numeric(38, 8) NULL,
+	tags jsonb NULL,
+  CONSTRAINT permit_num_pkey PRIMARY KEY (permit_num)
+);
+
 -- DROP TABLE note.categories CASCADE;
 
 CREATE TABLE note.categories
 (
     id SERIAL,
-    name character varying COLLATE pg_catalog."default" NOT NULL,
+    name character varying NOT NULL,
     CONSTRAINT categories_pkey PRIMARY KEY (id)
 );
 
@@ -66,7 +78,7 @@ CREATE TABLE note.tags
 (
     id SERIAL,
     category_id integer NOT NULL REFERENCES note.categories(id),
-    name character varying COLLATE pg_catalog."default" NOT NULL,
+    name character varying NOT NULL,
     CONSTRAINT tags_pkey PRIMARY KEY (id)
 );
 ---------------------------------------------------------------------------------
@@ -75,32 +87,24 @@ CREATE TABLE note.tags
 CREATE TABLE note.topics
 (
     id SERIAL,
-    name character varying COLLATE pg_catalog."default" NOT NULL,
-    permit_num character varying (30) COLLATE pg_catalog."default",
+    name character varying NOT NULL,
+    permit_num character varying (30),
     location_x float,
     location_y float,
+    topic_tags jsonb NULL,
     CONSTRAINT topics_pkey PRIMARY KEY (id)
 );
----------------------------------------------------------------------------------
- -- DROP TABLE note.topic_tags CASCADE;
 
-CREATE TABLE note.topic_tags
-(
-    id SERIAL,
-    tag_id integer NOT NULL REFERENCES note.tags(id),
-    topic_id integer NOT NULL REFERENCES note.topics(id),
-    CONSTRAINT topic_tags_pkey PRIMARY KEY (id)
 );---------------------------------------------------------------------------------
--- DROP TABLE note.messages CASCADE;
+-- DROP TABLE note.notification_permits_history CASCADE;
 
-CREATE TABLE note.messages
+CREATE TABLE note.notification_permits_history
 (
     id SERIAL,
-    topic_id integer NOT NULL REFERENCES note.topics(id),
-    message character varying COLLATE pg_catalog."default",
-    sent boolean,
-    datesent date,
-    CONSTRAINT messages_pkey PRIMARY KEY (id)
+    permit_num varchar(30) NULL,
+    applied_date timestamp NULL,
+    "name" varchar NULL,
+    sent_date timestamp NULL,
 );
 ---------------------------------------------------------------------------------
 -- DROP TABLE note.user_preferences CASCADE;
@@ -120,9 +124,9 @@ CREATE TABLE note.send_types
 (
     id SERIAL,
     user_id integer NOT NULL REFERENCES note.user_preferences(id),
-    type character varying (10) COLLATE pg_catalog."default", --EMAIL TEXT PUSH VOICE
-    email character varying COLLATE pg_catalog."default",
-    phone character varying COLLATE pg_catalog."default",
+    type character varying (10), --EMAIL TEXT PUSH VOICE
+    email character varying,
+    phone character varying,
     CONSTRAINT send_types_pkey PRIMARY KEY (id)
 );
 
@@ -146,23 +150,23 @@ CREATE UNIQUE INDEX subscriptions_user_id_tag_id ON note.subscriptions USING btr
 ---------------------------------------------------------------------------------
 -- DROP TABLE note.project_types CASCADE;
 
-CREATE TABLE note.project_types
-(
-    tag_level character varying (30) COLLATE pg_catalog."default" NOT NULL,
-    project_type character varying (30) COLLATE pg_catalog."default" NOT NULL,
-    permit_group character varying (30) COLLATE pg_catalog."default" NOT NULL,
-    permit_type character varying (30) COLLATE pg_catalog."default" NOT NULL,
-    permit_subtype character varying (30) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT project_types_pkey PRIMARY KEY (project_type)
-);
+-- CREATE TABLE note.project_types
+-- (
+--     tag_level character varying (30) NOT NULL,
+--     project_type character varying (30) NOT NULL,
+--     permit_group character varying (30) NOT NULL,
+--     permit_type character varying (30) NOT NULL,
+--     permit_subtype character varying (30) NOT NULL,
+--     CONSTRAINT project_types_pkey PRIMARY KEY (project_type)
+-- );
 
-INSERT INTO note.project_types(tag_level,project_type,permit_group,permit_type,permit_subtype)VALUES
-('Minor','Level I','Planning','Development','Level I'),
-('Major','Major Subdivision','Planning','Subdivision','Major'),
-('Major','Level II','Planning','Development','Level II'),
-('Major','Level III','Planning','Development','Level III'),
-('Major','Conditional Zoning','Planning','Development','Conditional Zoning'),
-('Major','Conditional Use Permit','Planning','Development','Conditional Use');
+-- INSERT INTO note.project_types(tag_level,project_type,permit_group,permit_type,permit_subtype)VALUES
+-- ('Minor','Level I','Planning','Development','Level I'),
+-- ('Major','Major Subdivision','Planning','Subdivision','Major'),
+-- ('Major','Level II','Planning','Development','Level II'),
+-- ('Major','Level III','Planning','Development','Level III'),
+-- ('Major','Conditional Zoning','Planning','Development','Conditional Zoning'),
+-- ('Major','Conditional Use Permit','Planning','Development','Conditional Use');
 
 -----------------------
 --ACCESS DB

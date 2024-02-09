@@ -1,6 +1,6 @@
 /* Run this to create and send emails */
-const recipientSelection = require('./recipientSelection'); // Finds who to send email to
-const sendEmails = require('./sendEmails'); // Send em
+import recipientSelection from './recipientSelection.js'; // Finds who to send email to
+import sendEmails from './sendEmails.js'; // Send em
 
 async function sendPermitMsgs() {
   try {
@@ -12,4 +12,4 @@ async function sendPermitMsgs() {
   }
 }
 
-module.exports = sendPermitMsgs;
+export default sendPermitMsgs;

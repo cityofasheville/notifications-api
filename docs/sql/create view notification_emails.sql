@@ -69,4 +69,5 @@ UNION
     b.latitude_wgs AS y
    FROM internal.permits a
      LEFT JOIN internal.coa_bc_address_master b ON a.civic_address_id::text = b.civicaddress_id::character varying(50)::text
-  WHERE a.permit_group::text = 'Permits'::text AND a.permit_type::text = 'Commercial'::text AND a.permit_subtype::text = 'Existing Building'::text AND a.permit_category::text = 'Sound Exceedance'::text;
+  WHERE a.permit_group::text = 'Permits'::text AND a.permit_type::text = 'Commercial'::text AND a.permit_subtype::text = 'Existing Building'::text AND a.permit_category::text = 'Sound Exceedance'::text
+  HAVING permit_num not like '%TMP%';

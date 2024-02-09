@@ -4,7 +4,7 @@ const client = new SESClient({ region: 'us-east-1' });
 
 import { compileFile } from 'pug';
 import { join } from 'path';
-import cryptofuncs from '../../api/cryptofuncs.js';
+import { createUnsubUrl } from '../../util/cryptofuncs.js';
 const __dirname = import.meta.dirname;
 import "dotenv/config.js";
 
@@ -15,7 +15,7 @@ const compiledFunction = compileFile(pugfile);
 async function sendConfirmationEmail(emailAddr) {
   try {
     const recipient = {};
-    recipient.unsub_url = cryptofuncs.createUnsubUrl(emailAddr);
+    recipient.unsub_url = createUnsubUrl(emailAddr);
     const htmlEmail = compiledFunction(recipient);
     const params = {
       Destination: { /* required */

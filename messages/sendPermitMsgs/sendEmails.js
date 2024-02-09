@@ -1,9 +1,10 @@
-const pug = require('pug');
-const path = require('path');
-const sesSendemail = require('./sesSendemail');
-const cryptofuncs = require('../../api/cryptofuncs');
+import { compileFile } from 'pug';
+import { join } from 'path';
+import sesSendemail from './sesSendemail.js';
+import { createUnsubUrl } from '../util/cryptofuncs.js';
 
-const compiledFunction = pug.compileFile(path.join(__dirname, '/email.pug'));
+const __dirname = import.meta.dirname;
+const compiledFunction = compileFile(join(__dirname, '/email.pug'));
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -19,7 +20,7 @@ async function sendEmails(recipients) {
       await sleep(300);
       const recipient = {};
       recipient.listOfTopics = recipients[emailAddr];
-      recipient.unsub_url = cryptofuncs.createUnsubUrl(emailAddr);
+      recipient.unsub_url = createUnsubUrl(emailAddr);
       const htmlEmail = compiledFunction(recipient);
       // eslint-disable-next-line no-await-in-loop
       await sesSendemail(emailAddr, htmlEmail);
@@ -30,4 +31,4 @@ async function sendEmails(recipients) {
   }
 }
 
-module.exports = sendEmails;
+export default sendEmails;
