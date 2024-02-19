@@ -98,13 +98,12 @@ CREATE TABLE note.topics
 );---------------------------------------------------------------------------------
 -- DROP TABLE note.notification_permits_history CASCADE;
 
-CREATE TABLE note.notification_permits_history
-(
-    id SERIAL,
-    permit_num varchar(30) NULL,
-    applied_date timestamp NULL,
-    "name" varchar NULL,
-    sent_date timestamp NULL,
+CREATE TABLE note.notification_permits_history (
+	permit_num varchar(30) NOT NULL,
+	applied_date timestamp NULL,
+	"name" varchar NULL,
+	sent_date timestamp NULL,
+	CONSTRAINT notification_permits_history_pk PRIMARY KEY (permit_num)
 );
 ---------------------------------------------------------------------------------
 -- DROP TABLE note.user_preferences CASCADE;

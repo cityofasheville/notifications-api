@@ -4,7 +4,7 @@ import sendEmails from './sendEmails.js'; // Send em
 
 async function sendPermitMsgs() {
   try {
-    const recipients = await recipientSelection();
+    const recipients = await recipientSelection(); console.log(recipients);
     sendEmails(recipients);
   } catch (e) {
     // eslint-disable-next-line no-console

@@ -13,17 +13,26 @@ const notePool = getDbConnection('note');
 
 // Finds who to send email to based on thier subscribed tags and radiuses, and project locations
 async function recipientSelection() {
-  return new Promise(async (resolve, reject) => {
-    const noteClient = await notePool.connect();
-    try {
-      const tags = await noteClient.query(`
-      with permits as (
-        select permit_num, "name", x, y, replace("tag"::text, '"', '') as "tag"
+  const noteClient = await notePool.connect();
+  try {
+    const tags = await noteClient.query(`
+      with insertedpermits as (    -- find permits not in history and insert them into history
+        INSERT INTO note.notification_permits_history
+        (permit_num, applied_date, "name", sent_date)
+        select np.permit_num, np.applied_date, np."name", now() 
+        from note.notification_permits np 
+        left join note.notification_permits_history nph 
+        on np.permit_num = nph.permit_num 
+        where nph.permit_num is null
+        returning permit_num 
+      )
+      ,permits as ( -- get all permits that were inserted into history and their tags
+        select p.permit_num, p."name", p.x, p.y, replace(a."tag"::text, '"', '') as "tag"
         from note.notification_permits p
-        CROSS JOIN LATERAL JSONB_ARRAY_ELEMENTS(p.tags) as "tag" --expand array in jsonb
-        where applied_date::date = '2023-07-12 00:00:00.000'::date
-        --where applied_date::date = current_date - '1 days'::interval
-        )
+        inner join insertedpermits ip
+        on p.permit_num = ip.permit_num
+        CROSS JOIN LATERAL JSONB_ARRAY_ELEMENTS(p.tags) as a("tag") --expand array in jsonb
+      )
       select type, email, phone, name, permit_num, STRING_AGG(notification_type,',') as notification_type from (
         select distinct send_types.type, send_types.email, send_types.phone, permits.name, permits.permit_num, tags.name as notification_type
         from note.user_preferences
@@ -38,42 +47,41 @@ async function recipientSelection() {
         where 
         ( 
             (subscriptions.whole_city = true) 
-        --            or 
-        --            (
-        --            (note.ST_DistanceSphere(note.ST_MakePoint(user_preferences.location_x, user_preferences.location_y),
-        --            note.ST_MakePoint(permits.x, permits.y)) / 1609.34) 
-        --            < subscriptions.radius_miles
-        --            )
-          )
-         ) as subq
-         group by type, email, phone, name, permit_num
-        ORDER BY type, email, name;
+              or 
+              (
+              (note.ST_DistanceSphere(note.ST_MakePoint(user_preferences.location_x, user_preferences.location_y),
+              note.ST_MakePoint(permits.x, permits.y)) / 1609.34) 
+              < subscriptions.radius_miles
+              )
+        )
+      ) as subq
+      group by type, email, phone, name, permit_num
+      ORDER BY type, email, name;		
       `);
-      const tagRows = tags.rows;
+    const tagRows = tags.rows;
 
-      // build recipients object grouped by email
-      const recipients = {};
-      Promise.all(
-        tagRows.map(async (row) => {
-          const shortRow = {
-            type: row.type, phone: row.phone, name: row.name, permit_num: row.permit_num, notification_type: row.notification_type,
-          };
-          const list = recipients[row.email];
-          if (list) {
-            list.push(shortRow);
-          } else {
-            recipients[row.email] = [shortRow];
-          }
-        }),
-      ).then(() => {
-        resolve(recipients);
-      });
-    } catch (e) {
-      reject(e);
-    } finally {
-      noteClient.release();
-    }
-  });
+    // build recipients object grouped by email
+    const recipients = {};
+    return Promise.all(
+      tagRows.map(async (row) => {
+        const shortRow = {
+          type: row.type, phone: row.phone, name: row.name, permit_num: row.permit_num, notification_type: row.notification_type,
+        };
+        const list = recipients[row.email];
+        if (list) {
+          list.push(shortRow);
+        } else {
+          recipients[row.email] = [shortRow];
+        }
+      }),
+    ).then(() => {
+      return (recipients);
+    });
+  } catch (e) {
+    throw (e);
+  } finally {
+    noteClient.release();
+  }
 }
 
 export default recipientSelection;
