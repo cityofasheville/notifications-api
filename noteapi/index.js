@@ -10,7 +10,6 @@ import session from 'express-session';
 import { createServer } from 'http';
 import cors from 'cors';
 import cache_client from './cache_client.js';
-// const { get, set } = cache;
 import loginpkg from 'coa-web-login';
 const { checkLogin, initializeContext, getUserInfo } = loginpkg;
 import memorystore from 'memorystore';
@@ -22,16 +21,12 @@ import "dotenv/config.js";
 import { apiConfig } from './api/config.js';
 import getDbConnection from './util/db.js';
 
-const GRAPHQL_PORT = process.env.PORT || 4000;
+const GRAPHQL_PORT = process.env.port || 4000;
 
 // PLAYGROUND
-let debug = true;
-
-let introspection = false;
-let playground = false;
-if (debug) {
-  introspection = true;
-  playground = true;
+let debug = false;
+if(process.env.debug === 'true') {
+  debug = true;
 }
 
 (async () => {
@@ -94,34 +89,37 @@ if (debug) {
   // // Check whether the user is logged in
   app.use((req, res, next) => {
     const sessionId = req.session.id;
-    const cData = cache_client.get(sessionId);
-    // console.log(sessionId, cData);
-    const cachedContext = cData || initializeContext();
-    if (!cData) {
-      cache_client.set(sessionId, cachedContext);
-    }
-
-    checkLogin(sessionId, cachedContext, cache_client)
-      .then(() => getUserInfo(sessionId, cachedContext, apiConfig, cache_client, getDbConnection('note')))
-      .then((uinfo) => {
-        req.session.employee_id = uinfo.id;
-        return next();
-      })
-      .catch((err) => {
-        const error = new Error(err.toString().substring(6));
-        error.httpStatusCode = 403;
-        error.stack = null;
-        return next(error);
+    cache_client.get(sessionId)
+      .then((cData) => {
+        // console.log(sessionId, cData);
+        let ensureInCache = Promise.resolve(null);
+        const cachedContext = cData || initializeContext();
+        if (!cData) {
+          ensureInCache = cache_client.store(sessionId, cachedContext);
+        }
+        ensureInCache.then(() => {
+          checkLogin(sessionId, cachedContext, cache_client)
+            .then(() => getUserInfo(sessionId, cachedContext, apiConfig, cache_client, getDbConnection('note')))
+            .then((uinfo) => {
+              req.session.employee_id = uinfo.id;
+              return next();
+            })
+            .catch((err) => {
+              const error = new Error(err.toString().substring(6));
+              error.httpStatusCode = 403;
+              error.stack = null;
+              return next(error); 
+            });
+        });
       });
   });
-
 
   const httpServer = createServer(app);
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    introspection,
-    playground,
+    introspection: debug,
+    playground: debug,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
   await server.start();
@@ -135,6 +133,7 @@ if (debug) {
         sessionId: req.session.id,
         session: req.session,
         cache: cache_client,
+        debug,
       }),
     }),
   );

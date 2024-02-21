@@ -99,3 +99,33 @@ query GetUserPreference {
   }
 }
 ```
+## This is what the front end actually sends.
+``` json
+query getUserPreference($email: String!) {
+  user_preference(email: $email) {
+    id
+    location_x
+    location_y
+    send_types {
+      type
+      email
+      __typename
+    }
+    subscriptions {
+      id
+      radius_miles
+      whole_city
+      tag {
+        id
+        name
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}
+
+
+{"email":"jtwilson@ashevillenc.gov"}
+```

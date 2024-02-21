@@ -13,6 +13,7 @@ const resolverMap = {
       return version;
     },
     user(obj, args, context) {
+      // console.log("context", context, "cache", context.cache.get(context.session.id));
       return context.cache.get(context.session.id)
         .then((cData) => {
           if (cData && cData.user) {
