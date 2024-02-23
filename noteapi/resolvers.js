@@ -1,5 +1,4 @@
-import lodashpkg from 'lodash';
-const { merge } = lodashpkg;
+import merge_deep from './util/merge_deep.js';
 import loginpkg from 'coa-web-login';
 const { graphql } = loginpkg;
 import * as fs from 'fs';
@@ -53,7 +52,7 @@ const resolverMap = {
 
 const loginResolvers = graphql.resolvers;
 
-export default merge(
+export default merge_deep(
   resolverMap,
   apiResolvers,
   loginResolvers,
