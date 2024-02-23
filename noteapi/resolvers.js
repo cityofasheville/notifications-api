@@ -1,6 +1,5 @@
 import merge_deep from './util/merge_deep.js';
-import loginpkg from 'coa-web-login';
-const { graphql } = loginpkg;
+import { graphql } from './coa-web-login/index.js';
 import * as fs from 'fs';
 const packagejson = JSON.parse(fs.readFileSync('./package.json'));
 const version = packagejson.version;

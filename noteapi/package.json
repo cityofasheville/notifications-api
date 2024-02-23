@@ -17,6 +17,7 @@
   "dependencies": {
     "@apollo/server": "^4.10.0",
     "@aws-sdk/client-ses": "^3.507.0",
+    "axios": "^1.6.7",
     "coa-web-login": "^2.2.7",
     "connect-pg-simple": "^9.0.1",
     "cors": "^2.8.5",
@@ -25,8 +26,10 @@
     "express-session": "^1.18.0",
     "lru-cache": "^10.2.0",
     "memorystore": "^1.6.7",
+    "node-jose": "^2.2.0",
     "pg": "^8.11.3",
-    "pug": "^3.0.2"
+    "pug": "^3.0.2",
+    "qs": "^6.11.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.3"

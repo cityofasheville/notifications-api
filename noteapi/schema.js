@@ -1,5 +1,4 @@
-import loginpkg from 'coa-web-login';
-const { graphql } = loginpkg;
+import { graphql } from './coa-web-login/index.js';
 import { schema } from './api/index.js';
 
 /*
