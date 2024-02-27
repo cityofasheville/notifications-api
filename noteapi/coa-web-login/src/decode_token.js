@@ -31,7 +31,7 @@ const decodeToken = function(kid, appClientId, token, type = 'authorization_code
       if (type == 'test') {
         shortExpire = 3570;
       }
-      current_ts = shortExpire + Math.floor(new Date() / 1000);
+      const current_ts = shortExpire + Math.floor(new Date() / 1000);
       if (current_ts > claims.exp) {
         return Promise.resolve({ status: 'expired', claims });
       }

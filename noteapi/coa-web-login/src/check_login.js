@@ -11,7 +11,7 @@ const checkLogin = function (sessionId, cacheData = null, cache) {
     if (!cacheData.sessionState) cacheData.sessionState = {};
     // get the kid from the headers prior to verification
     let header = JSON.parse(util.base64url.decode(cacheData.id_token.split('.')[0]));
-    kid = header.kid;
+    const kid = header.kid;
 
     return decodeToken(kid, process.env.appClientId, cacheData.id_token, 'test', cache)
     .then(result => {
