@@ -1,3 +1,6 @@
+-- Prerequisites: Create a database with a schema 'note' and a user 'notedb'
+-- Application also requires PostGIS extension to be installed in the database
+CREATE EXTENSION postgis;
 ------------------------
 CREATE TABLE note.categories (
 	id serial4 NOT NULL,

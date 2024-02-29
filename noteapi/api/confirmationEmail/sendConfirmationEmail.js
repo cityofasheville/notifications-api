@@ -13,6 +13,7 @@ const pugfile = join(__dirname, '/email.pug');
 const compiledFunction = compileFile(pugfile);
 
 async function sendConfirmationEmail(emailAddr) {
+  if(process.env.send_email === 'false') return;
   try {
     const recipient = {};
     recipient.unsub_url = createUnsubUrl(emailAddr);
