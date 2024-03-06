@@ -1,6 +1,19 @@
--- Prerequisites: Create a database with a schema 'note' and a user 'notedb'
--- Application also requires PostGIS extension to be installed in the database
-CREATE EXTENSION postgis;
+CREATE SCHEMA note;
+CREATE SCHEMA aux;
+CREATE SCHEMA tiger;
+CREATE ROLE notedb;
+CREATE EXTENSION tiger.postgis;
+------------------------
+CREATE TABLE aux."session" (
+	sid varchar NOT NULL,
+	sess json NOT NULL,
+	expire timestamp(6) NOT NULL,
+	CONSTRAINT session_pkey PRIMARY KEY (sid)
+);
+
+ALTER TABLE aux."session" OWNER TO dbadmin;
+GRANT ALL ON TABLE aux."session" TO dbadmin;
+GRANT ALL ON TABLE aux."session" TO notedb;
 ------------------------
 CREATE TABLE note.categories (
 	id serial4 NOT NULL,

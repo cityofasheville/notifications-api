@@ -80,7 +80,7 @@ function initializeDB() {
 const db = initializeDB();
 
 // Returns an array of rows
-let DBAll = function (sqlString, args) {
+let dbAll = function (sqlString, args) {
     return new Promise((resolve, reject) => {
         db.all(sqlString, args, (err, rows) => {
             if (err) reject(err);
@@ -89,7 +89,7 @@ let DBAll = function (sqlString, args) {
     });
 }
 // Returns a single row
-let DBGet = function (sqlString, args) {
+let dbGet = function (sqlString, args) {
     return new Promise((resolve, reject) => {
         db.get(sqlString, args, (err, row) => {
             if (err) reject(err);
@@ -98,7 +98,7 @@ let DBGet = function (sqlString, args) {
     });
 }
 // No data returned. (Only returns rows affected for UPDATE, DELETE)
-let DBRun = function (sqlString, args) {
+let dbRun = function (sqlString, args) {
     return new Promise((resolve, reject) => {
         db.run(sqlString, args, function (err) {
             if (err) reject(err);
@@ -108,7 +108,7 @@ let DBRun = function (sqlString, args) {
 }
 
 // No data returned. Return INSERTed id
-let DBRunIns = function (sqlInsertString, args) {
+let dbRunIns = function (sqlInsertString, args) {
     return new Promise((resolve, reject) => {
         db.run(sqlInsertString, args, function (err) {
             if (err) reject(err);
@@ -118,4 +118,4 @@ let DBRunIns = function (sqlInsertString, args) {
     });
 }
 
-export { DBAll, DBGet, DBRun, DBRunIns };
+export { dbAll, dbGet, dbRun, dbRunIns };
