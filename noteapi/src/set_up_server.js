@@ -4,13 +4,13 @@ import resolvers from './resolvers.js';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { createServer } from 'http'; // used by drain plugin
 
 import express from 'express';
 import session from 'express-session';
-import { createServer } from 'http';
 import cors from 'cors';
-import cache_client from './cache_client.js';
-import { checkLogin, initializeContext, getUserInfo } from './coa-web-login/index.js';
+import cache_client from './util/cache_client.js';
+import { checkLogin, initializeContext, getUserInfo } from './util/coa-web-login/index.js';
 import memorystore from 'memorystore';
 const MemoryStore = memorystore(session);
 import connectpgsimple from 'connect-pg-simple';

@@ -5,17 +5,20 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon ./index.js",
-    "debug": "DEBUG=express:* nodemon ./index.js",
-    "systemd": "/home/apiadmin/.nvm/versions/node/v16.20.0/bin/node index.js",
-    "send_msgs": "node ./messages/sendMessages.js",
-    "test": "jest"
+    "start": "nodemon --exec node --experimental-modules src/local.server.js",
+    "test": "cd test; sam local invoke --event sam_event.json",
+    "clean": "rm -rf deploy/build && rm -rf deploy/.terraform && rm -rf deploy/.terraform.lock.hcl",
+    "runterraform": "cd deploy/build && terraform init && terraform apply -auto-approve -var-file=../../.env",
+    "deploy": "cd deploy && node deploy.js && npm install --prefix ./build/nodejs --omit-dev && npm run runterraform",
+    "destroy": "cd deploy/build && terraform init && terraform destroy -auto-approve -var-file=../../.env"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@apollo/server": "^4.10.0",
+    "@as-integrations/aws-lambda": "^3.1.0",
+    "@aws-sdk/client-secrets-manager": "^3.525.0",
     "@aws-sdk/client-ses": "^3.507.0",
     "axios": "^1.6.7",
     "connect-pg-simple": "^9.0.1",
