@@ -40,7 +40,7 @@ resource "aws_lambda_function" "${prog_name}" {
   description      = "${prog_name}" 
   function_name    = "${prog_name}"
   role             = aws_iam_role.${prog_name}-role.arn
-  handler          = "lambda.default"
+  handler          = "lambda.handler"
   runtime          = "nodejs20.x"
   filename = data.archive_file.${prog_name}_zip.output_path
   source_code_hash = data.archive_file.${prog_name}_zip.output_base64sha256
@@ -60,15 +60,22 @@ resource "aws_lambda_function" "${prog_name}" {
   }
   environment {
     variables = {
-      "dbhost": var.dbhost
-      "dbuser": var.dbuser
-      "dbpassword": var.dbpassword
-      "database": var.database
-      "dbhost_accela": var.dbhost_accela
-      "dbuser_accela": var.dbuser_accela
-      "dbpassword_accela": var.dbpassword_accela
-      "dbdomain_accela": var.dbdomain_accela
-      "database_accela": var.database_accela
+      "sessionName": var.sessionName
+      "sessionSecret": var.sessionSecret
+      "maxSessionDays": var.maxSessionDays
+      "cache_method": var.cache_method
+      "database_type": var.database_type
+      "send_email": var.send_email
+      "userpoolId": var.userpoolId
+      "appClientId": var.appClientId
+      "cognitoOauthUrl": var.cognitoOauthUrl
+      "note_host": var.note_host
+      "note_database": var.note_database
+      "note_user": var.note_user
+      "note_password": var.note_password
+      "email_sender": var.email_sender
+      "email_hash_key": var.email_hash_key
+      "unsub_url": var.unsub_url
     }
   }
 }
@@ -79,7 +86,7 @@ resource "aws_lambda_function_url" "${prog_name}_function_url" {
 
   cors {
     allow_credentials = false
-    allow_origins     = ["https://development.d1thp43hcib1lz.amplifyapp.com","https://simplicity.ashevillenc.gov","http://localhost:3000"]
+    allow_origins     = ["https://dev-notifications-frontend.ashevillenc.gov","https://notifications.ashevillenc.gov","http://localhost:3000","https://dev-notify.ashevillenc.gov","https://notify-api.ashevillenc.gov","http://localhost:4000","http://localhost:4001"]
     allow_methods     = ["GET", "POST", "HEAD"]
     allow_headers     = ["date", "content-type"]
     max_age           = 86400
@@ -89,3 +96,4 @@ resource "aws_lambda_function_url" "${prog_name}_function_url" {
 output "${prog_name}_arn" {
   value = aws_lambda_function.${prog_name}.arn
 }
+

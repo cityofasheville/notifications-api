@@ -1,27 +1,10 @@
-import {
-  startServerAndCreateLambdaHandler,
-  handlers,
-} from '@as-integrations/aws-lambda';
-import { 
-  server,
-  pool,
-  pool_accela
-} from "./app.js";
 
-export default startServerAndCreateLambdaHandler(
-  server,
-  handlers.createAPIGatewayProxyEventV2RequestHandler(),
-  {
-    context: async ({ event }) => {
-      console.log("request: ", event.body);
-      return {
-        pool,
-        pool_accela,
-        user: null,
-        employee: null,
-      };
-    },
-  },
-);
-console.log(`SimpliCity: GraphQL Server is now running`);
+import serverlessExpress from '@codegenie/serverless-express';
+import app from './app.js';
 
+let serverlessExpressInstance = serverlessExpress({ app });
+
+export async function handler(event, context) {
+  console.log("request: ", event.rawPath);
+  return serverlessExpressInstance(event, context);
+}

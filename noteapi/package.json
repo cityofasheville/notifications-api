@@ -18,8 +18,8 @@
   "dependencies": {
     "@apollo/server": "^4.10.0",
     "@as-integrations/aws-lambda": "^3.1.0",
-    "@aws-sdk/client-secrets-manager": "^3.525.0",
     "@aws-sdk/client-ses": "^3.507.0",
+    "@codegenie/serverless-express": "^4.13.0",
     "axios": "^1.6.7",
     "connect-pg-simple": "^9.0.1",
     "cors": "^2.8.5",
@@ -31,10 +31,10 @@
     "node-jose": "^2.2.0",
     "pg": "^8.11.3",
     "pug": "^3.0.2",
-    "qs": "^6.11.2",
-    "sqlite3": "^5.1.7"
+    "qs": "^6.11.2"
   },
   "devDependencies": {
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "sqlite3": "^5.1.7"
   }
 }

@@ -13,47 +13,76 @@ variable "security_group_ids" {
   description   = "Array of security_group_ids" 
 }
 
-variable "dbhost" {
+variable "sessionName" {
  type = string
  description = "DB Env Var"
 }
 
-variable "dbuser" {
+variable "sessionSecret" {
  type = string
  description = "DB Env Var"
 }
 
-variable "dbpassword" {
+variable "maxSessionDays" {
  type = string
  description = "DB Env Var"
 }
 
-variable "database" {
+variable "cache_method" {
  type = string
  description = "DB Env Var"
 }
 
-variable "dbhost_accela" {
+variable "database_type" {
  type = string
  description = "DB Env Var"
 }
 
-variable "dbuser_accela" {
+variable "send_email" {
  type = string
  description = "DB Env Var"
 }
 
-variable "dbpassword_accela" {
+variable "userpoolId" {
  type = string
  description = "DB Env Var"
 }
 
-variable "dbdomain_accela" {
+variable "appClientId" {
  type = string
  description = "DB Env Var"
 }
 
-variable "database_accela" {
+variable "cognitoOauthUrl" {
+ type = string
+ description = "DB Env Var"
+}
+
+variable "note_host" {
+ type = string
+ description = "DB Env Var"
+}
+variable "note_database" {
+ type = string
+ description = "DB Env Var"
+}
+variable "note_user" {
+ type = string
+ description = "DB Env Var"
+}
+variable "note_password" {
+ type = string
+ description = "DB Env Var"
+}
+variable "email_sender" {
+ type = string
+ description = "DB Env Var"
+}
+variable "email_hash_key" {
+ type = string
+ description = "DB Env Var"
+}
+variable "unsub_url" {
  type = string
  description = "DB Env Var"
 }

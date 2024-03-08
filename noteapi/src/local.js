@@ -1,28 +1,6 @@
+import app from './app.js';
+import "dotenv/config.js";
+const port = process.env.PORT || 3000;
 
-import { startStandaloneServer } from '@apollo/server/standalone'; 
-import { 
-  server,
-  pool,
-  pool_accela
-} from "./app.js";
-
-(async () => {
-  try {
-    const GRAPHQL_PORT = 8080;
-
-    const { url } = await startStandaloneServer(server, {
-      context: () => {
-        return {
-          pool,
-          pool_accela,
-          user: null,
-          employee: null,
-        }
-      },
-      listen: { port: GRAPHQL_PORT },
-    });
-    console.log(`SimpliCity: GraphQL Server is now running on ${url}`);
-  }  catch (err) {
-    console.log(err);
-  }
-})();
+app.listen(port);
+console.info(`listening on http://localhost:${port}/graphql`);
