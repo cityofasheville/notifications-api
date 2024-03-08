@@ -7,7 +7,7 @@
 //       name: '30 Watauga Street Subdivision',
 //       permit_num: '19-03813PZ' },
 // ...
-import getDbConnection from '../util/db.js';
+import getDbConnection from './util/db.js';
 
 const notePool = getDbConnection('note');
 
@@ -49,8 +49,8 @@ async function recipientSelection() {
             (subscriptions.whole_city = true) 
               or 
               (
-              (note.ST_DistanceSphere(note.ST_MakePoint(user_preferences.location_x, user_preferences.location_y),
-              note.ST_MakePoint(permits.x, permits.y)) / 1609.34) 
+              (tiger.ST_DistanceSphere(tiger.ST_MakePoint(user_preferences.location_x, user_preferences.location_y),
+              tiger.ST_MakePoint(permits.x, permits.y)) / 1609.34) 
               < subscriptions.radius_miles
               )
         )

@@ -4,7 +4,7 @@ const client = new SESClient({ region: 'us-east-1' });
 import { compileFile } from 'pug';
 import { join } from 'path';
 import "dotenv/config.js";
-import { createUnsubUrl } from '../util/cryptofuncs.js';
+import { createUnsubUrl } from './util/cryptofuncs.js';
 
 const __dirname = import.meta.dirname;
 const compiledFunction = compileFile(join(__dirname, '/email.pug'));

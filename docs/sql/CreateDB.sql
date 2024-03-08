@@ -2,6 +2,9 @@ CREATE SCHEMA note;
 CREATE SCHEMA aux;
 CREATE SCHEMA tiger;
 CREATE ROLE notedb;
+GRANT USAGE ON SCHEMA note TO notedb;
+GRANT USAGE ON SCHEMA aux TO notedb;
+GRANT USAGE ON SCHEMA tiger TO notedb;
 CREATE EXTENSION tiger.postgis;
 ------------------------
 CREATE TABLE aux."session" (
