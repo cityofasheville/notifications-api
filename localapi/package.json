@@ -1,0 +1,35 @@
+{
+  "name": "notifications-api",
+  "version": "1.2.8",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon ./index.js",
+    "debug": "DEBUG=express:* nodemon ./index.js",
+    "systemd": "/home/apiadmin/.nvm/versions/node/v16.20.0/bin/node index.js",
+    "send_msgs": "node ./messages/sendMessages.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.10.0",
+    "@aws-sdk/client-ses": "^3.507.0",
+    "axios": "^1.6.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "express-session": "^1.18.0",
+    "lru-cache": "^10.2.0",
+    "memorystore": "^1.6.7",
+    "node-jose": "^2.2.0",
+    "pug": "^3.0.2",
+    "qs": "^6.11.2",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
