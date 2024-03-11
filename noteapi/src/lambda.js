@@ -1,6 +1,21 @@
-
+import apiResolvers from './api/api_resolvers_pg.js';
 import serverlessExpress from '@codegenie/serverless-express';
-import app from './app.js';
+import connectpgsimple from 'connect-pg-simple';
+import session from 'express-session';
+const PgSession = connectpgsimple(session);
+
+import server from './server.js';
+import getDbConnection from './util/db.js';
+
+const prunePeriod = 86400000; // prune expired entries every 24h
+
+let sessionCache = new PgSession({
+  pool: getDbConnection('note'),
+  schemaName: 'aux',
+  ttl: prunePeriod,
+});
+
+const app = server(apiResolvers, sessionCache);
 
 let serverlessExpressInstance = serverlessExpress({ app });
 
