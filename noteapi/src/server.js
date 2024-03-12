@@ -11,19 +11,16 @@ import express from 'express';
 // import cors from 'cors';
 import cache_client from './util/cache_client.js';
 import { checkLogin, initializeContext, getUserInfo } from './util/coa-web-login/index.js';
-// import memorystore from 'memorystore';
-// const MemoryStore = memorystore(session);
-// import connectpgsimple from 'connect-pg-simple';
-// const PgSession = connectpgsimple(session);
 
 import "dotenv/config.js";
 import { apiConfig } from './api/config.js';
 import getDbConnection from './util/db.js';
+// import corsOptions from './cors.js';
 
 async function server(apiResolver, sessionCache) {
 
   let resolvers = getResolvers(apiResolver);
-  
+
   // PLAYGROUND
   let debug = false;
   if (process.env.debug === 'true') {
@@ -45,29 +42,6 @@ async function server(apiResolver, sessionCache) {
       maxAge: 1000 * 60 * 60 * 24 * process.env.maxSessionDays,
     },
   }));
-
-  // Set up CORS
-  const allowedOrigins = [
-    'https://dev-notifications-frontend.ashevillenc.gov', // dev frontend
-    'https://notifications.ashevillenc.gov',              // prod frontend
-    'http://localhost:3000',                               // local frontend
-    'https://dev-notify.ashevillenc.gov',                 // dev sandbox
-    'https://notify-api.ashevillenc.gov',                 // prod sandbox
-    'http://localhost:4000',                               // local sandbox
-    'http://localhost:4001',                               // local sandbox
-  ];
-
-  // const corsOptions = {
-  //   origin: function (origin, callback) {
-  //     // console.log("orig", origin);
-  //     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-  //       callback(null, true)
-  //     } else {
-  //       callback(new Error(`Origin ${origin} not allowed by CORS`))
-  //     }
-  //   },
-  //   credentials: true,
-  // };
 
   // // Check whether the user is logged in
   app.use((req, res, next) => {
