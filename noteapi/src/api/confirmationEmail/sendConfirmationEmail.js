@@ -9,7 +9,6 @@ const __dirname = import.meta.dirname;
 import "dotenv/config.js";
 
 const pugfile = join(__dirname, '/email.pug');
-// console.log(pugfile);
 const compiledFunction = compileFile(pugfile);
 
 async function sendConfirmationEmail(emailAddr) {

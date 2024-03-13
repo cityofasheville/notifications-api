@@ -28,16 +28,6 @@ variable "maxSessionDays" {
  description = "DB Env Var"
 }
 
-variable "cache_method" {
- type = string
- description = "DB Env Var"
-}
-
-variable "database_type" {
- type = string
- description = "DB Env Var"
-}
-
 variable "send_email" {
  type = string
  description = "DB Env Var"

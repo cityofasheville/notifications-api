@@ -6,7 +6,7 @@ const MemoryStore = memorystore(session);
 
 import server from './server.js';
 import "dotenv/config.js";
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 
 const prunePeriod = 86400000; // prune expired entries every 24h
 

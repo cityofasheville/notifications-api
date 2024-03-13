@@ -21,8 +21,6 @@ If there are new ones, the emails are sent and the new permits are copied to his
 # Testing
 For local API testing, set these variables in noteapi/.env :
 ```
-cache_method=memory
-database_type=memory
 send_email=false
 ```
 

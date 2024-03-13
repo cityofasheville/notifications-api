@@ -7,6 +7,7 @@
     'https://notify-api.ashevillenc.gov',                 // prod sandbox
     'http://localhost:4000',                               // local sandbox
     'http://localhost:4001',                               // local sandbox
+    'https://fqcyg3mmdvfesdy4gbdjxntkge0qqxpt.lambda-url.us-east-1.on.aws',
   ];
 
   const corsOptions = {

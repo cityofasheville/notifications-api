@@ -15,8 +15,7 @@ let sessionCache = new PgSession({
   ttl: prunePeriod,
 });
 
-const app = server(apiResolvers, sessionCache);
-
+const app = await server(apiResolvers, sessionCache);
 let serverlessExpressInstance = serverlessExpress({ app });
 
 export async function handler(event, context) {

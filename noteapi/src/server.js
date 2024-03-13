@@ -8,14 +8,14 @@ import { createServer } from 'http'; // used by drain plugin
 import session from 'express-session';
 import express from 'express';
 
-// import cors from 'cors';
+import cors from 'cors';
 import cache_client from './util/cache_client.js';
 import { checkLogin, initializeContext, getUserInfo } from './util/coa-web-login/index.js';
 
 import "dotenv/config.js";
 import { apiConfig } from './api/config.js';
 import getDbConnection from './util/db.js';
-// import corsOptions from './cors.js';
+import corsOptions from './util/cors.js';
 
 async function server(apiResolver, sessionCache) {
 
@@ -80,9 +80,10 @@ async function server(apiResolver, sessionCache) {
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
   await server.start();
+
   app.use(
     '/graphql',
-    // cors(corsOptions),
+    cors(corsOptions),
     express.json(),
     expressMiddleware(server, {
       context: async ({ req }) => ({
@@ -94,7 +95,11 @@ async function server(apiResolver, sessionCache) {
       }),
     }),
   );
-  return httpServer;
+  app.use('/', function(req, res, next) {
+    res.redirect('graphql');
+    return next();
+  });
+  return app;
 }
 
 export default server;
