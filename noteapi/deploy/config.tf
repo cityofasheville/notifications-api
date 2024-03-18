@@ -74,6 +74,7 @@ resource "aws_lambda_function" "${prog_name}" {
       "email_sender": var.email_sender
       "email_hash_key": var.email_hash_key
       "unsub_url": var.unsub_url
+      "debug": var.debug
     }
   }
 }
@@ -81,6 +82,21 @@ resource "aws_lambda_function" "${prog_name}" {
 resource "aws_lambda_function_url" "${prog_name}_function_url" {
   function_name      = aws_lambda_function.${prog_name}.function_name
   authorization_type = "NONE"
+  cors {
+    allow_credentials = false
+    allow_origins     = [
+    "https://dev-notifications-frontend.ashevillenc.gov",
+    "https://notifications.ashevillenc.gov",
+    "http://localhost:3000",
+    "https://dev-notify.ashevillenc.gov",
+    "https://notify-api.ashevillenc.gov",
+    "http://localhost:4000",
+    "https://fqcyg3mmdvfesdy4gbdjxntkge0qqxpt.lambda-url.us-east-1.on.aws",
+    ]
+    allow_methods     = ["GET", "POST", "HEAD"]
+    allow_headers     = ["date", "content-type"]
+    max_age           = 86400
+  }
 }
 
 output "${prog_name}_arn" {

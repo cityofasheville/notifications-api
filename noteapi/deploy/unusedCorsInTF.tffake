@@ -10,10 +10,15 @@ resource "aws_lambda_function_url" "${prog_name}_function_url" {
     "https://dev-notify.ashevillenc.gov",
     "https://notify-api.ashevillenc.gov",
     "http://localhost:4000",
-    "http://localhost:4001"
+    "https://fqcyg3mmdvfesdy4gbdjxntkge0qqxpt.lambda-url.us-east-1.on.aws",
     ]
     allow_methods     = ["GET", "POST", "HEAD"]
     allow_headers     = ["date", "content-type"]
     max_age           = 86400
   }
+}
+
+resource "aws_lambda_function_url" "${prog_name}_function_url" {
+  function_name      = aws_lambda_function.${prog_name}.function_name
+  authorization_type = "NONE"
 }

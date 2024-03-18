@@ -76,3 +76,8 @@ variable "unsub_url" {
  type = string
  description = "DB Env Var"
 }
+
+variable "debug" {
+ type = string
+ description = "DB Env Var"
+}
