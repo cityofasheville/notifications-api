@@ -19,6 +19,8 @@ import corsOptions from './util/cors.js';
 
 async function server(apiResolver, sessionCache) {
 
+  const pool = getDbConnection('note'); // Initialize the connection.
+
   let resolvers = getResolvers(apiResolver);
 
   // PLAYGROUND
@@ -56,7 +58,7 @@ async function server(apiResolver, sessionCache) {
         }
         ensureInCache.then(() => {
           checkLogin(sessionId, cachedContext, cache_client)
-            .then(() => getUserInfo(sessionId, cachedContext, apiConfig, cache_client, getDbConnection('note')))
+            .then(() => getUserInfo(sessionId, cachedContext, apiConfig, cache_client, pool))
             .then((uinfo) => {
               req.session.employee_id = uinfo.id;
               return next();
@@ -87,6 +89,7 @@ async function server(apiResolver, sessionCache) {
     express.json(),
     expressMiddleware(server, {
       context: async ({ req }) => ({
+        pool,
         token: req.headers.token,
         sessionId: req.session.id,
         session: req.session,

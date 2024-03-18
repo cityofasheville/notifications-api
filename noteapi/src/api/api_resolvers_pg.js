@@ -2,199 +2,99 @@
 /* eslint-disable no-console */
 
 import { URL } from 'url';
-import getDbConnection from '../util/db.js';
 import { getHash } from '../util/cryptofuncs.js';
 import sendConfirmationEmail from './confirmationEmail/sendConfirmationEmail.js';
 
-const pool = getDbConnection('note'); // Initialize the connection.
-
-// Simple function that should not cause false negatives without trying to test every possible future email format.
+// Simple email validation that should not cause false negatives 
 function validateEmail(email) {
   var re = /\S+@\S+\.\S+/;
   return re.test(email);
 }
 
-// gets a user_preference, their subscriptions, and their send types, given an email.
-async function getUserPreference(parent, args, context) {
-  return context.cache.get(context.session.id)
-    .then(async (cData) => {
-      // Only return data if A: Debug mode OR B: The user is logged in, and that the logged in email matches the request.
-      if (context.debug || (cData.email === args.email && cData?.sessionState?.loggedIn === true)) {
-        const client = await pool.connect();
-        try {
-          const { rows } = await client.query(`
-          select row_to_json(peep) results
-          from (
-            select user_preferences.id, user_preferences.location_x, user_preferences.location_y,
-            (
-              select array_to_json(array_agg(row_to_json(s))) 
-              from (
-                select subscriptions.id, subscriptions.radius_miles, subscriptions.whole_city, tag_id,
-                (
-                  select row_to_json(t)
-                  from (
-                    select tags.id id, tags.category_id, tags.name
-                    from note.tags
-                    where subscriptions.tag_id = tags.id
-                  ) as t
-                ) as tag
-                from note.subscriptions
-                WHERE user_preferences.id = subscriptions.user_id
-              ) as s
-            ) as subscriptions,
-            (
-              select array_to_json(array_agg(row_to_json(st))) 
-              from (
-                select send_types.id, send_types.type, send_types.email, 
-                  send_types.phone
-                from note.send_types
-                WHERE user_preferences.id = send_types.user_id
-              ) as st
-            ) as send_types        
-            from note.user_preferences
-            inner join note.send_types
-            on user_preferences.id = send_types.user_id
-            where send_types.user_id is not null
-            and send_types.email = $1
-          ) as peep
-          `, [args.email]);
-          const ret = rows[0] ? rows[0].results : null;
-          return Promise.resolve(ret);
-        } catch (e) { return Promise.reject(e); } finally {
-          client.release();
-        }
-      } else {
-        return Promise.resolve(null);
-      }
-    });
+async function validateLoggedInUser(context, email) {
+  if (context.debug) return true;
+  if (!validateEmail(email)) return false;
+  // Return true if the user is logged in, and the logged in email matches the request.
+  let cData = await context.cache.get(context.session.id);
+  return (cData.email === email && cData?.sessionState?.loggedIn === true);
 }
 
-async function getCategories(parent, args, context) {
-  const client = await pool.connect();
-  try {
-    const result = await client.query('select id, name from note.categories'); 
-    // console.log( result.rows);
-    return Promise.resolve(result.rows);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
-  }
-}
-
-async function getTagsForCategory(category, args, context) {
-  const client = await pool.connect();
-  try {
-    const result = await client.query('select id, name, category_id from note.tags where category_id = $1', [category.id]);
-    return Promise.resolve(result.rows);
-  } catch (e) { return Promise.reject(e); } finally {
-    client.release();
+async function setUpUser(args, pool) {
+  // If the user exists, get their id and location, and update their location if it was sent.
+  // If the user doesn't exist, create them and send a confirmation email.
+  const user = args.user_preference;
+  const emailsendtype = user.send_types.find(sendtype => sendtype.type === 'EMAIL');
+  let { rows } = await pool.query(`
+        SELECT u.id, u.location_x, u.location_y FROM note.user_preferences u
+        inner join note.send_types on u.id = send_types.user_id
+        where send_types.user_id is not null and send_types.email = $1
+        `, [emailsendtype.email]);
+  if (rows[0]) { // already exist
+    let row = rows[0];
+    if (user.location_x && user.location_y) {
+      await pool.query(`
+              update note.user_preferences set location_x = $1, location_y = $2 where id = $3;
+              `, [user.location_x, user.location_y, row.id]);
+    }
+    return {
+      "userId": row.id,
+      "location_x": user.location_x,
+      "location_y": user.location_y
+    };
+  } else { // new
+    sendConfirmationEmail(emailsendtype.email);
+    let location_x = user.location_x || null;
+    let location_y = user.location_y || null;
+    let { rows: newUpRows } = await pool.query(`
+            insert into note.user_preferences(location_x, location_y)VALUES($1, $2) returning id;
+            `, [location_x, location_y]);
+    return {
+      userId: newUpRows[0].id,
+      location_x,
+      location_y
+    };
   }
 }
 
 async function createUserPreference(obj, args, context) {
-  let userId;
-  let userLocationX;
-  let userLocationY;
-  const client = await pool.connect();
+  if (!await validateLoggedInUser(context, args.email)) {
+    return ({ "id": -1, "send_types": [{ "email": "Not logged in" }] });
+  }
 
-  return context.cache.get(context.session.id)
-    .then(async (cData) => {
-      // see if they already exist
-      const emailsendtype = args.user_preference.send_types.find(sendtype => sendtype.type === 'EMAIL');
-      if (!validateEmail(emailsendtype.email)) {
-        return ({ "id": "invalid", "send_types": [{ "email": "Not created: Invalid email" }] });
-      }
-      // Only return data if A: Debug mode OR B: The user is logged in, and that the logged in email matches the request.
-      if (context.debug || (cData.email === emailsendtype.email && cData?.sessionState?.loggedIn === true)) {
-        try {
+  try {
+    const pool = context.pool;
+    const { userId, location_x, location_y } = await setUpUser(args, pool);
 
-          const { rows } = await client.query(`  
-          select send_types.user_id from note.send_types where email = $1;
-          `, [emailsendtype.email]);
+    // insert send types
+    if (args.user_preference.send_types) {
+      await pool.query(`
+                    delete from note.send_types
+                    where send_types.user_id = $1
+                    `, [userId]);
+      await Promise.all(args.user_preference.send_types.map(async (sendType) => {
+        await pool.query(`
+                      insert into note.send_types(user_id, type, email, phone)
+                      VALUES($1, $2, $3, $4);
+                      `, [userId, sendType.type, sendType.email, sendType.phone]);
+      }));
+    }
 
-          // user preferences
-          if (rows[0]) { // already exist
-            userId = rows[0].user_id;
-            if (args.user_preference.location_x && args.user_preference.location_y) {
-              await client.query(`
-              update note.user_preferences set location_x = $2, location_y = $3 where id = $1;
-              `, [userId, args.user_preference.location_x, args.user_preference.location_y]);
-              userLocationX = args.user_preference.location_x;
-              userLocationY = args.user_preference.location_y;
-            } else { // user exists but didn't send new x/y
-              const { rows: upRows } = await client.query(`
-              SELECT user_preferences.location_x, user_preferences.location_y
-              FROM note.user_preferences
-              WHERE user_preferences.id = $1
-              `, [userId]);
-              userLocationX = upRows[0].location_x;
-              userLocationY = upRows[0].location_y;
-            }
-          } else { // new
-            sendConfirmationEmail(emailsendtype.email);
-            const { rows: newUpRows } = await client.query(`  
-            insert into note.user_preferences(location_x, location_y)VALUES($1, $2) returning id, location_x, location_y;
-            `, [args.user_preference.location_x, args.user_preference.location_y]);
-            userId = newUpRows[0].id;
-            userLocationX = newUpRows[0].location_x;
-            userLocationY = newUpRows[0].location_y;
-          }
+    // insert subscriptions
+    if (args.user_preference.subscriptions) {
+      await pool.query(`
+                    delete from note.subscriptions
+                    where subscriptions.user_id = $1
+                    `, [userId]);
+      await Promise.all(args.user_preference.subscriptions.map(async (subscription) => {
+        await pool.query(`
+                        insert into note.subscriptions(user_id, tag_id, radius_miles, whole_city)
+                        VALUES($1, $2, $3, $4);
+                        `, [userId, subscription.tag.id, subscription.radius_miles, subscription.whole_city]);
+      }));
+    }
 
-          // insert send types
-          if (args.user_preference.send_types) {
-            args.user_preference.send_types.map(async (sendType) => {
-              await client.query(` 
-            insert into note.send_types(
-              user_id, type, email, phone)
-            VALUES($1, $2, $3, $4)
-            on conflict (user_id, type) do
-            update set email = $3, phone = $4
-            where send_types.user_id = $1 and send_types.type = $2;
-            `, [userId, sendType.type, sendType.email, sendType.phone]);
-            });
-          }
-
-          if (args.user_preference.subscriptions) {
-            // delete subscriptions not in array
-            const keepTags = args.user_preference.subscriptions.map(scrip => parseInt(scrip.tag.id, 10));
-            const res = await client.query(`
-            select * from note.subscriptions
-            where subscriptions.user_id = $1;
-            `, [userId]);
-            res.rows.map(async (row) => {
-              if (keepTags.indexOf(row.tag_id) === -1) {
-                await client.query(`
-              delete from note.subscriptions
-              where subscriptions.user_id = $1
-              and subscriptions.tag_id = $2;
-              `, [userId, row.tag_id]);
-              }
-            });
-            args.user_preference.subscriptions.map(async (subscription) => {
-              await client.query(`
-            insert into note.subscriptions(
-              user_id, tag_id, radius_miles, whole_city)
-            VALUES($1, $2, $3, $4)
-            on conflict (user_id, tag_id) do
-            update set radius_miles = $3, whole_city = $4
-            where subscriptions.user_id = $1 and subscriptions.tag_id = $2
-            `, [userId, subscription.tag.id, subscription.radius_miles, subscription.whole_city]);
-            });
-          } else {
-            await client.query(`
-            delete from note.subscriptions
-            where subscriptions.user_id = $1;
-            `, [userId]);
-          }
-          const ret = Object.assign({}, args.user_preference,
-            { id: userId, location_x: userLocationX, location_y: userLocationY });
-          return (ret);
-        } catch (e) { console.log(e); throw (e); } finally {
-          client.release();
-        }
-      } else {
-        return Promise.resolve({ "id": "invalid", "send_types": [{ "email": "Not created: Not logged in" }] });
-      }
-    });
+    return Object.assign({}, args.user_preference, { id: userId, location_x, location_y });
+  } catch (e) { console.log(e); throw (e); }
 }
 
 async function updateUserPreference(obj, args, context) {
@@ -202,10 +102,10 @@ async function updateUserPreference(obj, args, context) {
 }
 
 async function deleteUserPreferenceSecure(obj, args, context) {
+  const pool = context.pool;
   const ret = {};
   ret.error = null;
   const urlObj = new URL(args.url);
-  const client = await pool.connect();
   try {
     const decodedEmail = urlObj.searchParams.get('e');
     ret.deletedEmail = decodedEmail;
@@ -215,21 +115,23 @@ async function deleteUserPreferenceSecure(obj, args, context) {
     const hashShouldBe = getHash(encodedEmail, urlExpireEpoch);
     if (urlExpireEpoch > Date.now()) { // not expired
       if (hashShouldBe === urlHash) { // hash matches
-        const result = await client.query(`  
-          select send_types.user_id from note.send_types where email = $1;
+        let { rows } = pool.query(`
+        select send_types.user_id from note.send_types where email = $1;
         `, [decodedEmail]);
-        if (result.rowCount > 0) {
-          const userId = result.rows[0].user_id;
-          await client.query(`  
+        if (rows[0]) {
+          const row = rows[0];
+          const userId = row.user_id;
+          pool.query(`
             delete from note.subscriptions where user_id = $1;
-          `, [userId]);
-          await client.query(`  
+            `, [userId]);
+          pool.query(`
             delete from note.send_types where user_id = $1;
-          `, [userId]);
-          const { rows } = await client.query(`  
-            delete from note.user_preferences where id = $1 returning id;
-          `, [userId]);
-          // if(!rows[0].id){
+            `, [userId]);
+          pool.query(`
+            delete from note.user_preferences where id = $1;
+            `, [userId]);
+        } else {
+          ret.error = 'BADHASH';
         }
       } else {
         ret.error = 'BADHASH';
@@ -238,18 +140,60 @@ async function deleteUserPreferenceSecure(obj, args, context) {
       ret.error = 'EXPIRED';
     }
     return (ret);
-  } catch (e) { console.log(e); throw (e); } finally {
-    client.release();
-  }
+  } catch (e) { console.log(e); throw (e); }
 }
 
 const resolvers = {
   Query: {
-    user_preference: getUserPreference,
-    categories: getCategories,
+    user_preference: async (parent, args, context) => {
+      // gets a user_preference, their subscriptions, and their send types, given an email.
+      if (!await validateLoggedInUser(context, args.email)) {
+        return ({ "id": -1, "send_types": [{ "email": "No results: Not logged in" }] });
+      }
+      let { rows } = await context.pool.query(`
+          SELECT u.id, u.location_x, u.location_y FROM note.user_preferences u
+          inner join note.send_types on u.id = send_types.user_id
+          where send_types.user_id is not null and send_types.email = $1
+              `, [args.email]);
+      const ret = rows[0] ? rows[0]: null;
+      return (ret);
+    },
+    categories: async (parent, args, context) => {
+      let { rows } = await context.pool.query(`
+          select id, name from note.categories;
+          `);
+      return (rows);
+    }
   },
   Category: {
-    tags: getTagsForCategory,
+    tags: async (parent, args, context) => {
+      let { rows } = await context.pool.query(`
+          select id, name, category_id from note.tags where category_id = $1
+          `, [parent.id]);
+      return (rows);
+    }
+  },
+  UserPreference: {
+    send_types: async (parent, args, context) => {
+      let { rows } = await context.pool.query(`
+          select id, type, email, phone from note.send_types where user_id = $1
+          `, [parent.id]);
+      return (rows);
+    },
+    subscriptions: async (parent, args, context) => {
+      let { rows } = await context.pool.query(`
+          select id, tag_id, radius_miles, whole_city from note.subscriptions where user_id = $1
+          `, [parent.id]);
+      return (rows);
+    },
+  },
+  Subscription: {
+    tag: async (parent, args, context) => {
+      let { rows } = await context.pool.query(`
+          select id, name, category_id from note.tags where id = $1
+          `, [parent.tag_id]);
+      return (rows[0]);
+    },
   },
   Mutation: {
     createUserPreference,
