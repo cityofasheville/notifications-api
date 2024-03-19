@@ -1,4 +1,4 @@
-  // Set up CORS
+  // Set up CORS for local dev (Deployed Lambda uses API Gateway CORS settings in config.tf)
   const allowedOrigins = [
     'https://dev-notifications-frontend.ashevillenc.gov', // dev frontend
     'https://notifications.ashevillenc.gov',              // prod frontend
@@ -6,8 +6,6 @@
     'https://dev-notify.ashevillenc.gov',                 // dev sandbox
     'https://notify-api.ashevillenc.gov',                 // prod sandbox
     'http://localhost:4000',                               // local sandbox
-    'http://localhost:4001',                               // local sandbox
-    'https://vejykx4jxuuyb2dguzbb3nxflq0lznxq.lambda-url.us-east-1.on.aws',
   ];
 
   const corsOptions = {

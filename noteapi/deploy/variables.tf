@@ -1,3 +1,8 @@
+variable "prog_name" {
+  type          = string
+  description   = "Name of Program"
+}
+
 variable "region" {
   type          = string
   description   = "Region in which to create resources"
@@ -80,4 +85,17 @@ variable "unsub_url" {
 variable "debug" {
  type = string
  description = "DB Env Var"
+}
+variable "port" {
+ type = string
+ description = "Only used for local development"
+}
+variable "certificate_arn" {
+ type = string
+ description = "API Gateway Certificate ARN"
+}
+
+variable "domain_name" {
+ type = string
+ description = "API Gateway Domain Name"
 }

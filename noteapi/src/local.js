@@ -13,8 +13,8 @@ const prunePeriod = 86400000; // prune expired entries every 24h
 let sessionCache = new MemoryStore({
   checkPeriod: prunePeriod,
 });
-
-const app = await server(apiResolvers, sessionCache);
+let isLocal = true;
+const app = await server(apiResolvers, sessionCache, isLocal);
 
 app.listen(port);
 console.info(`listening on http://localhost:${port}/graphql`);

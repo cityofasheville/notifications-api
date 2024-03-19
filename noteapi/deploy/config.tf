@@ -79,27 +79,61 @@ resource "aws_lambda_function" "${prog_name}" {
   }
 }
 
-resource "aws_lambda_function_url" "${prog_name}_function_url" {
-  function_name      = aws_lambda_function.${prog_name}.function_name
-  authorization_type = "NONE"
-  cors {
-    allow_credentials = false
-    allow_origins     = [
+resource "aws_apigatewayv2_api" "${prog_name}" {
+  name          = "${prog_name}"
+  protocol_type = "HTTP"
+  target        = aws_lambda_function.${prog_name}.arn
+  cors_configuration {
+    allow_origins = [
     "https://dev-notifications-frontend.ashevillenc.gov",
     "https://notifications.ashevillenc.gov",
     "http://localhost:3000",
     "https://dev-notify.ashevillenc.gov",
     "https://notify-api.ashevillenc.gov",
     "http://localhost:4000",
-    "https://fqcyg3mmdvfesdy4gbdjxntkge0qqxpt.lambda-url.us-east-1.on.aws",
+    "https://hvqxaxoyvi.execute-api.us-east-1.amazonaws.com",
     ]
-    allow_methods     = ["GET", "POST", "HEAD"]
-    allow_headers     = ["date", "content-type"]
-    max_age           = 86400
   }
+  tags = {
+    Name          = "${prog_name}"
+    "coa:application" = "${prog_name}"
+    "coa:department"  = "information-technology"
+    "coa:owner"       = "jtwilson@ashevillenc.gov"
+    "coa:owner-team"  = "dev"
+  }
+}
+
+resource "aws_apigatewayv2_domain_name" "domain-name-${prog_name}" {
+  domain_name = "dev-notify.ashevillenc.gov"
+  domain_name_configuration {
+    certificate_arn = var.certificate_arn
+    endpoint_type   = "REGIONAL"
+    security_policy = "TLS_1_2"
+  }
+}
+
+resource "aws_apigatewayv2_api_mapping" "apigw-map-${prog_name}" {
+  api_id      = aws_apigatewayv2_api.${prog_name}.id
+  domain_name = "dev-notify.ashevillenc.gov"
+  stage       = "$default"
+}
+
+resource "aws_lambda_permission" "apigw-${prog_name}" {
+  action        = "lambda:InvokeFunction"
+	function_name = aws_lambda_function.${prog_name}.function_name
+	principal     = "apigateway.amazonaws.com"
+	source_arn = "${aws_apigatewayv2_api.${prog_name}.execution_arn}/*/*"
 }
 
 output "${prog_name}_arn" {
   value = aws_lambda_function.${prog_name}.arn
+}
+
+output "${prog_name}_api_url" {
+  value = aws_apigatewayv2_domain_name.domain-name-${prog_name}.domain_name
+}
+
+output "${prog_name}_api_id" {
+  value = aws_apigatewayv2_api.${prog_name}.id
 }
 
