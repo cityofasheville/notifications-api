@@ -94,7 +94,7 @@ resource "aws_apigatewayv2_api" "${prog_name}" {
 }
 
 resource "aws_apigatewayv2_domain_name" "domain-name-${prog_name}" {
-  domain_name = "dev-notify.ashevillenc.gov"
+  domain_name = var.domain_name
   domain_name_configuration {
     certificate_arn = var.certificate_arn
     endpoint_type   = "REGIONAL"
@@ -104,7 +104,7 @@ resource "aws_apigatewayv2_domain_name" "domain-name-${prog_name}" {
 
 resource "aws_apigatewayv2_api_mapping" "apigw-map-${prog_name}" {
   api_id      = aws_apigatewayv2_api.${prog_name}.id
-  domain_name = "dev-notify.ashevillenc.gov"
+  domain_name = var.domain_name
   stage       = "$default"
 }
 

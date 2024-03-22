@@ -1,3 +1,4 @@
+// For local dev, using regular Postgres DB.
 import apiResolvers from './api/api_resolvers_pg.js';
 import memorystore from 'memorystore';
 import session from 'express-session';
