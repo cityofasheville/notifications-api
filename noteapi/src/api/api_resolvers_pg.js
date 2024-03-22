@@ -16,19 +16,18 @@ async function validateLoggedInUser(context, email) {
   if (!validateEmail(email)) return false;
   // Return true if the user is logged in, and the logged in email matches the request.
   let cData = await context.cache.get(context.session.id);
-  return (cData.email === email && cData?.sessionState?.loggedIn === true);
+  let results = (cData.email === email && cData?.sessionState?.loggedIn === true);
+  return results;
 }
 
-async function setUpUser(args, pool) {
+async function setUpUser(useremail, user, pool) {
   // If the user exists, get their id and location, and update their location if it was sent.
   // If the user doesn't exist, create them and send a confirmation email.
-  const user = args.user_preference;
-  const emailsendtype = user.send_types.find(sendtype => sendtype.type === 'EMAIL');
   let { rows } = await pool.query(`
         SELECT u.id, u.location_x, u.location_y FROM note.user_preferences u
         inner join note.send_types on u.id = send_types.user_id
         where send_types.user_id is not null and send_types.email = $1
-        `, [emailsendtype.email]);
+        `, [useremail]);
   if (rows[0]) { // already exist
     let row = rows[0];
     if (user.location_x && user.location_y) {
@@ -42,7 +41,7 @@ async function setUpUser(args, pool) {
       "location_y": user.location_y
     };
   } else { // new
-    sendConfirmationEmail(emailsendtype.email);
+    sendConfirmationEmail(useremail);
     let location_x = user.location_x || null;
     let location_y = user.location_y || null;
     let { rows: newUpRows } = await pool.query(`
@@ -57,13 +56,16 @@ async function setUpUser(args, pool) {
 }
 
 async function createUserPreference(obj, args, context) {
-  if (!await validateLoggedInUser(context, args.email)) {
+  const user = args.user_preference;
+  const emailsendtype = user.send_types.find(sendtype => sendtype.type === 'EMAIL');
+  const useremail = emailsendtype.email;
+  if (!await validateLoggedInUser(context, useremail)) {
     return ({ "id": -1, "send_types": [{ "email": "Not logged in" }] });
   }
 
   try {
     const pool = context.pool;
-    const { userId, location_x, location_y } = await setUpUser(args, pool);
+    const { userId, location_x, location_y } = await setUpUser(useremail, user, pool);
 
     // insert send types
     if (args.user_preference.send_types) {
@@ -115,21 +117,21 @@ async function deleteUserPreferenceSecure(obj, args, context) {
     const hashShouldBe = getHash(encodedEmail, urlExpireEpoch);
     if (urlExpireEpoch > Date.now()) { // not expired
       if (hashShouldBe === urlHash) { // hash matches
-        let { rows } = pool.query(`
+        let { rows } = await pool.query(`
         select send_types.user_id from note.send_types where email = $1;
         `, [decodedEmail]);
         if (rows[0]) {
           const row = rows[0];
           const userId = row.user_id;
-          pool.query(`
-            delete from note.subscriptions where user_id = $1;
-            `, [userId]);
-          pool.query(`
-            delete from note.send_types where user_id = $1;
-            `, [userId]);
-          pool.query(`
-            delete from note.user_preferences where id = $1;
-            `, [userId]);
+          await pool.query(`
+          delete from note.subscriptions where user_id = $1;
+          `, [userId]);
+          await pool.query(`
+          delete from note.send_types where user_id = $1;
+          `, [userId]);
+          await pool.query(`
+          delete from note.user_preferences where id = $1;
+          `, [userId]);
         } else {
           ret.error = 'BADHASH';
         }
