@@ -17,7 +17,7 @@ import { apiConfig } from './api/config.js';
 import getDbConnection from './util/db.js';
 import corsOptions from './util/cors.js';
 
-async function server(apiResolver, sessionCache, isLocal = false) {
+async function server(apiResolver, sessionCache) {
 
   const pool = getDbConnection('note'); // Initialize the connection.
 
