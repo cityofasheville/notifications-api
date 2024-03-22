@@ -67,6 +67,7 @@ resource "aws_lambda_function" "${prog_name}" {
       "userpoolId": var.userpoolId
       "appClientId": var.appClientId
       "cognitoOauthUrl": var.cognitoOauthUrl
+      "region": var.region
       "note_host": var.note_host
       "note_database": var.note_database
       "note_user": var.note_user
@@ -83,17 +84,6 @@ resource "aws_apigatewayv2_api" "${prog_name}" {
   name          = "${prog_name}"
   protocol_type = "HTTP"
   target        = aws_lambda_function.${prog_name}.arn
-  cors_configuration {
-    allow_origins = [
-    "https://dev-notifications-frontend.ashevillenc.gov",
-    "https://notifications.ashevillenc.gov",
-    "http://localhost:3000",
-    "https://dev-notify.ashevillenc.gov",
-    "https://notify-api.ashevillenc.gov",
-    "http://localhost:4000",
-    "https://hvqxaxoyvi.execute-api.us-east-1.amazonaws.com",
-    ]
-  }
   tags = {
     Name          = "${prog_name}"
     "coa:application" = "${prog_name}"

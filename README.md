@@ -3,6 +3,7 @@ Send transactional emails
 
 ## .env files
 Each application, noteapi and messages, needs a new file .env (based on .env.example)
+NOTE: This is actually a Terraform formatted variable file, which requires strings to be in double quotes.
 
 ## Main Application
 * noteapi/

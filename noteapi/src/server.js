@@ -15,7 +15,7 @@ import { checkLogin, initializeContext, getUserInfo } from './util/coa-web-login
 import "dotenv/config.js";
 import { apiConfig } from './api/config.js';
 import getDbConnection from './util/db.js';
-import corsOptions from './util/localcors.js';
+import corsOptions from './util/cors.js';
 
 async function server(apiResolver, sessionCache, isLocal = false) {
 
@@ -83,9 +83,8 @@ async function server(apiResolver, sessionCache, isLocal = false) {
   });
   await server.start();
 
-  if (isLocal) {
-    app.use(cors(corsOptions));
-  }
+  app.use(cors(corsOptions));
+
   app.use(
     '/graphql',
     express.json(),

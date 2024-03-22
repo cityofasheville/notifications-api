@@ -6,6 +6,7 @@
     'https://dev-notify.ashevillenc.gov',                 // dev sandbox
     'https://notify-api.ashevillenc.gov',                 // prod sandbox
     'http://localhost:4000',                               // local sandbox
+    "https://1mut6b8e11.execute-api.us-east-1.amazonaws.com",
   ];
 
   const corsOptions = {
@@ -17,6 +18,8 @@
         callback(new Error(`Origin ${origin} not allowed by CORS`))
       }
     },
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type',
     credentials: true,
   };
 

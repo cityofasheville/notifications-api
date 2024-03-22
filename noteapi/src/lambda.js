@@ -20,6 +20,5 @@ const app = await server(apiResolvers, sessionCache, isLocal);
 let serverlessExpressInstance = serverlessExpress({ app });
 
 export async function handler(event, context) {
-  console.log("request: ", event.rawPath);
   return serverlessExpressInstance(event, context);
 }
