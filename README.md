@@ -9,6 +9,9 @@ NOTE: This is actually a Terraform formatted variable file, which requires strin
 * noteapi/
 This is the backend of the City of Asheville Notifications App. It provides a GraphQL API for the [Notifications frontend](https://github.com/cityofasheville/notifications-frontend)
 
+#### CORS
+CORS configuration for the API is done in the file noteapi/src/util/cors.js
+
 ## Messages
 * messages/
 Script to run nightly to send emails.

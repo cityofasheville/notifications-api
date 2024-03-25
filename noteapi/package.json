@@ -7,7 +7,7 @@
   "scripts": {
     "start": "nodemon --exec node src/local.js",
     "startpg": "nodemon --exec node src/localpg.js",
-    "clean": "rm -rf deploy/build && rm -rf deploy/.terraform && rm -rf deploy/.terraform.lock.hcl",
+    "clean": "rm -rf deploy/build && rm -rf node_modules",
     "runterraform": "cd deploy/build && terraform init && terraform apply -auto-approve -var-file=../../.env",
     "deploy": "cd deploy && node deploy.js && npm install --prefix ./build/nodejs --omit-dev && npm run runterraform",
     "destroy": "cd deploy/build && terraform init && terraform destroy -auto-approve -var-file=../../.env"
