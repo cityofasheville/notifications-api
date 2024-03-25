@@ -17,6 +17,7 @@ function sleep(ms) {
 
 async function sendEmails(recipients) {
   try {
+    let count = 0;
     // eslint-disable-next-line no-restricted-syntax
     for await (const emailAddr of Object.keys(recipients)) {
       // eslint-disable-next-line no-await-in-loop
@@ -25,12 +26,13 @@ async function sendEmails(recipients) {
       recipient.listOfTopics = recipients[emailAddr];
       recipient.unsub_url = createUnsubUrl(emailAddr);
       const htmlEmail = compiledFunction(recipient);
-      // eslint-disable-next-line no-await-in-loop
+      // eslint-disable-next-line no-await-in-loop]
       await sesSendemail(emailAddr, htmlEmail);
+      count += 1;
     }
-    return Promise.resolve();
+    return count;
   } catch (e) {
-    return Promise.reject(e);
+    console.error (e);
   }
 }
 
