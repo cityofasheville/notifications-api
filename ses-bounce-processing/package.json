@@ -3,10 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf deploy/build && rm -rf node_modules",
+    "runterraform": "cd deploy/build && terraform init && terraform apply -auto-approve -var-file=../../.env",
+    "deploy": "cd deploy && node deploy.js && npm install --prefix ./build/nodejs --omit-dev && npm run runterraform",
+    "destroy": "cd deploy/build && terraform init && terraform destroy -auto-approve -var-file=../../.env"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^8.11.3"
+  }
 }

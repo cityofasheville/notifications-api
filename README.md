@@ -2,7 +2,7 @@
 **Send emails to users who sign up to be notified about Permit Applications or other events.**
 
 ## .env files
-Each application, noteapi and messages, needs a new file .env (based on .env.example)
+Each application, (noteapi, messages, and ses-bounce-processing) needs a new file .env (based on .env.example)
 NOTE: This is actually a Terraform formatted variable file, which requires strings to be in double quotes.
 
 ### Deploy to Lambda
