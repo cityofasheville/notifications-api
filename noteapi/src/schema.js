@@ -1,4 +1,4 @@
-import { graphql } from './coa-web-login/index.js';
+import { graphql } from './util/coa-web-login/index.js';
 import { schema } from './api/index.js';
 
 /*

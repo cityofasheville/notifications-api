@@ -1,3 +1,22 @@
+CREATE SCHEMA note;
+CREATE SCHEMA aux;
+CREATE SCHEMA tiger;
+CREATE ROLE notedb;
+GRANT USAGE ON SCHEMA note TO notedb;
+GRANT USAGE ON SCHEMA aux TO notedb;
+GRANT USAGE ON SCHEMA tiger TO notedb;
+CREATE EXTENSION tiger.postgis;
+------------------------
+CREATE TABLE aux."session" (
+	sid varchar NOT NULL,
+	sess json NOT NULL,
+	expire timestamp(6) NOT NULL,
+	CONSTRAINT session_pkey PRIMARY KEY (sid)
+);
+
+ALTER TABLE aux."session" OWNER TO dbadmin;
+GRANT ALL ON TABLE aux."session" TO dbadmin;
+GRANT ALL ON TABLE aux."session" TO notedb;
 ------------------------
 CREATE TABLE note.categories (
 	id serial4 NOT NULL,

@@ -46,9 +46,6 @@ query GetUserPreference {
       whole_city
       tag {
         id
-        topics {
-          id
-        }
       }
 
     }

@@ -8,9 +8,7 @@ import { createUnsubUrl } from '../../util/cryptofuncs.js';
 const __dirname = import.meta.dirname;
 import "dotenv/config.js";
 
-// const pugfile = join(__dirname, '/email.pug');
-const pugfile = './api/confirmationEmail/email.pug'; 
-// console.log(pugfile);
+const pugfile = join(__dirname, '/email.pug');
 const compiledFunction = compileFile(pugfile);
 
 async function sendConfirmationEmail(emailAddr) {

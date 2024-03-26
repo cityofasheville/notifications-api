@@ -22,6 +22,7 @@ const getDbConnection = (name) => {
   if (dbConnections[name] === undefined) {
     dbConnections[name] = dbPool(name);
   }
+  console.log('db connected', name);
   return dbConnections[name];
 };
 

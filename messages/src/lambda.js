@@ -2,14 +2,14 @@
 import recipientSelection from './recipientSelection.js'; // Finds who to send email to
 import sendEmails from './sendEmails.js'; // Send em
 
-async function sendPermitMsgs() {
+export async function handler(event, context) {
   try {
     const recipients = await recipientSelection();
-    sendEmails(recipients);
+    let count = await sendEmails(recipients);
+    console.log(`Emails sent: ${count}`);
+
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(e);
   }
 }
-
-export default sendPermitMsgs;
