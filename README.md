@@ -1,4 +1,7 @@
 # Notifications API
+
+# THIS IS THE FINAL VERSION DEPLOYED TO web-app-api-server
+
 Send transactional emails
 
 This is the backend of the City of Asheville Notifications App. It provides a GraphQL API for the [Notifications frontend](https://github.com/cityofasheville/notifications-frontend)
@@ -12,4 +15,4 @@ npm start
 ````
 
 Based on the starter template for City of Asheville web API projects. 
-https://github.com/cityofasheville/graphql-starter-template
+
