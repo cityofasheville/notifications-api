@@ -15,3 +15,7 @@ which triggers this lambda
 Lambda permissions:
 arn:aws:iam::aws:policy/AmazonSQSReadOnlyAccess (Maybe? ... or:)
 arn:aws:iam::aws:policy/service-role/AWSLambdaSQSQueueExecutionRole
+
+## Status April 2024
+I hooked ses-bounce-processing all up and left it running but nothing was written to db, so giving up for now.
+Don't know how to debug.

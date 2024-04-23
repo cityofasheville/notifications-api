@@ -1,0 +1,2 @@
+# This was the cron string on webapp
+0 8 * * * /home/apiadmin/.nvm/versions/node/v16.20.0/bin/node /opt/notifications/messages/index.js > /opt/notifications/messages/cronlogs/cronlog.log
