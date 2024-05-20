@@ -8,9 +8,15 @@ NOTE: This is actually a Terraform formatted variable file, which requires strin
 ### Deploy to Lambda
 All Lambdas are deployed like this, (After getting proper permissions to AWS and changing to dir)
 
-```npm run deploy``` deploys the application to AWS Lambda (and API Gateway for noteapi).
-```npm run destroy``` removes all AWS assets.
-```npm run clean``` removes all local temp files.
+- Test Locally: npm start
+- Deploy: 
+  - npm run deploy prod
+  - npm run deploy dev
+- Destroy: (removes all objects from AWS)
+  - npm run destroy prod
+  - npm run destroy dev 
+- Clean: 
+  - npm run clean (removes local temp files)
 
 ---
 ## Main Application

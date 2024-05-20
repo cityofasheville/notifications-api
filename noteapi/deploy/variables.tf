@@ -1,8 +1,3 @@
-variable "prog_name" {
-  type          = string
-  description   = "Name of Program"
-}
-
 variable "region" {
   type          = string
   description   = "Region in which to create resources"
@@ -98,4 +93,14 @@ variable "certificate_arn" {
 variable "domain_name" {
  type = string
  description = "API Gateway Domain Name"
+}
+
+# Name of Lambda
+variable "production_name" {
+  type          = string
+  description   = "Name of Program"
+}
+variable "development_name" {
+  type          = string
+  description   = "Name of Program"
 }

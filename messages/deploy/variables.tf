@@ -1,8 +1,3 @@
-variable "prog_name" {
-  type          = string
-  description   = "Name of Program"
-}
-
 variable "region" {
   type          = string
   description   = "Region in which to create resources"
@@ -45,4 +40,14 @@ variable "email_hash_key" {
 variable "unsub_url" {
  type = string
  description = "DB Env Var"
+}
+
+# Name of Lambda
+variable "production_name" {
+  type          = string
+  description   = "Name of Program"
+}
+variable "development_name" {
+  type          = string
+  description   = "Name of Program"
 }
