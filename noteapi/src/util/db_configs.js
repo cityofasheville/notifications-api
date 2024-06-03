@@ -1,6 +1,3 @@
-
-import "dotenv/config.js";
-
 const defaultConfigs = {
   note: {
     db_type: 'pg',

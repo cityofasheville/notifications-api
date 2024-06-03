@@ -6,7 +6,6 @@ import { compileFile } from 'pug';
 import { join } from 'path';
 import { createUnsubUrl } from '../../util/cryptofuncs.js';
 const __dirname = import.meta.dirname;
-import "dotenv/config.js";
 
 const pugfile = join(__dirname, '/email.pug');
 const compiledFunction = compileFile(pugfile);

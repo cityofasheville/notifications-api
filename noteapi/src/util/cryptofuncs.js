@@ -1,7 +1,5 @@
 import { createHmac } from 'crypto';
 
-import "dotenv/config.js";
-
 function getHash(encodedEmail, expires) {
   const cryptokey = process.env.email_hash_key;
   const hash = createHmac('sha1', cryptokey).update(`${encodedEmail}${expires}`).digest('hex');

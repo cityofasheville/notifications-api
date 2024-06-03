@@ -6,7 +6,8 @@
     'https://dev-notify.ashevillenc.gov',                 // dev sandbox
     'https://notify-api.ashevillenc.gov',                 // prod sandbox
     'http://localhost:4000',                               // local sandbox
-    "https://1mut6b8e11.execute-api.us-east-1.amazonaws.com",
+    "https://eyry1huec5.execute-api.us-east-1.amazonaws.com",
+    "https://s8rppntuvd.execute-api.us-east-1.amazonaws.com",
   ];
 
   const corsOptions = {

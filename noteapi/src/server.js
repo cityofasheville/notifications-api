@@ -12,7 +12,6 @@ import cors from 'cors';
 import cache_client from './util/cache_client.js';
 import { checkLogin, initializeContext, getUserInfo } from './util/coa-web-login/index.js';
 
-import "dotenv/config.js";
 import { apiConfig } from './api/config.js';
 import getDbConnection from './util/db.js';
 import corsOptions from './util/cors.js';
