@@ -15,8 +15,10 @@
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-ses": "^3.509.0",
-    "dotenv": "^16.4.1",
     "pg": "^8.11.3",
     "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "yaml": "^2.4.2"
   }
 }
