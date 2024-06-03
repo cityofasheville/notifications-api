@@ -18,6 +18,9 @@ All Lambdas are deployed like this, (After getting proper permissions to AWS and
 - Clean: 
   - npm run clean (removes local temp files)
 
+#### Special deploy note: 
+Make sure the variable ```unsub_url``` is set correctly for dev or prod.
+
 ---
 ## Main Application
 * noteapi/
