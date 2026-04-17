@@ -8,15 +8,20 @@ NOTE: This is actually a Terraform formatted variable file, which requires strin
 ### Deploy to Lambda
 All Lambdas are deployed like this, (After getting proper permissions to AWS and changing to dir)
 
-- Test Locally: npm start
+First run ```npm install```
+
+```package.json``` has these scripts:
+- Test Locally: 
+  - ```npm start```
 - Deploy: 
-  - npm run deploy prod
-  - npm run deploy dev
+  - ```npm run deploy```
 - Destroy: (removes all objects from AWS)
-  - npm run destroy prod
-  - npm run destroy dev 
+  - ```npm run destroy```
 - Clean: 
-  - npm run clean (removes local temp files)
+  - ```npm run clean``` (removes local temp files)
+
+The Deploy/Destroy commands use the name of the active GitHub branch when creating AWS resources.
+For example, if the active GitHub branch is "feature" and the name of the resource is "template", the resource is named "template_feature". For API gateway domains, it's "feature-template.ashevillenc.gov". Production (or main) branches do not get a prefix/suffix.
 
 #### Special deploy note: 
 Make sure the variable ```unsub_url``` is set correctly for dev or prod.

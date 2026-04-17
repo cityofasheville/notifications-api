@@ -11,12 +11,19 @@ resource "aws_apigatewayv2_api" "${config.prog_name}" {
     "coa:owner"       = "${config.owner_tag}"
     "coa:owner-team"  = "dev"
   }
+  cors_configuration {
+    allow_headers     = ["*"]
+    allow_methods     = ["POST", "GET"]
+    allow_origins     = ["*"]
+    expose_headers    = ["*"]
+    max_age           = 300
+  }
 }
 
 resource "aws_apigatewayv2_domain_name" "domain-name-${config.prog_name}" {
   domain_name = "${config.domain_name}"
   domain_name_configuration {
-    certificate_arn = "${config.api_gateway_settings.certificate_arn}"
+    certificate_arn = "${config.certificate_arn}"
     endpoint_type   = "REGIONAL"
     security_policy = "TLS_1_2"
   }
