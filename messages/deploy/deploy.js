@@ -16,6 +16,7 @@ try {
   const file = await fs.readFile(`${__deploy_dir}/deploy.yaml`, 'utf8');
   let config = YAML.parse(file);
   config.deploy_dir = __deploy_dir;
+  const gitBranch = execSync('git branch --show-current').toString().trim().split('/').pop();
 
   // get Lambda environment variables from .env file
   try {
@@ -26,30 +27,45 @@ try {
   }
 
   // Get dev or prod from command line
-  if (process.argv.length !== 3 || (process.argv[2] !== 'prod' && process.argv[2] !== 'dev')) {
-    console.error('Usage: npm run deploy prod|dev');
-    process.exit(1);
-  }
-  let deploy_type = process.argv[2]; // prod or dev
+  // if (process.argv.length !== 3 || (process.argv[2] !== 'prod' && process.argv[2] !== 'dev')) {
+  //   console.error('Usage: npm run deploy prod|dev');
+  //   process.exit(1);
+  // }
+  let deploy_type = gitBranch; // prod or dev
 
   // determine Lambda name
-  if (deploy_type === 'prod') {
-    config.prog_name = config.lambda_names.production_name;
+  if (deploy_type === 'production' || deploy_type === 'main') {
+    config.prog_name = config.lambda_name;
     config.build_dir = 'build/prod';
-  } else if (deploy_type === 'dev') {
-    config.prog_name = config.lambda_names.development_name;
+  } else if (deploy_type === 'development') {
+    config.prog_name = config.lambda_name + '_dev';
     config.build_dir = 'build/dev';
+  } else {
+    config.prog_name = config.lambda_name + '_' + deploy_type;
+    config.build_dir = 'build/' + deploy_type;
   }
 
-  // Set domain name for API Gateway
+  // Set domain name and certificate for API Gateway
   if (config.lambda_options.api_gateway === 'true') {
-    if (deploy_type === 'prod') {
-      config.domain_name = config.api_gateway_settings.production_domain_name;
-    } else if (deploy_type === 'dev') {
-      config.domain_name = config.api_gateway_settings.development_domain_name;
+    let prodDomain = config.api_gateway_settings.production_domain_name;
+    let prodCertificateArn = config.api_gateway_settings.production_certificate_arn;
+    let devDomain = config.api_gateway_settings.development_domain_name ?? prodDomain;
+    let devCertificateArn = config.api_gateway_settings.development_certificate_arn ?? prodCertificateArn;
+  
+    if (deploy_type === 'production' || deploy_type === 'main') {
+      config.domain_name = prodDomain;
+      config.certificate_arn = prodCertificateArn;
+    } else if (deploy_type === 'development') {
+      config.domain_name = `dev-${devDomain}`;
+      config.certificate_arn = devCertificateArn;
+    } else {
+      config.domain_name = `${deploy_type}-${devDomain}`;
+      config.certificate_arn = devCertificateArn;
     }
+    
   } else {
     config.domain_name = '';
+    config.certificate_arn = '';
   }
 
   // vpc settings
@@ -91,7 +107,7 @@ async function setUpFiles(config) {
     await BuildPython(build_dir, config.sam_deploy);
   }
 ///////////////////////////////////
- execSync(`cd ${build_dir} && terraform init && terraform apply -auto-approve`, { stdio: 'inherit' });
+ execSync(`cd ${build_dir} && terraform init && terraform apply`, { stdio: 'inherit' });
 ///////////////////////////////////
 }
 
@@ -114,5 +130,5 @@ async function BuildNodeJS(build_dir) {
   await fs.copyFile('../package.json', `${build_dir}/nodejs/package.json`);
   await fs.copyFile('../package-lock.json', `${build_dir}/nodejs/package-lock.json`);
 
-  execSync(`npm install --prefix ${build_dir}/nodejs --omit-dev`, { stdio: 'inherit' });
+  execSync(`npm install --prefix ${build_dir}/nodejs --omit=dev`, { stdio: 'inherit' });
 }
