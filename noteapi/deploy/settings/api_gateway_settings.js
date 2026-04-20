@@ -11,13 +11,6 @@ resource "aws_apigatewayv2_api" "${config.prog_name}" {
     "coa:owner"       = "${config.owner_tag}"
     "coa:owner-team"  = "dev"
   }
-  cors_configuration {
-    allow_headers     = ["*"]
-    allow_methods     = ["POST", "GET"]
-    allow_origins     = ["*"]
-    expose_headers    = ["*"]
-    max_age           = 300
-  }
 }
 
 resource "aws_apigatewayv2_domain_name" "domain-name-${config.prog_name}" {
