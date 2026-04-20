@@ -14,8 +14,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@apollo/server": "^4.10.0",
-    "@as-integrations/aws-lambda": "^3.1.0",
+    "@apollo/server": "^5.5.0",
+    "@as-integrations/express4": "^1.1.2",
     "@aws-sdk/client-ses": "^3.507.0",
     "@codegenie/serverless-express": "^4.13.0",
     "axios": "^1.6.7",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.3",
-    "sqlite3": "^5.1.7",
+    "sqlite3": "^6.0.1",
     "yaml": "^2.4.3"
   }
 }
