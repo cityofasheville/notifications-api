@@ -2,7 +2,7 @@ import typeDefs from './schema.js';
 import getResolvers from './getResolvers.js';
 
 import { ApolloServer } from '@apollo/server';
-import { expressMiddleware } from '@apollo/server/express4';
+import { expressMiddleware } from '@as-integrations/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { createServer } from 'http'; // used by drain plugin
 import session from 'express-session';
@@ -24,8 +24,11 @@ async function server(apiResolver, sessionCache) {
 
   // PLAYGROUND
   let debug = false;
-  if (process.env.debug === 'true') {
+  if(process.env.debug === 'true') {
     debug = true;
+    process.env.NODE_ENV = 'development';
+  } else {
+    process.env.NODE_ENV = 'production';
   }
 
   const app = express();
@@ -77,7 +80,7 @@ async function server(apiResolver, sessionCache) {
     typeDefs,
     resolvers,
     introspection: debug,
-    playground: debug,
+    // playground: debug,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
   await server.start();
