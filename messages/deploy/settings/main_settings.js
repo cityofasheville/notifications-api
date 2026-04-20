@@ -43,6 +43,7 @@ resource "aws_lambda_function" "${config.prog_name}" {
   function_name    = "${config.prog_name}"
   role             = aws_iam_role.${config.prog_name}-role.arn
   handler          = "index.handler"
+  architectures    = ["arm64"]
   runtime          = "${config.nodejs_or_python==='nodejs'?'nodejs24.x':'python3.14'}"
   filename = data.archive_file.${config.prog_name}_zip.output_path
   source_code_hash = data.archive_file.${config.prog_name}_zip.output_base64sha256
