@@ -2,7 +2,6 @@
 import decodeToken from './decode_token.js';
 import josepkg from 'node-jose';
 const { util } = josepkg;
-import axios from 'axios';
 import { stringify } from 'qs';
 
 const checkLogin = function (sessionId, cacheData = null, cache) {
@@ -27,11 +26,16 @@ const checkLogin = function (sessionId, cacheData = null, cache) {
         const headers = {
           'Content-Type': 'application/x-www-form-urlencoded',
         };      
-        return axios({
+        return fetch(process.env.cognitoOauthUrl, {
           method: 'post',
-          url: process.env.cognitoOauthUrl,
-          data: stringify(refreshData),
+          body: stringify(refreshData),
           headers,
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            return response.json().then(data => ({ status: 200, data }));
+          }
+          return { status: response.status, data: null };
         })
         .then((response) => {
           if (response.status == 200) {
