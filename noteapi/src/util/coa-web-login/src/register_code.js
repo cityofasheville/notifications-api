@@ -1,5 +1,4 @@
 /* eslint-disable */
-import axios from 'axios';
 import josepkg from 'node-jose';
 const { util } = josepkg;
 import decodeToken from './decode_token.js';
@@ -31,15 +30,15 @@ const registerCode = function (parent, args, context) {
   return context.cache.get(context.sessionId)
   .then (cdata => {
     if (cdata) cacheData = cdata;
-    return axios({
+    return fetch(process.env.cognitoOauthUrl, {
       method: 'post',
-      url: process.env.cognitoOauthUrl,
-      data: stringify(data),
+      body: stringify(data),
       headers,
     });
   })
-  .then((response) => {
-    token = response.data.id_token;
+  .then((response) => response.json())
+  .then((data) => {
+    token = data.id_token;
 
     sections = token.split('.');
     // get the kid from the headers prior to verification
@@ -58,9 +57,9 @@ const registerCode = function (parent, args, context) {
           email: claims.email,
           loginProvider,
           sessionState: { loggedIn: true },
-          id_token: response.data.id_token,
-          access_token: response.data.access_token,
-          refresh_token: response.data.refresh_token,
+          id_token: data.id_token,
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
         }));
       return Promise.resolve({ loggedIn: true, message: 'Hi there', reason: 'No reason' });
     });

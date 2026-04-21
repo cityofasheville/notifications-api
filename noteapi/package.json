@@ -18,7 +18,6 @@
     "@as-integrations/express4": "^1.1.2",
     "@aws-sdk/client-ses": "^3.507.0",
     "@codegenie/serverless-express": "^4.13.0",
-    "axios": "^1.6.7",
     "connect-pg-simple": "^9.0.1",
     "cors": "^2.8.5",
     "express": "^4.18.2",
