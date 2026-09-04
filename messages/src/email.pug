@@ -8,7 +8,7 @@ html
     title Development Notification
     style.
       .container {
-        padding: 2rem 0;
+        padding-bottom: 2rem;
       }
      .permit-list {
         list-style: none;
@@ -30,7 +30,8 @@ html
       ul(class='permit-list')
         each val in listOfTopics
           li
-            a(href='https://simplicity.ashevillenc.gov/permits/'+val.permit_num) #{val.name} - #{val.notification_type}
+            a(href='https://simplicity.ashevillenc.gov/permits/'+val.permit_num) #{val.name}
+            span()= ' - ' + val.notification_type.replace(/,/g, ', ')
             if val.in_legacy_neighborhood
               span()= ' (in legacy neighborhood)'
 
