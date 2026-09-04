@@ -7,36 +7,36 @@ html
 
     title Development Notification
     style.
-      .red {
-        color: red;
+      .container {
+        padding-bottom: 2rem;
       }
-      .box {
-        border: 1px solid  rgb(192, 82, 82);
-        padding: 20px;
-        margin: 10%;
+     .permit-list {
+        list-style: none;
+        padding: 0;
+        margin: 2rem 0;
       }
-     .tablecenter {
-        margin-left: auto;
-        margin-right: auto;
-        text-align: left;
+      .mb-block {
+        margin-bottom: 1rem;
+      }
+      ul li {
+        margin-bottom: 0.5rem;
       }
   body
-    div(class='box')
-      h1 New land development proposed in Asheville
-      p The City of Asheville began processing the following land development applications yesterday.  Click on a project name to view details.
-      br
+    div(class='container')
+      h1(class='mb-block') New land development proposed in Asheville
 
-      table(class='tablecenter')
+      p() The City of Asheville began processing the following land development applications yesterday.  Click on a project name to view details.
+
+      ul(class='permit-list')
         each val in listOfTopics
-          tr
-            td 
-              a(href='https://simplicity.ashevillenc.gov/permits/'+val.permit_num) #{val.name} 
-            //- td #{val.notification_type}     
-      br
-      br
-      br
-      p You are receiving this email because you signed up for notifications.  No longer interested?
-      br
+          li
+            a(href='https://simplicity.ashevillenc.gov/permits/'+val.permit_num) #{val.name}
+            span()= ' - ' + val.notification_type.replace(/,/g, ', ')
+            if val.in_legacy_neighborhood
+              span()= ' (in legacy neighborhood)'
+
+      p(class='mb-block') You are receiving this email because you signed up for notifications.  No longer interested?
+      
       ul
         li
           a(href=unsub_url) Unsubscribe
