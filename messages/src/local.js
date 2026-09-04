@@ -3,7 +3,12 @@ import recipientSelection from './recipientSelection.js'; // Finds who to send e
 import sendEmails from './sendEmails.js'; // Send em
 
 try {
-  const recipients = await recipientSelection();
+  let recipients = await recipientSelection();
+  let devEmail = process.env.dev_email;
+  if (process.env.use_dev === 'true' || process.env.use_dev === true) {
+    recipients = {[devEmail]: recipients[devEmail]};
+  }
+
   let count = await sendEmails(recipients);
   console.log(`Emails sent: ${count}`);
 } catch (e) {
