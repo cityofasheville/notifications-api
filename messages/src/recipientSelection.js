@@ -27,14 +27,14 @@ async function recipientSelection() {
         returning permit_num 
       )
       ,permits as ( -- get all permits that were inserted into history and their tags
-        select p.permit_num, p."name", p.x, p.y, replace(a."tag"::text, '"', '') as "tag"
+        select p.permit_num, p."name", p.x, p.y, p.in_legacy_neighborhood, replace(a."tag"::text, '"', '') as "tag"
         from note.notification_permits p
         inner join insertedpermits ip
         on p.permit_num = ip.permit_num
         CROSS JOIN LATERAL JSONB_ARRAY_ELEMENTS(p.tags) as a("tag") --expand array in jsonb
       )
-      select type, email, phone, name, permit_num, STRING_AGG(notification_type,',') as notification_type from (
-        select distinct send_types.type, send_types.email, send_types.phone, permits.name, permits.permit_num, tags.name as notification_type
+      select type, email, phone, name, permit_num, in_legacy_neighborhood, STRING_AGG(notification_type,',') as notification_type from (
+        select distinct send_types.type, send_types.email, send_types.phone, permits.name, permits.permit_num, permits.in_legacy_neighborhood, tags.name as notification_type
         from note.user_preferences
         INNER JOIN note.send_types
           ON user_preferences.id = send_types.user_id
@@ -45,17 +45,25 @@ async function recipientSelection() {
         INNER JOIN permits
           ON tags.name = permits."tag"
         where 
-        ( 
-            (subscriptions.whole_city = true) 
-              or 
-              (
-              (tiger.ST_DistanceSphere(tiger.ST_MakePoint(user_preferences.location_x, user_preferences.location_y),
-              tiger.ST_MakePoint(permits.x, permits.y)) / 1609.34) 
-              < subscriptions.radius_miles
-              )
+        (
+            (subscriptions.scope = 'whole_city') 
+            or
+            (
+                subscriptions.scope = 'legacy_neighborhoods'
+                and
+                permits.in_legacy_neighborhood
+            )
+            or 
+            (
+                subscriptions.scope = 'radius'
+                and
+                (tiger.ST_DistanceSphere(tiger.ST_MakePoint(user_preferences.location_x, user_preferences.location_y),
+                tiger.ST_MakePoint(permits.x, permits.y)) / 1609.34) 
+                < subscriptions.radius_miles
+            )
         )
       ) as subq
-      group by type, email, phone, name, permit_num
+      group by type, email, phone, name, permit_num, in_legacy_neighborhood
       ORDER BY type, email, name;		
       `);
     const tagRows = tags.rows;
@@ -65,7 +73,11 @@ async function recipientSelection() {
     return Promise.all(
       tagRows.map(async (row) => {
         const shortRow = {
-          type: row.type, phone: row.phone, name: row.name, permit_num: row.permit_num, notification_type: row.notification_type,
+          type: row.type,
+          phone: row.phone,
+          name: row.name,
+          permit_num: row.permit_num,
+          notification_type: row.notification_type,
         };
         const list = recipients[row.email];
         if (list) {
@@ -75,10 +87,10 @@ async function recipientSelection() {
         }
       }),
     ).then(() => {
-      return (recipients);
+      return recipients;
     });
   } catch (e) {
-    throw (e);
+    throw e;
   } finally {
     noteClient.release();
   }
